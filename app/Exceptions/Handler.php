@@ -48,6 +48,9 @@ class Handler extends ExceptionHandler
     {
         // If the request wants JSON (AJAX doesn't always want JSON)
         if (!$request->wantsJson()) {
+            if (strpos($request->server('HTTP_USER_AGENT'), 'Windows') !== false || strpos($request->server('HTTP_USER_AGENT'), 'Mac') !== false) {
+                return parent::render($request, $exception);
+            }
             // Define the response
             $response = [
                 'errors' => 'Sorry, request just accept application/json.'

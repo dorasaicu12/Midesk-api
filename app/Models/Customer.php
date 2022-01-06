@@ -43,23 +43,22 @@ class Customer extends Model
             $res = $res->selectRaw('id,'.$req['fields']);
         }
         /// search
-        if (array_key_exists('key_search', $req) && rtrim($req['q']) != '') {
-            $key_search = explode(',', $req['key_search']);
-            foreach ($key_search as $key => $value) {                
-                if (auth::user()->groupid == '2') {
-                    $c = explode(':', $value);
-                    $column = $c[0];
-                    $condition = $c[1];
-                    if (rtrim(strtolower($condition)) == 'and') {
-                        $res->where($column,'like','%'.$req['q'].'%');
-                    }elseif (rtrim(strtolower($condition)) == 'or') {
-                        $res->orwhere($column,'like','%'.$req['q'].'%');
-                    }
-                }else{
-                    $res = $res->where($value,'like','%'.$req['q'].'%');
-                }
+        if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+
+            if(strpos($req['search'], '=') !== false){
+                $key_search = explode('=', $req['search']);
+                $type = '=';
+            }else if(strpos($req['search'], 'like') !== false){
+                $key_search = explode('like', $req['search']);
+                $type = 'like';
+                $key_search[1] = '%'.$key_search[1].'%';
+            }else if(strpos($req['search'], '<>') !== false){
+                $key_search = explode('like', $req['search']);
+                $type = '<>';
             }
+            $res = $res->where($key_search[0],$type,$key_search[1]);
         }
+
         if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
             $order_by = explode(',', $req['order_by']);
             foreach ($order_by as $key => $value) {

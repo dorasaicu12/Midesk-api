@@ -24,17 +24,37 @@ class AuthController extends Controller
         $this->middleware('auth:site', ['except' => ['login']]);
     }
     /**
-        * Login Get Token
-        ===================================
-        * @bodyParam  email email required The email of the user Example: admin@gmail.com 
-        * @bodyParam  password password required The password of the user Example: ***********
-        ===================================
-        * @response  {
-        *  "access_token": "{token}",
-        *  "token_type": "bearer",
-        *  "expires_in": "300"
-        * }
-    **/
+     * @SWG\Post(
+     *     path="/api/v3/auth/login",
+     *     tags={"Login"},
+     *     summary="Login",
+     *     operationId="login",
+     *
+     *     description="Return a token to authentication",
+     *     @SWG\Parameter(
+     *         name="email",
+     *         in="query",
+     *         type="string",
+     *         description="Your email",
+     *         required=true,
+     *     ),
+     *     @SWG\Parameter(
+     *         name="password",
+     *         in="query",
+     *         type="string",
+     *         description="Your your password",
+     *         required=true,
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Success",
+     *     ),
+     *     @SWG\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     )
+     * )
+     */
     public function login(Request $request)
     {   
         $check_user = new AuthByUser;

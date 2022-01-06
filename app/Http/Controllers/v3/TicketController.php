@@ -14,7 +14,7 @@ use App\Models\TicketDetail;
 use App\Models\Event;
 use App\Models\Contact;
 use App\Models\GroupTable;
-use App\Models\TicketsTrait;
+use App\Models\ModelsTrait;
 use App\Models\Team;
 use App\Models\TeamStaff;
 use App\Models\TicketCategory;
@@ -29,7 +29,7 @@ use DB;
  */
 class TicketController extends Controller
 {
-    use TicketsTrait;
+    use ModelsTrait;
 
 
     /**
@@ -64,54 +64,58 @@ class TicketController extends Controller
         return MyHelper::response(true,'Successfully', $data,200);
     }
 
-
     /**
-     * Get All Ticket
-     *
-     * @queryParam  page optional get record in page Example: page=1
-     * @queryParam  limit optional limit record Example: limit=5
-     * @queryParam  search optional search data. Example: search={$key}={$value}
-     * @queryParam  order_by optional sort record ( $key = id:desc,records_id,asc optional sort by id order by desc, if you want search many field add (,) before) Example: order_by={$key}
-     * @queryParam  fields optional get column you want (default get all) Example: fields=id,fullname,status,category,...
-    
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Successfully",
-     *   "data": {
-            "current_page": 1,
-            "data": [{
-                    "id":1,
-                    "title": "phiếu test từ dev 1",
-                    "ticket_id": "2112",
-                    "channel": "api",
-                    "content": "Lạc Long Quân - Tân Bình 1",
-                    "status": "pending"
-                },{
-                    "id":2,
-                    "title": "phiếu test từ dev 2",
-                    "ticket_id": "2113",
-                    "channel": "api",
-                    "content": "Lạc Long Quân - Tân Bình 2",
-                    "status": "close"
-            }],
-            "first_page_url": "{$URL}/ticket?limit=5&key_search=status%3Aand%2Ctitle%3Aor&q=new&order_by=id%3Aasc%2Cticket_id%3Adesc&fields=title%2Cpriority%2Cstatus%2Ccategory%2Cassign_agent%2Cassign_team%2Crequester%2Cgroupid&page=1",
-            "from": 1,
-            "last_page": 17,
-            "last_page_url": "{$URL}/ticket?limit=5&key_search=status%3Aand%2Ctitle%3Aor&q=new&order_by=id%3Aasc%2Cticket_id%3Adesc&fields=title%2Cpriority%2Cstatus%2Ccategory%2Cassign_agent%2Cassign_team%2Crequester%2Cgroupid&page=17",
-            "next_page_url": "{$URL}/ticket?limit=5&key_search=status%3Aand%2Ctitle%3Aor&q=new&order_by=id%3Aasc%2Cticket_id%3Adesc&fields=title%2Cpriority%2Cstatus%2Ccategory%2Cassign_agent%2Cassign_team%2Crequester%2Cgroupid&page=2",
-            "path": "{$URL}/ticket",
-            "per_page": "5",
-            "prev_page_url": null,
-            "to": 5,
-            "total": 83
-        }
-     *}
-
-     * @response 404 {
-     *   "status": false,
-     *   "message": "Resource Not Found",
-     *   "data": []
-     * }
+     * @SWG\Get(
+     *     path="/api/v3/ticket",
+     *     tags={"Ticket"},
+     *     summary="Ticket",
+     *     operationId="ticket",
+     *     security={{"bearer":{}}},
+     *     description="Return a list ticket",
+     *     @SWG\Parameter(
+     *         name="page",
+     *         in="query",
+     *         type="string",
+     *         description="number of page",
+     *         required=false,
+     *     ),
+     *     @SWG\Parameter(
+     *         name="limit",
+     *         in="query",
+     *         type="string",
+     *         description="limit record to get",
+     *         required=false,
+     *     ),
+     *     @SWG\Parameter(
+     *         name="search",
+     *         in="query",
+     *         type="string",
+     *         description="search data by ( {key}={value} )",
+     *         required=false,
+     *     ),
+     *     @SWG\Parameter(
+     *         name="order_by",
+     *         in="query",
+     *         type="string",
+     *         description="Sort order by ( {id}:{asc} )",
+     *         required=false,
+     *     ),
+     *     @SWG\Parameter(
+     *         name="fields",
+     *         in="query",
+     *         type="string",
+     *         description="Get custom record result ( title,priority,status,content )",
+     *         required=false,
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Success",
+     *     ),
+     *     @SWG\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     )
+     * )
      */
     public function index(Request $request)
     {

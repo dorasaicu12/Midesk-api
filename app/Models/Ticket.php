@@ -47,18 +47,20 @@ class Ticket extends Model
     		$res->selectRaw('id,'.$req['fields']);
     	}
     	/// search
-    	if (array_key_exists('key_search', $req) && rtrim($req['q']) != '') {
-    		$key_search = explode(',', $req['key_search']);
-    		foreach ($key_search as $key => $value) {
-    			$c = explode(':', $value);
-    			$column = $c[0];
-    			$condition = $c[1];
-    			if (rtrim(strtolower($condition)) == 'and') {
-    				$res->where($column,'like','%'.$req['q'].'%');
-    			}elseif (rtrim(strtolower($condition)) == 'or') {
-    				$res->orwhere($column,'like','%'.$req['q'].'%');
-    			}
-    		}
+    	if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+
+            if(strpos($req['search'], '=') !== false){
+                $key_search = explode('=', $req['search']);
+                $type = '=';
+            }else if(strpos($req['search'], 'like') !== false){
+                $key_search = explode('like', $req['search']);
+                $type = 'like';
+                $key_search[1] = '%'.$key_search[1].'%';
+            }else if(strpos($req['search'], '<>') !== false){
+                $key_search = explode('like', $req['search']);
+                $type = '<>';
+            }
+    		$res->where($key_search[0],$type,$key_search[1]);
     	}
     	if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
     		$order_by = explode(',', $req['order_by']);
@@ -85,6 +87,10 @@ class Ticket extends Model
     public function getTicketsDetail()
     {
     	return $this->hasMany(TicketDetail::class,'ticket_id','id');
+    }
+    public function getTicketAssign()
+    {
+        return $this->hasOne(User::class,'id','assign_agent');
     }
 	static function insert($table,$ins,$returnID=true){
 		if($returnID) return DB::table($table)->insertGetId($ins);
@@ -137,7 +143,10 @@ class Ticket extends Model
     static function showOne($id='')
     {
         $delete = self::DELETE;
-        return self::with(['getTicketsDetail.getTicketCreator' => function ($q)
+        return self::with(['getTicketAssign'=> function ($q)
+        {
+            $q->select(['id','fullname']);
+        },'getTicketsDetail.getTicketCreator' => function ($q)
         {
             $q->select(['id','fullname','picture',DB::raw("'https://dev2021.midesk.vn/upload/images/userthumb/' as path"),]);
         }])
@@ -148,8 +157,12 @@ class Ticket extends Model
     }
     public function checkExist_mtmb($orid='',$prcode='')
     {
+        $delete = self::DELETE;
         return self::leftjoin('product',function ($join='') {
             $join->on(self::getTable().'.mt_productid','=','product.id');
-        })->where('mt_orderid',$orid)->where('product.product_code',$prcode)->where('is_delete',self::DELETE)->first([self::getTable().'.*']);
+        })->where('mt_orderid',$orid)->where('product.product_code',$prcode)
+        ->where(function($q) use ($delete) {
+            $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+        })->first([self::getTable().'.*']);
     }
 }

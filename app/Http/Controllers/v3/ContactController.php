@@ -8,6 +8,7 @@ use App\Http\Functions\MyHelper;
 use App\Models\Contact;
 use App\Models\Group;
 use App\Models\CustomField;
+use App\Models\ModelsTrait;
 use Carbon\Carbon;
 use App\Http\Requests\v3\ContactRequest;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +23,7 @@ use DB;
  */
 class ContactController extends Controller
 {
-    
+    use ModelsTrait;
     /**
      * Get All Contact
      *
@@ -161,6 +162,7 @@ class ContactController extends Controller
         $email    = $req->email ?: "";
         $address  = $req->address ?: "";    
         $gender   = $req->gender ?: "";    
+        
         $channel_list  = ['facebook', 'zalo', 'webform', 'email', 'web', 'api'];
         $channel = 'api';
         if (array_key_exists('channel', $req)) {
@@ -176,13 +178,13 @@ class ContactController extends Controller
             //Kiểm tra tồn tại contact hay không
             $contact = new Contact;
 
-            $check_contact = Contact::checkContact();
+            $check_contact = Contact::checkContact($phone,$email,$ext_contact_id);
 
             DB::commit();
 
             //Thêm mới Contact
 
-            if(!$check_contact){              
+            if(!$check_contact){    
                 $contact->address     	= $address;
                 $contact->groupid   	= $groupid;
                 $contact->fullname   	= $fullname;
@@ -277,7 +279,7 @@ class ContactController extends Controller
         try {
             //Kiểm tra tồn tại contact hay không
             
-            $check_contact = Contact::checkContact();
+            $check_contact = Contact::checkContact($phone,$email,$id);
 
             DB::commit();
 

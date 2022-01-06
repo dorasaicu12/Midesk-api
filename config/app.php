@@ -123,6 +123,17 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'customer' => [
+        '103' => [
+            'order.update' => 'OrderUpdateMinhTuanMobile',
+            'order.store' => 'OrderStoreMinhTuanMobile',
+        ],
+        '196' => [
+            'contact.store' => 'ContactStoreTrungSon',
+            'contact.update' => 'ContactUpdateTrungSon',
+        ]
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -227,6 +238,5 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
-    ],
-    'group' => ['103','196']
+    ]
 ];

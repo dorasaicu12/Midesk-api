@@ -20,17 +20,7 @@ Route::group(['prefix' => 'v3'], function () {
         Route::post('login', 'AuthController@login');
     });
 
-    $namespace = 'v3';
-    $group_custom = config('app.group');
-    if (auth()->user() && in_array($group_id = auth()->user()->groupid, $group_custom)) {
-        $namespace = 'Group_'.$group_id;
-
-        if (!file_exists(app_path('Http/Controllers/'.$namespace))) {
-            $namespace = 'v3';
-        }
-    }
-
-    Route::group(['middleware' => 'auth:api','namespace' => $namespace], function () {
+    Route::group(['middleware' => ['auth:api','CheckCustomer'],'namespace' => 'v3'], function () {
 
         Route::get('ticket/assignForm', 'TicketController@assignForm');
         Route::post('ticket/comment/{id}', 'TicketController@comment');
@@ -39,8 +29,10 @@ Route::group(['prefix' => 'v3'], function () {
 
         Route::apiResource('contact', 'ContactController')->except('create','edit');
         Route::apiResource('customer', 'CustomerController')->except('create','edit');
-        Route::apiResource('product', 'ProductController')->only('store');        
+        Route::apiResource('product', 'ProductController')->only('store');   
+
         Route::apiResource('order', 'OrderController')->except('create','edit');
+        Route::apiResource('event', 'EventController')->except('create','edit');
 
     });
 
