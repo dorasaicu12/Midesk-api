@@ -1,0 +1,1305 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Midesk API Reference",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v3/auth/login": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Get token",
+                "description": "Get token by email, password",
+                "operationId": "authLogin",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$",
+                                        "example": "user2@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "PassWord12345"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "{$token}"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "bearer"
+                                        },
+                                        "expires_in": {
+                                            "type": "string",
+                                            "example": "{$minute}"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v3/contact": {
+            "get": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Get list contact",
+                "description": "Get list contact with param",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Num of page",
+                        "required": false,
+                        "explode": true
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Total number of records to get",
+                        "required": false,
+                        "explode": true
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Condition to find contact ({$key}={$value})",
+                        "required": false,
+                        "explode": true
+                    },
+                    {
+                        "name": "order_by",
+                        "in": "query",
+                        "description": "Sort follow condition ({column}={DESC or ASC})",
+                        "required": false,
+                        "explode": true
+                    },
+                    {
+                        "name": "fields",
+                        "in": "query",
+                        "description": "Column to get {$column1},{$column2},{$column3}",
+                        "required": false,
+                        "explode": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "data": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "object",
+                                                            "example": "1"
+                                                        },
+                                                        "contact_id": {
+                                                            "type": "object",
+                                                            "example": "1"
+                                                        },
+                                                        "firstname": {
+                                                            "type": "object",
+                                                            "example": "văn A"
+                                                        },
+                                                        "lastname": {
+                                                            "type": "object",
+                                                            "example": "Nguyễn"
+                                                        },
+                                                        "phone": {
+                                                            "type": "object",
+                                                            "example": "0987654321"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "abcxyz@gmail.com"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "current_page": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "last_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "from": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "to": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "total": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://api-dev2021.midesk.vn/api/v3/contact"
+                                                },
+                                                "last_page": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Create the contact with json form",
+                "description": "Create contact form",
+                "operationId": "store",
+                "requestBody": {
+                    "description": "typing form data to create",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Phiếu khiếu nại 2"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Nội dung phiếu số 1"
+                                    },
+                                    "channel": {
+                                        "type": "string",
+                                        "example": "Facebook"
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "contact": {
+                                        "required": [
+                                            "name",
+                                            "email"
+                                        ],
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Nguyễn văn A"
+                                            },
+                                            "facebook_id": {
+                                                "type": "string",
+                                                "example": ""
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "abcxyz@gmail.com"
+                                            },
+                                            "phone": {
+                                                "type": "string",
+                                                "example": "0123456789"
+                                            },
+                                            "zalo_id": {
+                                                "type": "string",
+                                                "example": ""
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Create Contact Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Create Contact Successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "contact_id": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Create failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Fullname is require"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v3/contact/{contactId}": {
+            "get": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Find the contact by ID",
+                "description": "Will be return a single contact",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "contactId",
+                        "in": "path",
+                        "description": "ID of contact",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "contact_id": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "fullname": {
+                                                    "type": "string",
+                                                    "example": "Nguyễn văn A"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "0987654321"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "abcxyz@gmail.com"
+                                                },
+                                                "custom_field": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "dynamic_1": {
+                                                                "type": "string",
+                                                                "example": "value dynamic 1"
+                                                            },
+                                                            "dynamic_2": {
+                                                                "type": "string",
+                                                                "example": "value dynamic 2"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Contact not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Contact not found"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v3/contact/{$contactId}": {
+            "put": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Update the contact by ID",
+                "description": "Update a contact with input",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "contactId",
+                        "in": "path",
+                        "description": "ID of contact",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "typing form data to update",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "fullname",
+                                    "phone",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "fullname": {
+                                        "type": "string",
+                                        "example": "Phiếu khiếu nại 2"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "Nội dung phiếu số 1"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "Facebook"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "gender": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "custom_field": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "dynamic_1": {
+                                                    "type": "string",
+                                                    "example": "value dynamic 1"
+                                                },
+                                                "dynamic_2": {
+                                                    "type": "string",
+                                                    "example": "value dynamic 2"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Update contact successfully"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Update failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email required"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Will be return contact not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Contact not found"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v3/{contactId}": {
+            "delete": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Deletes a contact",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "contactId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete contact successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Delete contact successfully"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "contact not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Contact not found"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v3/ticket": {
+            "get": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Get list ticket",
+                "description": "Get list ticket with param",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Num of page",
+                        "required": false,
+                        "explode": true
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Total number of records to get",
+                        "required": false,
+                        "explode": true
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Condition to find ticket ({$key}={$value})",
+                        "required": false,
+                        "explode": true
+                    },
+                    {
+                        "name": "order_by",
+                        "in": "query",
+                        "description": "Sort follow condition ({column}={DESC or ASC})",
+                        "required": false,
+                        "explode": true
+                    },
+                    {
+                        "name": "fields",
+                        "in": "query",
+                        "description": "Column to get {$column1},{$column2},{$column3}",
+                        "required": false,
+                        "explode": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "data": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "object",
+                                                            "example": "1"
+                                                        },
+                                                        "ticket_id": {
+                                                            "type": "object",
+                                                            "example": "1"
+                                                        },
+                                                        "title": {
+                                                            "type": "object",
+                                                            "example": "this is example ticket"
+                                                        },
+                                                        "assign_agent": {
+                                                            "type": "object",
+                                                            "example": "1"
+                                                        },
+                                                        "requester": {
+                                                            "type": "object",
+                                                            "example": "3"
+                                                        },
+                                                        "get_tickets_detail": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "example": "1"
+                                                                    },
+                                                                    "title": {
+                                                                        "type": "string",
+                                                                        "example": "this is title example"
+                                                                    },
+                                                                    "content": {
+                                                                        "type": "string",
+                                                                        "example": "this is content example"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "current_page": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "last_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "from": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "to": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "total": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://api-dev2021.midesk.vn/api/v3/ticket"
+                                                },
+                                                "last_page": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Create the ticket with json form",
+                "description": "Can create many ticket in a request with array ticket []",
+                "operationId": "store",
+                "requestBody": {
+                    "description": "typing form data to create",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Phiếu khiếu nại 2"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Nội dung phiếu số 1"
+                                    },
+                                    "channel": {
+                                        "type": "string",
+                                        "example": "Facebook"
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "contact": {
+                                        "required": [
+                                            "name",
+                                            "email"
+                                        ],
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Nguyễn văn A"
+                                            },
+                                            "facebook_id": {
+                                                "type": "string",
+                                                "example": ""
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "abcxyz@gmail.com"
+                                            },
+                                            "phone": {
+                                                "type": "string",
+                                                "example": "0123456789"
+                                            },
+                                            "zalo_id": {
+                                                "type": "string",
+                                                "example": ""
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "405": {
+                        "description": "Invalid input"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v3/ticket/{ticketId}": {
+            "get": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Find the ticket by ID",
+                "description": "Will be return a single ticket",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "description": "ID of ticket",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "object",
+                                                    "example": "1"
+                                                },
+                                                "ticket_id": {
+                                                    "type": "object",
+                                                    "example": "1"
+                                                },
+                                                "title": {
+                                                    "type": "object",
+                                                    "example": "this is example ticket"
+                                                },
+                                                "assign_agent": {
+                                                    "type": "object",
+                                                    "example": "1"
+                                                },
+                                                "requester": {
+                                                    "type": "object",
+                                                    "example": "3"
+                                                },
+                                                "get_tickets_detail": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "example": "1"
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "this is title example"
+                                                            },
+                                                            "content": {
+                                                                "type": "string",
+                                                                "example": "this is content example"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Invalid Ticket ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "boolean",
+                                            "example": "Ticket not found"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v3/ticket/{$ticketId}": {
+            "put": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Update the ticket by ID",
+                "description": "Update a ticket with input",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "description": "ID of ticket",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "typing form data to update",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Phiếu khiếu nại 2"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Nội dung phiếu số 1"
+                                    },
+                                    "channel": {
+                                        "type": "string",
+                                        "example": "Facebook"
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "contact": {
+                                        "required": [
+                                            "name",
+                                            "email"
+                                        ],
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Nguyễn văn A"
+                                            },
+                                            "facebook_id": {
+                                                "type": "string",
+                                                "example": ""
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "abcxyz@gmail.com"
+                                            },
+                                            "phone": {
+                                                "type": "string",
+                                                "example": "0123456789"
+                                            },
+                                            "zalo_id": {
+                                                "type": "string",
+                                                "example": ""
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Update ticket successfully"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "If $ticketId do not exist or invalid will be return ticket not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ticket not found"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v3/{ticketId}": {
+            "delete": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Deletes a ticket",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete ticket successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Delete ticket successfully"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ticket not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ticket not found"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearer_token": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}
