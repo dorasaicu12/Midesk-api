@@ -31,92 +31,87 @@ class TicketController extends Controller
 {
     use ModelsTrait;
 
-
     /**
-     * Form Assign Ticket
-    
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Create ticket successfully",
-     *   "data": {
-     *       "teams": "{$object_teams}",
-     *       "priority": "[$array_priority]",
-     *       "category": "[$array_category]",
-     *       "listEmail": "[$array_email]"
-     *   }
-     * }
-     */
-    public function assignForm()
-    {
-        $groupid = auth::user()->groupid;
-        $team = TeamStaff::with('Agent')->select('team_id','agent_id')->where('groupid',$groupid)->get();
-        $teams = [];
-        foreach ($team as $element) {
-            $teamid = $element['team_id'];
-            unset($element['agent_id']);
-            unset($element['team_id']);
-            $teams[$teamid][] = $element->Agent;
-        }
-        $data['teams'] = $teams;
-        $data['priority'] = TicketPriority::all()->toArray();
-        $data['category'] = TicketCategory::with('Child.Child')->where([['groupid',$groupid],['parent','0']])->get()->toArray();
-        $data['listEmail'] = User::select('email')->where('groupid',$groupid)->get()->pluck('email')->toArray();
-        return MyHelper::response(true,'Successfully', $data,200);
-    }
-
-    /**
-     * @SWG\Get(
-     *     path="/api/v3/ticket",
-     *     tags={"Ticket"},
-     *     summary="Ticket",
-     *     operationId="ticket",
-     *     security={{"bearer":{}}},
-     *     description="Return a list ticket",
-     *     @SWG\Parameter(
-     *         name="page",
-     *         in="query",
-     *         type="string",
-     *         description="number of page",
-     *         required=false,
-     *     ),
-     *     @SWG\Parameter(
-     *         name="limit",
-     *         in="query",
-     *         type="string",
-     *         description="limit record to get",
-     *         required=false,
-     *     ),
-     *     @SWG\Parameter(
-     *         name="search",
-     *         in="query",
-     *         type="string",
-     *         description="search data by ( {key}={value} )",
-     *         required=false,
-     *     ),
-     *     @SWG\Parameter(
-     *         name="order_by",
-     *         in="query",
-     *         type="string",
-     *         description="Sort order by ( {id}:{asc} )",
-     *         required=false,
-     *     ),
-     *     @SWG\Parameter(
-     *         name="fields",
-     *         in="query",
-     *         type="string",
-     *         description="Get custom record result ( title,priority,status,content )",
-     *         required=false,
-     *     ),
-     *     @SWG\Response(
-     *         response=200,
-     *         description="Success",
-     *     ),
-     *     @SWG\Response(
-     *         response=403,
-     *         description="Forbidden"
-     *     )
-     * )
-     */
+    * @OA\Get(
+    *     path="/api/v3/ticket",
+    *     tags={"Ticket"},
+    *     summary="Get list ticket",
+    *     description="Get list ticket with param",
+    *     operationId="index",
+    *     @OA\Parameter(
+    *         name="page",
+    *         in="query",
+    *         description="Num of page",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="limit",
+    *         in="query",
+    *         description="Total number of records to get",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="search",
+    *         in="query",
+    *         description="Condition to find ticket ({$key}={$value})",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="order_by",
+    *         in="query",
+    *         description="Sort follow condition ({column}={DESC or ASC})",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="fields",
+    *         in="query",
+    *         description="Column to get {$column1},{$column2},{$column3}",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Response(
+    *         response=201,
+    *         description="Successful",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="status", type="boolean", example="true"),
+    *             @OA\Property(property="message", type="string", example="Successfully"),
+    *             @OA\Property(property="data", type="object",
+    *                 @OA\Property(property="data",type="object",
+    *                   @OA\Property(property="id",type="object", example="1"),
+    *                   @OA\Property(property="ticket_id",type="object", example="1"),
+    *                   @OA\Property(property="title",type="object", example="this is example ticket"),
+    *                   @OA\Property(property="assign_agent",type="object", example="1"),
+    *                   @OA\Property(property="requester",type="object", example="3"),
+    *                   @OA\Property(property="get_tickets_detail",type="array", 
+    *                     @OA\Items(type="object",
+    *                       @OA\Property(property="id",type="string", example="1"),
+    *                       @OA\Property(property="title",type="string", example="this is title example"),
+    *                       @OA\Property(property="content",type="string", example="this is content example"),
+    *                     ),
+    *                   ),
+    *                 ),
+    *                 @OA\Property(property="current_page",type="string", example="1"),
+    *                 @OA\Property(property="first_page_url",type="string", example="null"),
+    *                 @OA\Property(property="next_page_url",type="string", example="null"),
+    *                 @OA\Property(property="last_page_url",type="string", example="null"),
+    *                 @OA\Property(property="prev_page_url",type="string", example="null"),
+    *                 @OA\Property(property="from",type="string", example="1"),
+    *                 @OA\Property(property="to",type="string", example="1"),
+    *                 @OA\Property(property="total",type="string", example="1"),
+    *                 @OA\Property(property="path",type="string", example="http://api-dev2021.midesk.vn/api/v3/ticket"),
+    *                 @OA\Property(property="last_page",type="string", example="null"),
+    *             )
+    *         )
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     }
+    * )
+    */
     public function index(Request $request)
     {
         $req = $request->all();
@@ -124,70 +119,98 @@ class TicketController extends Controller
         $tickets = $tickets->getDefault($req);
         return MyHelper::response(true,'Successfully',$tickets,200);
     }
-
+    
     /**
-     * Show A Ticket.
-     *
-     * @queryParam ticket int required id of the ticket.
-     *
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Successfully",
-     *   "data": {
-            "id":2,
-            "title": "phiếu test từ dev 2",
-            "ticket_id": "0113",
-            "channel": "api",
-            "content": "Lạc Long Quân - Tân Bình 2",
-            "status": "close"
-         }
-     * }
-
-     * @response 404 {
-     *   "status": false,
-     *   "message": "Resource Not Found",
-     *   "data": {}
-     *  }
-     */
+    * @OA\Get(
+    *     path="/api/v3/ticket/{ticketId}",
+    *     tags={"Ticket"},
+    *     summary="Find the ticket by ID",
+    *     description="Will be return a single ticket",
+    *     operationId="show",
+    *     @OA\Parameter(
+    *         name="ticketId",
+    *         in="path",
+    *         description="ID of ticket",
+    *         required=true,
+    *         @OA\Schema(
+    *             type="integer",
+    *             format="int64"
+    *         )    
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Successful",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="data",type="object",
+    *             @OA\Property(property="id",type="object", example="1"),
+    *             @OA\Property(property="ticket_id",type="object", example="1"),
+    *             @OA\Property(property="title",type="object", example="this is example ticket"),
+    *             @OA\Property(property="assign_agent",type="object", example="1"),
+    *             @OA\Property(property="requester",type="object", example="3"),
+    *             @OA\Property(property="get_tickets_detail",type="array", 
+    *               @OA\Items(type="object",
+    *                 @OA\Property(property="id",type="string", example="1"),
+    *                   @OA\Property(property="title",type="string", example="this is title example"),
+    *                   @OA\Property(property="content",type="string", example="this is content example"),
+    *                 ),
+    *               ),
+    *           ),
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=403,
+    *         description="Invalid Ticket ID",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="boolean", example="Ticket not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         )
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     }
+    * )
+    */
     public function show($id)
     {
         $ticket = Ticket::showOne($id);
         return MyHelper::response(true,'Successfully',$ticket,200);
     }
-
     /**
-     * Create A Ticket
-     *
-     * @bodyParam title string required The title of the ticket.
-     * @bodyParam content string required The content of the ticket.
-     * @bodyParam priority int required ticket priority. Example: 1
-     * @bodyParam category int required category of the ticket. Example: 1
-     * @bodyParam contact.*.name string required string name of contact.
-     * @bodyParam contact.*.email email required email of contact. Example: admin@gmail.com
-     * @bodyParam contact.*.phone string required phone of contact. Example: 01234567890
-     * @bodyParam private int optional default public.
-
-     
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Create ticket successfully",
-     *   "data": {
-     *       "id": "{$id}",
-     *       "ticket_id": "{$ticket}"
-     *   }
-     * }
-
-     * @response  404 {
-     *   "status": false,
-     *   "message": "Resource not found"
-     * }
-
-     * @response  400 {
-     *   "status": false,
-     *   "message": "Title is require",
-     *   "data": {}
-     * }
-     */
+    * @OA\POST(
+    *     path="/api/v3/ticket",
+    *     tags={"Ticket"},
+    *     summary="Create the ticket with json form",
+    *     description="Can create many ticket in a request with array ticket []",
+    *     operationId="store",
+    *     @OA\RequestBody(
+    *       required=true,
+    *       description="typing form data to create",
+    *       @OA\JsonContent(
+    *         required={"title","content"},
+    *         @OA\Property(property="title", type="string", example="Phiếu khiếu nại 2"),
+    *         @OA\Property(property="content", type="string", example="Nội dung phiếu số 1"),
+    *         @OA\Property(property="channel", type="string", example="Facebook"),
+    *         @OA\Property(property="priority", type="string", example="1"),
+    *         @OA\Property(property="category", type="string", example="1"),
+    *         @OA\Property(property="contact", type="object", required={"name","email"},
+    *           @OA\Property(property="name",type="string", example="Nguyễn văn A"),
+    *           @OA\Property(property="facebook_id",type="string", example=""),
+    *           @OA\Property(property="email",type="string", example="abcxyz@gmail.com"),
+    *           @OA\Property(property="phone",type="string", example="0123456789"),
+    *           @OA\Property(property="zalo_id",type="string", example=""),
+    *         )
+    *       ),
+    *     ),
+    *     @OA\Response(
+    *         response=405,
+    *         description="Invalid input"
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function store(TicketRequest $request)
     {   
         if (array_key_exists(0, $request->all())) {
@@ -200,54 +223,109 @@ class TicketController extends Controller
             return $this->create_or_update_ticket($request->all());   
         }
     }
+    
+   
     /**
-     * Update Ticket
-     * @urlParam  ticket required The ID of the ticket. Example: 1
-     * @bodyParam title string required The title of the ticket.
-     * @bodyParam content string required The content of the ticket.
-     * @bodyParam priority int required ticket priority. Example: 1
-     * @bodyParam category int required category of the ticket. Example: 1
-     * @bodyParam status string status of the ticket. Example: closed
-     * @bodyParam contact.*.name string required string name of contact.
-     * @bodyParam contact.*.email email required email of contact. Example: admin@gmail.com
-     * @bodyParam contact.*.phone string required phone of contact. Example: 01234567890
-     
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Update ticket successfully",
-     *   "data": []
-     * }
-
-     * @response  404 {
-     *   "status": false,
-     *   "message": "Resource Not Found"
-     * }
-     
-     * @response  400 {
-     *   "status": false,
-     *   "message": "Title is require",
-     *   "data": {}
-     * }
-     */
+    * @OA\Put(
+    *     path="/api/v3/ticket/{$ticketId}",
+    *     tags={"Ticket"},
+    *     summary="Update the ticket by ID",
+    *     description="Update a ticket with input",
+    *     operationId="update",
+    *     @OA\Parameter(
+    *         name="ticketId",
+    *         in="path",
+    *         description="ID of ticket",
+    *         required=true,
+    *         @OA\Schema(
+    *             type="integer",
+    *             format="int64"
+    *         ),
+    *     ),
+    *     @OA\RequestBody(
+    *       required=true,
+    *       description="typing form data to update",
+    *       @OA\JsonContent(
+    *         required={"title","content"},
+    *         @OA\Property(property="title", type="string", example="Phiếu khiếu nại 2"),
+    *         @OA\Property(property="content", type="string", example="Nội dung phiếu số 1"),
+    *         @OA\Property(property="channel", type="string", example="Facebook"),
+    *         @OA\Property(property="priority", type="string", example="1"),
+    *         @OA\Property(property="category", type="string", example="1"),
+    *         @OA\Property(property="contact", type="object", required={"name","email"},
+    *           @OA\Property(property="name",type="string", example="Nguyễn văn A"),
+    *           @OA\Property(property="facebook_id",type="string", example=""),
+    *           @OA\Property(property="email",type="string", example="abcxyz@gmail.com"),
+    *           @OA\Property(property="phone",type="string", example="0123456789"),
+    *           @OA\Property(property="zalo_id",type="string", example=""),
+    *         ),
+    *       ),
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Update successfully",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="true"),
+    *              @OA\Property(property="message", type="string", example="Update ticket successfully"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="If $ticketId do not exist or invalid will be return ticket not found",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="Ticket not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function update(Request $request, $id)
     {
         return $this->create_or_update_ticket($request->all(),$id);
     }
     /**
-     * Destroy Ticket
-     
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Delete ticket successfully",
-     *   "data": []
-     * }
-
-     * @response  404 {
-     *   "status": false,
-     *   "message": "Resource Not Found"
-     * }
-
-     */
+    * @OA\Delete(
+    *     path="/api/v3/{ticketId}",
+    *     tags={"Ticket"},
+    *     summary="Deletes a ticket",
+    *     operationId="destroy",
+    *     @OA\Parameter(
+    *         name="ticketId",
+    *         in="path",
+    *         required=true,
+    *         @OA\Schema(
+    *             type="integer",
+    *             format="int64"
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Delete ticket successfully",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="true"),
+    *              @OA\Property(property="message", type="string", example="Delete ticket successfully"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="Ticket not found",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="Ticket not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function destroy($id)
     {   
         $ticket = Ticket::showOne($id);
@@ -394,6 +472,38 @@ class TicketController extends Controller
             $requester = $check_contact->id;
         }
         return $requester;
+    }
+
+    /**
+     * Form Assign Ticket
+    
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Create ticket successfully",
+     *   "data": {
+     *       "teams": "{$object_teams}",
+     *       "priority": "[$array_priority]",
+     *       "category": "[$array_category]",
+     *       "listEmail": "[$array_email]"
+     *   }
+     * }
+     */
+    public function assignForm()
+    {
+        $groupid = auth::user()->groupid;
+        $team = TeamStaff::with('Agent')->select('team_id','agent_id')->where('groupid',$groupid)->get();
+        $teams = [];
+        foreach ($team as $element) {
+            $teamid = $element['team_id'];
+            unset($element['agent_id']);
+            unset($element['team_id']);
+            $teams[$teamid][] = $element->Agent;
+        }
+        $data['teams'] = $teams;
+        $data['priority'] = TicketPriority::all()->toArray();
+        $data['category'] = TicketCategory::with('Child.Child')->where([['groupid',$groupid],['parent','0']])->get()->toArray();
+        $data['listEmail'] = User::select('email')->where('groupid',$groupid)->get()->pluck('email')->toArray();
+        return MyHelper::response(true,'Successfully', $data,200);
     }
 
 }

@@ -24,37 +24,44 @@ class AuthController extends Controller
         $this->middleware('auth:site', ['except' => ['login']]);
     }
     /**
-     * @SWG\Post(
-     *     path="/api/v3/auth/login",
-     *     tags={"Login"},
-     *     summary="Login",
-     *     operationId="login",
-     *
-     *     description="Return a token to authentication",
-     *     @SWG\Parameter(
-     *         name="email",
-     *         in="query",
-     *         type="string",
-     *         description="Your email",
-     *         required=true,
-     *     ),
-     *     @SWG\Parameter(
-     *         name="password",
-     *         in="query",
-     *         type="string",
-     *         description="Your your password",
-     *         required=true,
-     *     ),
-     *     @SWG\Response(
-     *         response=200,
-     *         description="Success",
-     *     ),
-     *     @SWG\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     )
-     * )
-     */
+    * @OAS\SecurityScheme(
+    *   securityScheme="bearer_token",
+    *   type="https",
+    *   scheme="bearer"
+    * ),
+    * @OA\Post(
+    * path="/api/v3/auth/login",
+    * summary="Get token",
+    * description="Get token by email, password",
+    * operationId="authLogin",
+    * tags={"Login"},
+    * @OA\RequestBody(
+    *    required=true,
+    *    description="Pass user credentials",
+    *    @OA\JsonContent(
+    *       required={"email","password"},
+    *       @OA\Property(property="email", type="string", pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", format="email", example="user2@gmail.com"),
+    *       @OA\Property(property="password", type="string", format="password", example="PassWord12345"),
+    *    ),
+    * ),
+    * @OA\Response(
+    *    response=201,
+    *    description="Successful",
+    *    @OA\JsonContent(
+    *        @OA\Property(property="access_token", type="string", example="{$token}"),
+    *        @OA\Property(property="token_type", type="string", example="bearer"),
+    *        @OA\Property(property="expires_in", type="string", example="{$minute}")
+    *    )
+    * ),
+    * @OA\Response(
+    *    response=401,
+    *    description="Unauthorized",
+    *    @OA\JsonContent(
+    *       @OA\Property(property="error", type="string", example="Unauthorized")
+    *        )
+    *     )
+    * )
+    */
     public function login(Request $request)
     {   
         $check_user = new AuthByUser;

@@ -119,9 +119,9 @@ trait ModelsTrait {
             if (!empty($req['custom_field'])) {
                 foreach ($req['custom_field'] as $key => $value) {
                     $key = str_replace('dynamic_', '', $key);
-                    $check_field = CustomField::where('id',$key)->first();
+                    $check_field = CustomField::where([['id',$key],['groupid',$groupid]])->first();
                     if (!$check_field) {
-                        return MyHelper::response(true,'Custom Field '.$key.' Do not exists', null,200);
+                        return MyHelper::response(true,'Custom Field '.$key.' Do not exists', null,400);
                     }else{
                         $field[$key] = $value;
                     }

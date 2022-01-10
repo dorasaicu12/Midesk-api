@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use Auth;
-
 class Ticket extends Model
 {
     public $timestamps = false;

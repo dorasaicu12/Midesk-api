@@ -17,7 +17,7 @@ class Contact extends Model
     const DELETED = 1;
     const DELETE = [NULL,0];
     const SORT = 'id';
-    const ORDER = 'asc';
+    const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
     const KEYS = 'fullname';

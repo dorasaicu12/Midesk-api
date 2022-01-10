@@ -24,58 +24,82 @@ use DB;
 class ContactController extends Controller
 {
     use ModelsTrait;
-    /**
-     * Get All Contact
-     *
-     * @queryParam  page optional get record in page Example: page=1
-     * @queryParam  limit optional limit record Example: limit=5
-     * @queryParam  search optional search data. Example: search={$key}={$value}
-     * @queryParam  order_by optional sort record ( $key = id:desc,records_id,asc optional sort by id order by desc, if you want search many field add (,) before) Example: order_by={$key}
-     * @queryParam  fields optional get column you want (default get all) Example: fields=id,fullname,status,category,...
-    
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Successfully",
-     *   "data": {
-            "current_page": 1,
-            "data": [{
-                    "id": 1184,
-                    "contact_id": "MCT000389",
-                    "groupid": 2,
-                    "firstname": null,
-                    "lastname": null,
-                    "fullname": "Sendgrid Renewal Team",
-                    "phone": "",
-                    "email": "test@test.com"
-                },{
-                    "id": 1183,
-                    "contact_id": "MCT000380",
-                    "groupid": 2,
-                    "firstname": null,
-                    "lastname": null,
-                    "fullname": "Sendgrid Renewal Team",
-                    "phone": "",
-                    "email": "test@test.com"
-            }],
-            "first_page_url": "http://api-prod2021.midesk.vn/api/v3/contact?limit=5&key_search=fullname%3Aand%2Caddress%3Aor&q=new&order_by=id%3Aasc%2Ccontact_id%3Adesc&fields=contact_id%2Cgroupid%2Cfirstname%2Clastname%2Cfullname%2Cphone%2Cemail&page=1",
-            "from": 1,
-            "last_page": 1,
-            "last_page_url": "http://api-prod2021.midesk.vn/api/v3/contact?limit=5&key_search=fullname%3Aand%2Caddress%3Aor&q=new&order_by=id%3Aasc%2Ccontact_id%3Adesc&fields=contact_id%2Cgroupid%2Cfirstname%2Clastname%2Cfullname%2Cphone%2Cemail&page=1",
-            "next_page_url": null,
-            "path": "http://api-prod2021.midesk.vn/api/v3/contact",
-            "per_page": "5",
-            "prev_page_url": null,
-            "to": 2,
-            "total": 2
-        }
-     *}
 
-     * @response 404 {
-     *   "status": false,
-     *   "message": "Resource Not Found",
-     *   "data": []
-     * }
-     */
+    /**
+    * @OA\Get(
+    *     path="/api/v3/contact",
+    *     tags={"Contact"},
+    *     summary="Get list contact",
+    *     description="Get list contact with param",
+    *     operationId="index",
+    *     @OA\Parameter(
+    *         name="page",
+    *         in="query",
+    *         description="Num of page",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="limit",
+    *         in="query",
+    *         description="Total number of records to get",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="search",
+    *         in="query",
+    *         description="Condition to find contact ({$key}={$value})",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="order_by",
+    *         in="query",
+    *         description="Sort follow condition ({column}={DESC or ASC})",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="fields",
+    *         in="query",
+    *         description="Column to get {$column1},{$column2},{$column3}",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Response(
+    *         response=201,
+    *         description="Successful",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="status", type="boolean", example="true"),
+    *             @OA\Property(property="message", type="string", example="Successfully"),
+    *             @OA\Property(property="data", type="object",
+    *                 @OA\Property(property="data",type="object",
+    *                   @OA\Property(property="id",type="object", example="1"),
+    *                   @OA\Property(property="contact_id",type="object", example="1"),
+    *                   @OA\Property(property="firstname",type="object", example="văn A"),
+    *                   @OA\Property(property="lastname",type="object", example="Nguyễn"),
+    *                   @OA\Property(property="phone",type="object", example="0987654321"),
+    *                   @OA\Property(property="email",type="string", example="abcxyz@gmail.com"),
+    *                 ),
+    *                 @OA\Property(property="current_page",type="string", example="1"),
+    *                 @OA\Property(property="first_page_url",type="string", example="null"),
+    *                 @OA\Property(property="next_page_url",type="string", example="null"),
+    *                 @OA\Property(property="last_page_url",type="string", example="null"),
+    *                 @OA\Property(property="prev_page_url",type="string", example="null"),
+    *                 @OA\Property(property="from",type="string", example="1"),
+    *                 @OA\Property(property="to",type="string", example="1"),
+    *                 @OA\Property(property="total",type="string", example="1"),
+    *                 @OA\Property(property="path",type="string", example="http://api-dev2021.midesk.vn/api/v3/contact"),
+    *                 @OA\Property(property="last_page",type="string", example="null"),
+    *             )
+    *         )
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     }
+    * )
+    */
     public function index(Request $request)
     {
         $req = $request->all();
@@ -85,31 +109,57 @@ class ContactController extends Controller
     }
 
     /**
-     * Show A Contact.
-     *
-     * @bodyParam contact int required id of the contact.
-     *
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Successfully",
-     *   "data": {
-            "fullname":"Hao Ngo Dev",
-            "phone": "0971234567",
-            "email": "haongodev@gmail.com",
-            "address": "Lạc Long Quân - Tân Bình",
-            "gender": "male",
-            "custom_field":{
-                "dynamic_1":"Field 1",
-                "dynamic_2":"Field 2"
-            }
-     *   }
-     * }
-     * @response 404 {
-     *   "status": false,
-     *   "message": "Resource Not Found",
-     *   "data": {}
-     * }
-     */
+    * @OA\Get(
+    *     path="/api/v3/contact/{contactId}",
+    *     tags={"Contact"},
+    *     summary="Find the contact by ID",
+    *     description="Will be return a single contact",
+    *     operationId="show",
+    *     @OA\Parameter(
+    *         name="contactId",
+    *         in="path",
+    *         description="ID of contact",
+    *         required=true,
+    *         @OA\Schema(
+    *             type="integer",
+    *             format="int64"
+    *         )    
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Successfully",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="status", type="boolean", example="true"),
+    *           @OA\Property(property="message", type="string", example="Successfully"),
+    *           @OA\Property(property="data",type="object",
+    *             @OA\Property(property="id",type="string", example="1"),
+    *             @OA\Property(property="contact_id",type="string", example="1"),
+    *             @OA\Property(property="fullname",type="string", example="Nguyễn văn A"),
+    *             @OA\Property(property="phone",type="string", example="0987654321"),
+    *             @OA\Property(property="email",type="string", example="abcxyz@gmail.com"),
+    *             @OA\Property(property="custom_field",type="array", 
+    *               @OA\Items(type="object",
+    *                 @OA\Property(property="dynamic_1",type="string", example="value dynamic 1"),
+    *                 @OA\Property(property="dynamic_2",type="string", example="value dynamic 2"),
+    *               ),
+    *             ),
+    *           ),
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="Contact not found",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="Contact not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         )
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     }
+    * )
+    */
     public function show($id)
     {
         $contact = (new Contact)->ShowOne($id);
@@ -120,38 +170,59 @@ class ContactController extends Controller
             return MyHelper::response(true,'Successfully',$contact,200);
         }
     }
-    
+
     /**
-     * Create A Contact
-     *
-     * @bodyParam fullname string required full name contact.
-     * @bodyParam phone string required phone Example: 0123456789.
-     * @bodyParam email string required email. Example: admin@gmail.com
-     * @bodyParam address string optional address.
-     * @bodyParam gender string optional gender 'male' or 'female'. Example: male
-
-     
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Create Contact Successfully",
-     *   "data": {
-     *       "id": "{$id}",
-     *       "contact_id": "{$contact_id}"
-     *   }
-     * }
-
-     * @response  404 {
-     *   "status": false,
-     *   "message": "Resource not found"
-     * }
-
-     * @response  400 {
-     *   "status": false,
-     *   "message": "fullname is require",
-     *   "data": {}
-     * }
-     */
-
+    * @OA\POST(
+    *     path="/api/v3/contact",
+    *     tags={"Contact"},
+    *     summary="Create the contact with json form",
+    *     description="Create contact form",
+    *     operationId="store",
+    *     @OA\RequestBody(
+    *       required=true,
+    *       description="typing form data to create",
+    *       @OA\JsonContent(
+    *         required={"title","content"},
+    *         @OA\Property(property="title", type="string", example="Phiếu khiếu nại 2"),
+    *         @OA\Property(property="content", type="string", example="Nội dung phiếu số 1"),
+    *         @OA\Property(property="channel", type="string", example="Facebook"),
+    *         @OA\Property(property="priority", type="string", example="1"),
+    *         @OA\Property(property="category", type="string", example="1"),
+    *         @OA\Property(property="contact", type="object", required={"name","email"},
+    *           @OA\Property(property="name",type="string", example="Nguyễn văn A"),
+    *           @OA\Property(property="facebook_id",type="string", example=""),
+    *           @OA\Property(property="email",type="string", example="abcxyz@gmail.com"),
+    *           @OA\Property(property="phone",type="string", example="0123456789"),
+    *           @OA\Property(property="zalo_id",type="string", example=""),
+    *         )
+    *       ),
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Create Contact Successfully",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="status", type="boolean", example="true"),
+    *           @OA\Property(property="message", type="string", example="Create Contact Successfully"),
+    *           @OA\Property(property="data",type="object",
+    *             @OA\Property(property="id",type="string", example="1"),
+    *             @OA\Property(property="contact_id",type="string", example="1"),
+    *           ),
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=403,
+    *         description="Create failed",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="status", type="boolean", example="true"),
+    *           @OA\Property(property="message", type="string", example="Fullname is require"),
+    *           @OA\Property(property="data",type="string", example="[]"),
+    *         )
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function store(ContactRequest $req)
     {
         $groupid = auth::user()->groupid;
@@ -229,33 +300,72 @@ class ContactController extends Controller
         }
     }
     /**
-     * Update A Contact
-     *
-     * @urlParam  contact required The ID of the contact. Example: 1
-     * @bodyParam fullname string required full name contact.
-     * @bodyParam phone string required phone Example: 0123456789.
-     * @bodyParam email string required email. Example: admin@gmail.com
-     * @bodyParam address string optional address.
-     * @bodyParam gender string optional gender.
-
-     
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Update Contact Successfully",
-     *   "data": []
-     * }
-
-     * @response  404 {
-     *   "status": false,
-     *   "message": "Resource not found"
-     * }
-
-     * @response  400 {
-     *   "status": false,
-     *   "message": "fullname is require",
-     *   "data": []
-     * }
-     */
+    * @OA\Put(
+    *     path="/api/v3/contact/{$contactId}",
+    *     tags={"Contact"},
+    *     summary="Update the contact by ID",
+    *     description="Update a contact with input",
+    *     operationId="update",
+    *     @OA\Parameter(
+    *         name="contactId",
+    *         in="path",
+    *         description="ID of contact",
+    *         required=true,
+    *         @OA\Schema(
+    *             type="integer",
+    *             format="int64"
+    *         ),
+    *     ),
+    *     @OA\RequestBody(
+    *       required=true,
+    *       description="typing form data to update",
+    *       @OA\JsonContent(
+    *         required={"fullname","phone","email"},
+    *         @OA\Property(property="fullname",type="string", example="Phiếu khiếu nại 2"),
+    *         @OA\Property(property="phone",type="string", example="Nội dung phiếu số 1"),
+    *         @OA\Property(property="email",type="string", example="Facebook"),
+    *         @OA\Property(property="address", type="string", example="1"),
+    *         @OA\Property(property="gender", type="string", example="1"),
+    *         @OA\Property(property="custom_field",type="array", 
+    *           @OA\Items(type="object",
+    *             @OA\Property(property="dynamic_1",type="string", example="value dynamic 1"),
+    *             @OA\Property(property="dynamic_2",type="string", example="value dynamic 2"),
+    *           ),
+    *         ),
+    *       ),
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Update successfully",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="true"),
+    *              @OA\Property(property="message", type="string", example="Update contact successfully"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=403,
+    *         description="Update failed",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="Email required"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="Will be return contact not found",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="Contact not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function update(ContactRequest $req,$id)
     {
         $groupid = auth::user()->groupid;
@@ -321,21 +431,45 @@ class ContactController extends Controller
         }
     }
 
+    
     /**
-     * Destroy Contact
-     
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Delete contact successfully",
-     *   "data": []
-     * }
-
-     * @response  404 {
-     *   "status": false,
-     *   "message": "Resource Not Found"
-     * }
-
-     */
+    * @OA\Delete(
+    *     path="/api/v3/{contactId}",
+    *     tags={"Contact"},
+    *     summary="Deletes a contact",
+    *     operationId="destroy",
+    *     @OA\Parameter(
+    *         name="contactId",
+    *         in="path",
+    *         required=true,
+    *         @OA\Schema(
+    *             type="integer",
+    *             format="int64"
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Delete contact successfully",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="true"),
+    *              @OA\Property(property="message", type="string", example="Delete contact successfully"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="contact not found",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="Contact not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function destroy($id)
     {   
         $contact = (new Contact)->ShowOne($id);
