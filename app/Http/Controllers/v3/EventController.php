@@ -424,11 +424,12 @@ class EventController extends Controller
     */
     public function show($id)
     {
-        $event = (new Event)->showOne($id);
-        if (!$event) {
-            return MyHelper::response(false,'Event do not exist', [],404);
-        }   
-        return MyHelper::response(true,'Successfully', $event,200);
+        $event = Event::where('id', $id)->first();
+        if (!$event) {            
+            return MyHelper::response(false,'Event not found',[],404);
+        }else{
+            return MyHelper::response(true,'Successfully',$event,200);
+        }
     }
 
     /**
@@ -667,12 +668,13 @@ class EventController extends Controller
     */
     public function destroy($id)
     {
-        $event = (new Event)->showOne($id);
-        if (!$event) {
-            return MyHelper::response(false,'Event not found', [],404);
-        }
-        if ($event->delete()) {            
-            return MyHelper::response(false,'Delete event successfully', [],200);
+        $event = Event::where('id', $id)->first();
+        if (!$event) {            
+            return MyHelper::response(false,'Ticket not found',[],404);
+        }else{
+            $eventact = Event::find($id);
+            $eventact->delete();
+            return MyHelper::response(true,'Delete Ticket Successfully', [],200);
         }
     }
 }

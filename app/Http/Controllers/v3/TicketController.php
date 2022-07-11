@@ -189,9 +189,11 @@ class TicketController extends Controller
     */
     public function show($id)
     {
-        $ticket = (new Ticket)->showOne($id);
-        if (!$ticket) {
-            return MyHelper::response(false,'Ticket not found',[],403);
+        $ticket = Ticket::showOne($id);
+        if($ticket){
+            return MyHelper::response(true,'Successfully',$ticket,200);
+        }else{
+            return MyHelper::response(false,'Ticket not found',$ticket,404);
         }
         return MyHelper::response(true,'Successfully',$ticket,200);
     }
