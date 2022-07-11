@@ -20,6 +20,7 @@ use App\Models\TeamStaff;
 use App\Models\TicketCategory;
 use App\Models\TicketPriority;
 use App\Models\User;
+use App\MarcoModel;
 use Auth;
 use DB;
 /**
@@ -174,7 +175,11 @@ class TicketController extends Controller
     public function show($id)
     {
         $ticket = Ticket::showOne($id);
-        return MyHelper::response(true,'Successfully',$ticket,200);
+        if($ticket){
+            return MyHelper::response(true,'Successfully',$ticket,200);
+        }else{
+            return MyHelper::response(true,'404 not found',$ticket,401);
+        }
     }
     /**
     * @OA\POST(
@@ -227,7 +232,7 @@ class TicketController extends Controller
    
     /**
     * @OA\Put(
-    *     path="/api/v3/ticket/{$ticketId}",
+    *     path="/api/v3/ticket/{ticketId}",
     *     tags={"Ticket"},
     *     summary="Update the ticket by ID",
     *     description="Update a ticket with input",
@@ -286,7 +291,14 @@ class TicketController extends Controller
     */
     public function update(Request $request, $id)
     {
-        return $this->create_or_update_ticket($request->all(),$id);
+
+        $ticket = Ticket::showOne($id);
+        if($ticket){
+            return $this->create_or_update_ticket($request->all(),$id);
+        }else{
+            return MyHelper::response(true,'404 not found',$ticket,404);
+        }
+        
     }
     /**
     * @OA\Delete(
@@ -357,11 +369,19 @@ class TicketController extends Controller
      */
     public function comment(Request $request, $id)
     {
-        if (!$id) {
-            return MyHelper::response(false,'Create Failed', [],500);
+
+        $ticket = Ticket::showOne($id);
+        if($ticket){
+            if (!$id) {
+                return MyHelper::response(false,'ticket to find for creat comment not found', [],404);
+            }
+            $comment = $this->create_comment($id,$request->all(),'');
+            return MyHelper::response(true,'Created Comment Successfully', [],200);
+
+        }else{
+            return MyHelper::response(true,'404 not found,please enter a correct ticket"s id',$ticket,401);
         }
-        $comment = $this->create_comment($id,$request->all(),'');
-        return MyHelper::response(true,'Created Comment Successfully', [],200);
+
     }
 
     /**
@@ -503,6 +523,20 @@ class TicketController extends Controller
         $data['priority'] = TicketPriority::all()->toArray();
         $data['category'] = TicketCategory::with('Child.Child')->where([['groupid',$groupid],['parent','0']])->get()->toArray();
         $data['listEmail'] = User::select('email')->where('groupid',$groupid)->get()->pluck('email')->toArray();
+        return MyHelper::response(true,'Successfully', $data,200);
+    }
+
+
+    public function marcoList()
+    {
+        $groupid = auth::user()->groupid;
+        $team = MarcoModel::get();
+        $data['text']='';
+        foreach($team as $key=> $element){
+            $data['text']=$element['action'];
+        }
+        $data = $team;
+
         return MyHelper::response(true,'Successfully', $data,200);
     }
 

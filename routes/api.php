@@ -22,7 +22,8 @@ Route::group(['prefix' => 'v3'], function () {
 
     Route::group(['middleware' => ['auth:api','CheckCustomer'],'namespace' => 'v3'], function () {
 
-        Route::get('ticket/assignForm', 'TicketController@assignForm');
+        Route::get('ticket/ticketForm', 'TicketController@assignForm');
+        Route::get('ticket/macro', 'TicketController@marcoList');
         Route::post('ticket/comment/{id}', 'TicketController@comment');
         Route::post('ticket/attachfile/{id}', 'TicketController@attachfile');
         Route::apiResource('ticket', 'TicketController')->except('create','edit');

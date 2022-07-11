@@ -241,7 +241,7 @@ class ContactController extends Controller
                 $channel = $req->channel;
             }
         }
-
+          
         $time     = time();
         $field = [];
         DB::beginTransaction();
@@ -249,50 +249,63 @@ class ContactController extends Controller
             //Kiểm tra tồn tại contact hay không
             $contact = new Contact;
 
-            $check_contact = Contact::checkContact($phone,$email,$ext_contact_id);
+            $check_contact = Contact::checkContact($phone,$email);
 
             DB::commit();
 
             //Thêm mới Contact
+              if($fullname==""){
+                return MyHelper::response(true,'fullname field is required', [],200);
+              }else{
 
-            if(!$check_contact){    
-                $contact->address     	= $address;
-                $contact->groupid   	= $groupid;
-                $contact->fullname   	= $fullname;
-                $contact->phone    		= $phone;
-                $contact->email      	= $email;                  
-                $contact->gender     	= $gender;                  
-                $contact->channel    	= $channel;
-                $contact->datecreate 	= $time;
-                $contact->creby      	= $creby;
-                if (!empty($req->custom_field)) {
-                    foreach ($req->custom_field as $key => $value) {
-                        $key = str_replace('dynamic_', '', $key);
-                        $check_field = CustomField::where('id',$key)->first();
-                        if (!$check_field) {
-                            return MyHelper::response(true,'Custom Field '.$key.' Do not exists', null,200);
-                        }else{
-                            $field[$key] = $value;
+
+                if(!$check_contact){    
+                    $contact->address     	= $address;
+                    $contact->groupid   	= $groupid;
+                    $contact->fullname   	= $fullname;
+                    $contact->phone    		= $phone;
+                    $contact->email      	= $email;                  
+                    $contact->gender     	= $gender;                  
+                    $contact->channel    	= $channel;
+                    $contact->datecreate 	= $time;
+                    $contact->creby      	= $creby;
+                    if (!empty($req->custom_field)) {
+                        foreach ($req->custom_field as $key => $value) {
+                            $key = str_replace('dynamic_', '', $key);
+                            $check_field = CustomField::where('id',$key)->first();
+                            if (!$check_field) {
+                                return MyHelper::response(true,'Custom Field '.$key.' Do not exists', null,200);
+                            }else{
+                                $field[$key] = $value;
+                            }
                         }
+                        $custom_field = json_encode($field);    
+                        $contact->custom_fields = $custom_field;
                     }
-                    $custom_field = json_encode($field);    
-                    $contact->custom_fields = $custom_field;
+                    $contact->save();
+                    if(!$contact){
+                        return MyHelper::response(false,'Create Contact Failed', [],500);
+                    }
+                    $id = $contact->id;
+    
+    
+                    usleep(1000);
+    
+                    $new_contact = Contact::select('contact_id')->find($id);                
+                    Log::channel('contact_history')->info('Create contact successfully',['id'=>$id,'request'=>$req->all()]);
+                    return MyHelper::response(true,'Create contact successfully', ['id' => $id,'contact_id' => $new_contact->contact_id],200);
+                }else{   
+                    return MyHelper::response(true,'Contact already exists', ['id' => $check_contact->id,'contact_id' => $check_contact->contact_id],200);
                 }
-                $contact->save();
-                if(!$contact){
-                    return MyHelper::response(false,'Create Contact Failed', [],500);
-                }
-                $id = $contact->id;
+
+              }
 
 
-                usleep(1000);
+            
+            
+            
 
-                $new_contact = Contact::select('contact_id')->find($id);                
-                Log::channel('contact_history')->info('Create contact successfully',['id'=>$id,'request'=>$req->all()]);
-                return MyHelper::response(true,'Create contact successfully', ['id' => $id,'contact_id' => $new_contact->contact_id],200);
-            }else{   
-                return MyHelper::response(true,'Contact already exists', ['id' => $check_contact->id,'contact_id' => $check_contact->contact_id],200);
-            }  
+
 
         } catch (\Exception $ex) {
             DB::rollback();
@@ -301,7 +314,7 @@ class ContactController extends Controller
     }
     /**
     * @OA\Put(
-    *     path="/api/v3/contact/{$contactId}",
+    *     path="/api/v3/contact/{contactId}",
     *     tags={"Contact"},
     *     summary="Update the contact by ID",
     *     description="Update a contact with input",
@@ -422,7 +435,7 @@ class ContactController extends Controller
                 if(!$check_contact){
                     return MyHelper::response(false,'Updated Contact Failed', [],500);
                 }
-                return MyHelper::response(true,'Updated contact successfully', [],200);
+                return MyHelper::response(true,'Updated contact successfully', [$check_contact],200);
             }  
 
         } catch (\Exception $ex) {
@@ -434,7 +447,7 @@ class ContactController extends Controller
     
     /**
     * @OA\Delete(
-    *     path="/api/v3/{contactId}",
+    *     path="/api/v3/contact/{contactId}",
     *     tags={"Contact"},
     *     summary="Deletes a contact",
     *     operationId="destroy",
@@ -473,12 +486,16 @@ class ContactController extends Controller
     public function destroy($id)
     {   
         $contact = (new Contact)->ShowOne($id);
-        if (!$contact) {
-            return MyHelper::response(false,'Contact Not Found', [],404);
+        if ($contact) {            
+            
+            // $contact->update(['is_delete' => Contact::DELETED,'is_delete_date' =>date('Y-m-d H:i:s'),'is_delete_creby' => auth::user()->id]);
+            DB::table('contact_2')->where('id', $id)->delete();
+            return MyHelper::response(true,'Delete Contact Successfully', [],200);
         }else{
-            $contact->update(['is_delete' => Contact::DELETED,'is_delete_date' =>date('Y-m-d H:i:s'),'is_delete_creby' => auth::user()->id]);
+            return MyHelper::response(false,'Contact Not Found', [],404);
         }
-        return MyHelper::response(true,'Delete Contact Successfully', [],200);
+
+        
     }
 
 }

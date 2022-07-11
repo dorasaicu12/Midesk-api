@@ -111,7 +111,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "Condition to find contact ({$key}={$value})",
+                        "description": "Condition to find contact ({$key}<=>{$value})",
                         "required": false,
                         "explode": true
                     },
@@ -483,9 +483,7 @@
                         "bearer_token": []
                     }
                 ]
-            }
-        },
-        "/api/v3/contact/{$contactId}": {
+            },
             "put": {
                 "tags": [
                     "Contact"
@@ -638,9 +636,7 @@
                         "bearer_token": []
                     }
                 ]
-            }
-        },
-        "/api/v3/{contactId}": {
+            },
             "delete": {
                 "tags": [
                     "Contact"
@@ -1071,9 +1067,7 @@
                         "bearer_token": []
                     }
                 ]
-            }
-        },
-        "/api/v3/ticket/{$ticketId}": {
+            },
             "put": {
                 "tags": [
                     "Ticket"

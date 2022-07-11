@@ -112,7 +112,12 @@ class CustomerController extends Controller
     public function show($id)
     {
         $customer = Customer::ShowOne($id);
-        return MyHelper::response(true,'Successfully',$customer,200);
+        if($customer){
+            return MyHelper::response(true,'Successfully',$customer,200);
+        }else{
+            return MyHelper::response(false,'not found',$customer,404);
+        }
+        
     }
     /**
      * Create A Customer
@@ -145,34 +150,40 @@ class CustomerController extends Controller
      */
     public function store(CustomerRequest $request)
     {
-        $channel_list  = ['facebook', 'zalo', 'webform', 'email', 'web', 'api'];
-        $channel = 'api';
-        if (array_key_exists('channel', $request)) {
-            if (in_array($request->channel, $channel_list)) {
-                $channel = $request->channel;
+        if($request->fullname==''){
+            return MyHelper::response(false,'fullname field is required', [],400);
+        }else{
+            $channel_list  = ['facebook', 'zalo', 'webform', 'email', 'web', 'api'];
+            $channel = 'api';
+            if (array_key_exists('channel', $request)) {
+                if (in_array($request->channel, $channel_list)) {
+                    $channel = $request->channel;
+                }
+            }
+            $customer['groupid']  = auth::user()->groupid;
+            $customer['fullname'] = $request->fullname;
+            $customer['phone']   = $request->phone ?? null;
+            $customer['email']   = $request->email ?? null;
+            $customer['address']   = $request->address ?? null;
+            $customer['province']   = $request->province ?? null;
+            $customer['createby']   = auth::user()->id;
+            $customer['datecreate']   = time();
+            $customer['channel']   = $channel;
+    
+            DB::beginTransaction();
+            try {
+                $response = Customer::create($customer);
+    
+            DB::commit();
+            $customer = Customer::ShowOne($response->id);
+                return MyHelper::response(true,'Create customer successfully', ['id' => $customer->customer_id],200);
+            } catch (\Exception $ex) {
+    
+            DB::rollback();
+                return MyHelper::response(false,$ex->getMessage(), [],500);
             }
         }
-        $customer['groupid']  = auth::user()->groupid;
-        $customer['fullname'] = $request->fullname;
-        $customer['phone']   = $request->phone ?? null;
-        $customer['email']   = $request->email ?? null;
-        $customer['address']   = $request->address ?? null;
-        $customer['province']   = $request->province ?? null;
-        $customer['createby']   = auth::user()->id;
-        $customer['datecreate']   = time();
-        $customer['channel']   = $channel;
-
-        DB::beginTransaction();
-        try {
-            $response = Customer::create($customer);
-
-        DB::commit();
-            return MyHelper::response(true,'Create customer successfully', ['id' => $response->id],200);
-        } catch (\Exception $ex) {
-
-        DB::rollback();
-            return MyHelper::response(false,$ex->getMessage(), [],500);
-        }
+        
     }
     /**
      * Update Customer
