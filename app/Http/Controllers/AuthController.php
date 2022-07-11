@@ -69,6 +69,84 @@ class AuthController extends Controller
         if ($user) {
             $token = JWTAuth::fromUser($user);
             $token = $this->respondWithToken($token)->original;
+            $token['roles']=[
+            'name'=>$user['fullname'],
+            'level'=>$user['level']
+        ];
+        $token['permissions']=[
+            "dashboard_cskh" => [
+                "view"
+            ],
+            "report_cskh"=>[
+                "view"
+            ],
+            "dashboard"=> [
+                "view"
+            ],
+            "timeline"=> [
+                "view",
+                "edit",
+                "delete",
+                "view_data"
+            ],
+            "social"=>[
+                "view"
+            ],
+            "other_event"=> [
+                "view",
+                "add",
+                "edit",
+                "delete"
+            ],
+            "order"=> [
+                "view",
+                "edit",
+                "delete"
+            ],
+            "order_event"=> [
+                "view"
+            ],
+            "agent"=>[
+                "view",
+                "add",
+                "edit",
+                "delete"
+            ],
+            "customer"=>[
+                "view",
+                "add",
+                "edit",
+                "delete",
+                "view_data"
+            ],
+            "contact"=> [
+                "view",
+                "add",
+                "edit",
+                "delete",
+                "view_data"
+            ],
+            "report"=>[
+                "view"
+            ],
+            "setting"=> [
+                "view",
+                "edit",
+                "delete"
+            ],
+            "hide_phone"=> [
+                "view"
+            ],
+            "call_center" => [
+                "view",
+                "edit",
+                "delete"
+            ],
+            "webrtc"=>[
+                "view"
+            ]
+
+        ];
             return response()->json($token, 201);
         }else{
             return response()->json(['error' => 'Unauthorized'], 401);
