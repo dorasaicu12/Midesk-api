@@ -165,7 +165,7 @@ class ContactController extends Controller
         $contact = (new Contact)->ShowOne($id);
         if (!$contact) {            
             Log::channel('contact_history')->info('Contact notfound',['id'=>$id]);
-            return MyHelper::response(false,'Contact not found',[],200);
+            return MyHelper::response(false,'Contact not found',[],404);
         }else{
             return MyHelper::response(true,'Successfully',$contact,200);
         }

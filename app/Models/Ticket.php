@@ -48,19 +48,21 @@ class Ticket extends Model
     	/// search
     	if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
 
-            if(strpos($req['search'], '=') !== false){
-                $key_search = explode('=', $req['search']);
+            if(strpos($req['search'], '<=>') !== false){
+                $key_search = explode('<=>', $req['search']);
                 $type = '=';
-            }else if(strpos($req['search'], 'like') !== false){
-                $key_search = explode('like', $req['search']);
+            }else if(strpos($req['search'], '<like>') !== false){
+                $key_search = explode('<like>', $req['search']);
                 $type = 'like';
                 $key_search[1] = '%'.$key_search[1].'%';
             }else if(strpos($req['search'], '<>') !== false){
-                $key_search = explode('like', $req['search']);
+                $key_search = explode('<>', $req['search']);
                 $type = '<>';
             }
     		$res->where($key_search[0],$type,$key_search[1]);
     	}
+
+		
     	if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
     		$order_by = explode(',', $req['order_by']);
     		foreach ($order_by as $key => $value) {

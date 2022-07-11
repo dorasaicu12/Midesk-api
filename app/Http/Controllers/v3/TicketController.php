@@ -178,7 +178,7 @@ class TicketController extends Controller
         if($ticket){
             return MyHelper::response(true,'Successfully',$ticket,200);
         }else{
-            return MyHelper::response(true,'404 not found',$ticket,401);
+            return MyHelper::response(false,'Ticket not found',$ticket,404);
         }
     }
     /**
