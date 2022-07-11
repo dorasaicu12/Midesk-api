@@ -4,7 +4,7 @@ namespace App\Http\Controllers\v3;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\v3\CustomerRequest;
+use App\Http\Requests\CustomerRequest;
 use App\Http\Functions\MyHelper;
 use App\Models\Customer;
 use Carbon\Carbon;
@@ -19,137 +19,239 @@ use DB;
 class CustomerController extends Controller
 {
     /**
-     * Get All Customer
-     *
-     * @queryParam  page optional get record in page Example: page=1
-     * @queryParam  limit optional limit record Example: limit=5
-     * @queryParam  search optional search data. Example: search={$key}={$value}
-     * @queryParam  order_by optional sort record ( $key = id:desc,records_id,asc optional sort by id order by desc, if you want search many field add (,) before) Example: order_by={$key}
-     * @queryParam  fields optional get column you want (default get all) Example: fields=id,fullname,status,category,...
-    
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Successfully",
-     *   "data": {
-            "current_page": 1,
-            "data": [{
-                    "id":1,
-                    "title": "phiếu test từ dev 1",
-                    "ticket_id": "2112",
-                    "channel": "api",
-                    "content": "Lạc Long Quân - Tân Bình 1",
-                    "status": "pending"
-                },{
-                    "id":2,
-                    "title": "phiếu test từ dev 2",
-                    "ticket_id": "2113",
-                    "channel": "api",
-                    "content": "Lạc Long Quân - Tân Bình 2",
-                    "status": "close"
-            }],
-            "first_page_url": "{$URL}/ticket?limit=5&key_search=status%3Aand%2Ctitle%3Aor&q=new&order_by=id%3Aasc%2Cticket_id%3Adesc&fields=title%2Cpriority%2Cstatus%2Ccategory%2Cassign_agent%2Cassign_team%2Crequester%2Cgroupid&page=1",
-            "from": 1,
-            "last_page": 17,
-            "last_page_url": "{$URL}/ticket?limit=5&key_search=status%3Aand%2Ctitle%3Aor&q=new&order_by=id%3Aasc%2Cticket_id%3Adesc&fields=title%2Cpriority%2Cstatus%2Ccategory%2Cassign_agent%2Cassign_team%2Crequester%2Cgroupid&page=17",
-            "next_page_url": "{$URL}/ticket?limit=5&key_search=status%3Aand%2Ctitle%3Aor&q=new&order_by=id%3Aasc%2Cticket_id%3Adesc&fields=title%2Cpriority%2Cstatus%2Ccategory%2Cassign_agent%2Cassign_team%2Crequester%2Cgroupid&page=2",
-            "path": "{$URL}/ticket",
-            "per_page": "5",
-            "prev_page_url": null,
-            "to": 5,
-            "total": 83
-        }
-     *}
-
-     * @response 404 {
-     *   "status": false,
-     *   "message": "Resource Not Found",
-     *   "data": []
-     * }
-     */
+    * @OA\Get(
+    *     path="/api/v3/customer",
+    *     tags={"Customer"},
+    *     summary="Get list customer",
+    *     description="<h2>This API will Get list customer with condition below</h2>",
+    *     operationId="index",
+    *     @OA\Parameter(
+    *         name="page",
+    *         in="query",
+    *         required=false,
+    *         explode=true,
+    *         example=1,
+    *         description="<h4>Number of page to get</h4>
+                    <code>Type: <b id='require'>Number</b></code>"
+    *     ),
+    *     @OA\Parameter(
+    *         name="limit",
+    *         in="query",
+    *         required=false,
+    *         explode=true,
+    *         example=5,
+    *         description="<h4>Total number of records to get</h4>
+                    <code>Type: <b id='require'>Number<b></code>"
+    *     ),
+    *     @OA\Parameter(
+    *         name="search",
+    *         in="query",
+    *         example="fullname<=>nguyễn văn a",
+    *         description="<h4>Find records with condition get result desire</h4>
+                    <code>Type: <b id='require'>String<b></code><br>
+                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>
+                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>
+                    <code id='require'>If multiple search with connect (,) before</code>",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="order_by",
+    *         in="query",
+    *         example="id:DESC",
+    *         description="<h4>Sort records by colunm</h4>
+                    <code>Type: <b id='require'>String</b></code><br>
+                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>
+                    <code id='require'>If multiple order with connect (,) before</code>",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="fields",
+    *         in="query",
+    *         required=false,
+    *         explode=true,
+    *         example="id,fullname,phone",
+    *         description="<h4>Get only the desired columns</h4>
+                    <code>Type: <b id='require'>String<b></code>"
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Successfully",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="status", type="boolean", example="true"),
+    *             @OA\Property(property="message", type="string", example="Successfully"),
+    *             @OA\Property(property="data", type="object",
+    *                 @OA\Property(property="data",type="object",
+    *                   @OA\Property(property="id",type="string", example="1"),
+    *                   @OA\Property(property="fullname",type="string", example="văn A"),
+    *                   @OA\Property(property="phone",type="string", example="0362548726"),
+    *                   @OA\Property(property="phone_other",type="string", example="0987654321"),
+    *                   @OA\Property(property="email",type="string", example="abcxyz@gmail.com"),
+    *                   @OA\Property(property="address",type="string", example="abc/271/10"),
+    *                   @OA\Property(property="province",type="string", example="HCM"),
+    *                 ),
+    *                 @OA\Property(property="current_page",type="string", example="1"),
+    *                 @OA\Property(property="first_page_url",type="string", example="null"),
+    *                 @OA\Property(property="next_page_url",type="string", example="null"),
+    *                 @OA\Property(property="last_page_url",type="string", example="null"),
+    *                 @OA\Property(property="prev_page_url",type="string", example="null"),
+    *                 @OA\Property(property="from",type="string", example="1"),
+    *                 @OA\Property(property="to",type="string", example="1"),
+    *                 @OA\Property(property="total",type="string", example="1"),
+    *                 @OA\Property(property="path",type="string", example="http://api-dev2021.midesk.vn/api/v3/customer"),
+    *                 @OA\Property(property="last_page",type="string", example="null"),
+    *             )
+    *         )
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     }
+    * )
+    */
     public function index(Request $request)
     {
         $req = $request->all();
-        $customers = new Customer;
-        $customers = $customers->getDefault($req);
+        $customers = (new Customer)->getListDefault($req);
         return MyHelper::response(true,'Successfully',$customers,200);
     }
 
     /**
-     * Show A Customer.
-     *
-     * @queryParam customer int required id of the customer.
-     *
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Successfully",
-     *   "data": {
-            "id": 2,
-            "customer_id": "MKH000002",
-            "honor": "company",
-            "firstname": null,
-            "lastname": null,
-            "fullname": "KH 13",
-            "phone": "0362694452",
-            "phone_other": "0362548721,",
-            "email": "dttien1@gmail.com",
-            "address": "",
-            "province_code": "VN-SG",
-            "province": "Hồ Chí Minh",
-            "district": "",
-            "area": "Châu Á",
-            "country": "Việt Nam",
-            "createby": "13",
-            "createby_update": "Mitek Admin"
-         }
-     * }
-
-     * @response 404 {
-     *   "status": false,
-     *   "message": "Resource Not Found",
-     *   "data": {}
-     *  }
-     */
+    * @OA\Get(
+    *     path="/api/v3/customer/{customerId}",
+    *     tags={"Customer"},
+    *     summary="Find customer by customerId",
+    *     description="<h2>This API will find customer by {customerId} and return only a single record</h2>",
+    *     operationId="show",
+    *     @OA\Parameter(
+    *         name="customerId",
+    *         in="path",
+    *         description="<h4>This is the id of the customer you are looking for</h4>
+              <code>Type: <b id='require'>Number</b></code>",
+    *         required=true,
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Successfully",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="status", type="boolean", example="true"),
+    *           @OA\Property(property="message", type="string", example="Successfully"),
+    *           @OA\Property(property="data",type="object",
+    *             @OA\Property(property="id",type="string", example="1"),
+    *             @OA\Property(property="fullname",type="string", example="Nguyễn văn A"),
+    *             @OA\Property(property="phone",type="string", example="0987654321"),
+    *             @OA\Property(property="email",type="string", example="abcxyz@gmail.com"),
+    *             @OA\Property(property="address",type="string", example="123/12b"),
+    *             @OA\Property(property="province",type="string", example="Hồ Chí Minh"),
+    *             @OA\Property(property="country",type="string", example="Việt Nam"),
+    *           ),
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="Will be return customer not found",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="Customer not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     }
+    * )
+    */
     public function show($id)
     {
-        $customer = Customer::ShowOne($id);
-        if($customer){
-            return MyHelper::response(true,'Successfully',$customer,200);
-        }else{
-            return MyHelper::response(false,'not found',$customer,404);
+        $customer = (new Customer)->showOne($id);
+        if (!$customer) {
+            return MyHelper::response(false,'Customer not found',[],404);
         }
-        
+        return MyHelper::response(true,'Successfully',$customer,200);
     }
+
     /**
-     * Create A Customer
-     *
-     * @bodyParam fullname string required full name customer.
-     * @bodyParam phone string required phone Example: 0123456789.
-     * @bodyParam email string required email. Example: admin@gmail.com
-     * @bodyParam address string optional address.
-     * @bodyParam province string optional province.
-
-     
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Create customer successfully",
-     *   "data": {
-     *       "id": "{$id}",
-     *   }
-     * }
-
-     * @response  404 {
-     *   "status": false,
-     *   "message": "Resource not found"
-     * }
-
-     * @response  400 {
-     *   "status": false,
-     *   "message": "Fullname is require",
-     *   "data": {}
-     * }
-     */
+    * @OA\POST(
+    *     path="/api/v3/customer",
+    *     tags={"Customer"},
+    *     summary="Create a customer",
+    *     description="<h2>This API will Create a customer with json form below</h2><br><code>Press try it out button to modified</code>",
+    *     operationId="store",
+    *     @OA\RequestBody(
+    *       required=true,
+    *       description="<table id='my-custom-table'>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <td><b id='require'>Required</b></td>
+                </tr>
+                <tr>
+                    <th>fullname</th>
+                    <td>This is full name of customer</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <th>email</th>
+                    <td>This is email of customer</td>
+                    <td>True if without phone</td>
+                </tr>
+                <tr>
+                    <th>phone</th>
+                    <td>This is phone number of customer</td>
+                    <td>True if without email</td>
+                </tr>
+                <tr>
+                    <th>address</th>
+                    <td>This is address of customer</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <th>province</th>
+                    <td>This is province of customer</td>
+                    <td>false</td>
+                </tr>
+            </table><br><code>Click Schema to view data property</code>",
+    *       @OA\JsonContent(
+    *         required={"fullname","phone","email"},
+    *         @OA\Property(property="fullname", type="string", example="Nguyễn văn A"),
+    *         @OA\Property(property="email", type="string", example="acb@xyz"),
+    *         @OA\Property(property="phone", type="string", example="0123456789"),
+    *         @OA\Property(property="address", type="string", example="123/321"),
+    *         @OA\Property(property="province", type="string", example="HCM"),
+    *       ),
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Create Customer Successfully",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="status", type="boolean", example="true"),
+    *           @OA\Property(property="message", type="string", example="Create Customer Successfully"),
+    *           @OA\Property(property="data",type="object",
+    *             @OA\Property(property="id",type="string", example="1"),
+    *           ),
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=422,
+    *         description="Create Customer failed",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="status", type="boolean", example="true"),
+    *           @OA\Property(property="message", type="string", example="The given data was invalid"),
+    *           @OA\Property(property="errors",type="object",
+    *             @OA\Property(property="fullname",type="array", 
+    *               @OA\Items(type="string", example="the fullname field is required")
+    *             ),
+    *           )
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function store(CustomerRequest $request)
     {
+
         if($request->fullname==''){
             return MyHelper::response(false,'fullname field is required', [],400);
         }else{
@@ -183,78 +285,150 @@ class CustomerController extends Controller
                 return MyHelper::response(false,$ex->getMessage(), [],500);
             }
         }
-        
     }
+
     /**
-     * Update Customer
-     * @bodyParam fullname string required full name customer.
-     * @bodyParam phone string required phone Example: 0123456789.
-     * @bodyParam email string required email. Example: admin@gmail.com
-     * @bodyParam address string optional address.
-     * @bodyParam province string optional province.
-
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Update customer successfully",
-     *   "data": []
-     * }
-
-     * @response  404 {
-     *   "status": false,
-     *   "message": "Resource Not Found"
-     * }
-     
-     * @response  400 {
-     *   "status": false,
-     *   "message": "fullname is require",
-     *   "data": {}
-     * }
-     */
+    * @OA\Put(
+    *     path="/api/v3/customer/{$customerId}",
+    *     tags={"Customer"},
+    *     summary="Update customer by customerId",
+    *     description="<h2>This API will update a customer by customerId and the value json form below</h2><br><code>Press try it out button to modified</code>",
+    *     operationId="update",
+    *     @OA\Parameter(
+    *         name="customerId",
+    *         in="path",
+    *         example=1,
+    *         description="<h4>This is the id of the customer you need update</h4>
+              <code>Type: <b id='require'>Number</b></code>",
+    *         required=true,
+    *     ),
+    *     @OA\RequestBody(
+    *       required=true,
+    *       description="<table id='my-custom-table'>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <td><b id='require'>Required</b></td>
+                </tr>
+                <tr>
+                    <th>fullname</th>
+                    <td>This is full name of customer</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <th>email</th>
+                    <td>This is email of customer</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <th>phone</th>
+                    <td>This is phone num of customer</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <th>address</th>
+                    <td>This is address of customer</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <th>province</th>
+                    <td>This is province of customer</td>
+                    <td>false</td>
+                </tr>
+            </table><br><code>Click Schema to view data property</code>",
+    *       @OA\JsonContent(
+    *         required={"fullname","phone","email"},
+    *         @OA\Property(property="fullname",type="string", example="Ngô văn B"),
+    *         @OA\Property(property="phone",type="string", example="0987654321"),
+    *         @OA\Property(property="email",type="string", example="abc@xyz123"),
+    *         @OA\Property(property="address", type="string", example="123/321/HCM"),
+    *         @OA\Property(property="province", type="string", example="male"),
+    *       ),
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Update successfully",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="true"),
+    *              @OA\Property(property="message", type="string", example="Update customer successfully"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="Will be return customer not found",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="Customer not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function update(CustomerRequest $request,$id)
     {
-    	$check_customer = Customer::ShowOne($id);
+    	$check_customer = (new Customer)->showOne($id);
     	if(!$check_customer){
-            return MyHelper::response(true,'Customer Not found', [],400);
+            return MyHelper::response(true,'Customer Not found', [],404);
         }else{
-            $check_customer->fullname   	= $request->fullname;
-            $check_customer->phone    		= $request->phone;
-            $check_customer->email      	= $request->email;                  
-            $check_customer->province     	= $request->province;            
-            $check_customer->address     	= $request->address;        
-            $check_customer->dateupdate 	= time();
-            $check_customer->save();
+            $request = array_filter($request->all());   
+            $request['dateupdate'] 	= time();
+            $check_customer->update($request);
             if(!$check_customer){
                 return MyHelper::response(false,'Updated Customer Failed', [],500);
             }
             return MyHelper::response(true,'Updated Customer successfully', [],200);
         }  
     }
-
+    
     /**
-     * Destroy Customer
-     
-     * @response 200 {
-     *   "status": true,
-     *   "message": "Delete customer successfully",
-     *   "data": []
-     * }
-
-     * @response  404 {
-     *   "status": false,
-     *   "message": "Resource Not Found"
-     * }
-
-     */
+    * @OA\Delete(
+    *     path="/api/v3/customer/{customerId}",
+    *     tags={"Customer"},
+    *     summary="Delete a customer by customerId",
+    *     description="<h2>This API will delete a customer by customerId</h2>",
+    *     operationId="destroy",
+    *     @OA\Parameter(
+    *         name="customerId",
+    *         in="path",
+    *         example=1,
+    *         description="<h4>This is the id of the customer you need delete</h4>
+              <code>Type: <b id='require'>Number</b></code>",
+    *         required=true,
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Delete customer successfully",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="true"),
+    *              @OA\Property(property="message", type="string", example="Delete customer successfully"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="Customer not found",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="Customer not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function destroy($id)
     {   
-        $customer = Customer::ShowOne($id);
+        $customer = (new Customer)->showOne($id);
         if (!$customer) {
             return MyHelper::response(false,'Customer Not Found', [],404);
         }else{
-            $customer->is_delete = Customer::DELETED;
-            $customer->is_delete_date = date('Y-m-d H:i:s');
-            $customer->is_delete_creby = auth::user()->id;
-            $customer->save();
+            $customer->delete();
         }
         return MyHelper::response(true,'Delete Customer Successfully', [],200);
     }

@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\AuthByUser;
+use App\Models\User;
 use App\Models\Group;
+use App\Http\Functions\MyHelper;
 use Auth;
 use JWTAuth;
 /**
@@ -31,28 +32,49 @@ class AuthController extends Controller
     * ),
     * @OA\Post(
     * path="/api/v3/auth/login",
-    * summary="Get token",
-    * description="Get token by email, password",
+    * summary="Login to get token",
+    * description="<h2>To login to get token you need fill in your email and password </h2><br> 
+    <code>Press try it out button to get token</code><br>
+    <code>After receiving the token you need to copy it then you can press the Authorize button and past the token in value field</code><br>
+    <code id='require'>Don't forget to put Bearer in front of the token</code><br>
+    <code id='require'>Example: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9</code>",
     * operationId="authLogin",
     * tags={"Login"},
     * @OA\RequestBody(
     *    required=true,
-    *    description="Pass user credentials",
+    *    description="<code>Fill email and password below to get token</code><br><code>Click Schema to view data property</code>",
     *    @OA\JsonContent(
     *       required={"email","password"},
-    *       @OA\Property(property="email", type="string", pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", format="email", example="user2@gmail.com"),
+    *       @OA\Property(property="email", type="string", format="email", example="user2@gmail.com"),
     *       @OA\Property(property="password", type="string", format="password", example="PassWord12345"),
     *    ),
     * ),
-    * @OA\Response(
-    *    response=201,
-    *    description="Successful",
-    *    @OA\JsonContent(
-    *        @OA\Property(property="access_token", type="string", example="{$token}"),
-    *        @OA\Property(property="token_type", type="string", example="bearer"),
-    *        @OA\Property(property="expires_in", type="string", example="{$minute}")
-    *    )
-    * ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Successfully",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="status", type="boolean", example="true"),
+    *             @OA\Property(property="message", type="string", example="Successfully"),
+    *             @OA\Property(property="data", type="object",
+    *                 @OA\Property(property="access_token", type="string", example="$token"),
+    *                 @OA\Property(property="token_type", type="string", example="Bearer"),
+    *                 @OA\Property(property="expires_in", type="number", example="300"),
+    *                 @OA\Property(property="permissions",type="object",
+    *                   @OA\Property(property="dashboard_cskh",type="array", 
+    *                       @OA\Items(type="string", example="View"),
+    *                       @OA\Items(type="string", example="Update"),
+    *                       @OA\Items(type="string", example="Delete"),
+    *                   ),
+    *                 ),
+    *                 @OA\Property(property="roles",type="object",
+    *                   @OA\Property(property="name",type="string", example="Role Name"),
+    *                   @OA\Property(property="type",type="array", 
+    *                       @OA\Items(type="string", example="User type name")
+    *                   ),
+    *                 ),
+    *             )
+    *         )
+    *     ),
     * @OA\Response(
     *    response=401,
     *    description="Unauthorized",
@@ -64,25 +86,27 @@ class AuthController extends Controller
     */
     public function login(Request $request)
     {   
-        $check_user = new AuthByUser;
-        $user = $check_user->Check($request->all());
-        if ($user) {
-            $token = JWTAuth::fromUser($user);
+        $check_user = new User;
+        $token = auth('api')->attempt($request->all());
+        if ($token) {
+            $user = auth()->user();
+            if ($user->active == 0) {   
+                return MyHelper::response(false,'Your account is locked, can\'t login',[],403);
+            }
             $token = $this->respondWithToken($token)->original;
-            return response()->json($token, 201);
+            $typeRole = $user->Roles()->get('name')->pluck('name');
+            $permissions = $user->Permissions()->get(['page','action']);
+            $format_permisssions = [];
+            foreach ($permissions as $key => $permission) {
+                $format_permisssions[$permission['page']][] = $permission['action'];
+            }
+            $token['permissions'] = $format_permisssions;
+            $token['roles']['name'] = $user->class_staff;
+            $token['roles']['type'] = $typeRole;
+            return MyHelper::response(true,'Successfully',$token,200);
         }else{
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return MyHelper::response(false,'Unauthorized',[],401);
         }
-    }
-
-    /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function me()
-    {
-        return response()->json(auth()->user());
     }
 
     /**
