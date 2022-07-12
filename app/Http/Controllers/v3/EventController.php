@@ -670,11 +670,11 @@ class EventController extends Controller
     {
         $event = Event::where('id', $id)->first();
         if (!$event) {            
-            return MyHelper::response(false,'Ticket not found',[],404);
+            return MyHelper::response(false,'Event not found',[],404);
         }else{
             $eventact = Event::find($id);
             $eventact->delete();
-            return MyHelper::response(true,'Delete Ticket Successfully', [],200);
+            return MyHelper::response(true,'Delete Event Successfully', [],200);
         }
     }
 }
