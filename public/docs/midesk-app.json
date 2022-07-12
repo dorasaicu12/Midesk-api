@@ -11,7 +11,7 @@
                     "Login"
                 ],
                 "summary": "Login to get token",
-                "description": "<h2>To login to get token you need fill in your email and password </h2><br> \n    <code>Press try it out button to get token</code><br>\n    <code>After receiving the token you need to copy it then you can press the Authorize button and past the token in value field</code><br>\n    <code id='require'>Don't forget to put Bearer in front of the token</code><br>\n    <code id='require'>Example: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9</code>",
+                "description": "<h2>To login to get token you need fill in your email and password </h2><br> \r\n    <code>Press try it out button to get token</code><br>\r\n    <code>After receiving the token you need to copy it then you can press the Authorize button and past the token in value field</code><br>\r\n    <code id='require'>Don't forget to put Bearer in front of the token</code><br>\r\n    <code id='require'>Example: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9</code>",
                 "operationId": "authLogin",
                 "requestBody": {
                     "description": "<code>Fill email and password below to get token</code><br><code>Click Schema to view data property</code>",
@@ -137,7 +137,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "<h4>Number of page to get</h4>\n                    <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>Number of page to get</h4>\r\n                    <code>Type: <b id='require'>Number</b></code>",
                         "required": false,
                         "explode": true,
                         "example": 1
@@ -145,7 +145,7 @@
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "<h4>Total number of records to get</h4>\n                    <code>Type: <b id='require'>Number<b></code>",
+                        "description": "<h4>Total number of records to get</h4>\r\n                    <code>Type: <b id='require'>Number<b></code>",
                         "required": false,
                         "explode": true,
                         "example": 5
@@ -153,7 +153,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "<h4>Find records with condition get result desire</h4>\n                    <code>Type: <b id='require'>String<b></code><br>\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>\n                    <code id='require'>If multiple search with connect (,) before</code>",
+                        "description": "<h4>Find records with condition get result desire</h4>\r\n                    <code>Type: <b id='require'>String<b></code><br>\r\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\r\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>\r\n                    <code id='require'>If multiple search with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "firstname<=>Nhỡ"
@@ -161,7 +161,7 @@
                     {
                         "name": "order_by",
                         "in": "query",
-                        "description": "<h4>Sort records by colunm</h4>\n                    <code>Type: <b id='require'>String</b></code><br>\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\n                    <code id='require'>If multiple order with connect (,) before</code>",
+                        "description": "<h4>Sort records by colunm</h4>\r\n                    <code>Type: <b id='require'>String</b></code><br>\r\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\r\n                    <code id='require'>If multiple order with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "id:DESC"
@@ -169,7 +169,7 @@
                     {
                         "name": "fields",
                         "in": "query",
-                        "description": "<h4>Get only the desired columns</h4>\n                    <code>Type: <b id='require'>String<b></code>",
+                        "description": "<h4>Get only the desired columns</h4>\r\n                    <code>Type: <b id='require'>String<b></code>",
                         "required": false,
                         "explode": true,
                         "example": "fullname,phone,email"
@@ -285,7 +285,7 @@
                 "description": "<h2>This API will Create a contact with json form below</h2><br><code>Press try it out button to modified</code>",
                 "operationId": "store",
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>fullname</th>\n                    <td>This is full name of contact</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>email</th>\n                    <td>This is email of contact</td>\n                    <td>true if without phone</td>\n                </tr>\n                <tr>\n                    <th>phone</th>\n                    <td>This is phone number of contact</td>\n                    <td>true if without email</td>\n                </tr>\n                <tr>\n                    <th>address</th>\n                    <td>This is address of contact</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>gender</th>\n                    <td>This is gender of contact</td>\n                    <td>false</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>fullname</th>\r\n                    <td>This is full name of contact</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>email</th>\r\n                    <td>This is email of contact</td>\r\n                    <td>true if without phone</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>phone</th>\r\n                    <td>This is phone number of contact</td>\r\n                    <td>true if without email</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>address</th>\r\n                    <td>This is address of contact</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>gender</th>\r\n                    <td>This is gender of contact</td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -403,7 +403,7 @@
                     {
                         "name": "contactId",
                         "in": "path",
-                        "description": "<h4>This is the id of the contact you are looking for</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the contact you are looking for</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -524,7 +524,7 @@
                     {
                         "name": "contactId",
                         "in": "path",
-                        "description": "<h4>This is the id of the contact you need delete</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the contact you need delete</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -598,13 +598,13 @@
                     {
                         "name": "contactId",
                         "in": "path",
-                        "description": "<h4>This is the id of the contact you need update</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the contact you need update</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
                 ],
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>fullname</th>\n                    <td>This is full name of contact</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>email</th>\n                    <td>This is email of contact</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>phone</th>\n                    <td>This is phone number of contact</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>address</th>\n                    <td>This is address of contact</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>gender</th>\n                    <td>This is gender of contact</td>\n                    <td>false</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>fullname</th>\r\n                    <td>This is full name of contact</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>email</th>\r\n                    <td>This is email of contact</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>phone</th>\r\n                    <td>This is phone number of contact</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>address</th>\r\n                    <td>This is address of contact</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>gender</th>\r\n                    <td>This is gender of contact</td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -710,7 +710,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "<h4>Number of page to get</h4>\n                    <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>Number of page to get</h4>\r\n                    <code>Type: <b id='require'>Number</b></code>",
                         "required": false,
                         "explode": true,
                         "example": 1
@@ -718,7 +718,7 @@
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "<h4>Total number of records to get</h4>\n                    <code>Type: <b id='require'>Number<b></code>",
+                        "description": "<h4>Total number of records to get</h4>\r\n                    <code>Type: <b id='require'>Number<b></code>",
                         "required": false,
                         "explode": true,
                         "example": 5
@@ -726,7 +726,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "<h4>Find records with condition get result desire</h4>\n                    <code>Type: <b id='require'>String<b></code><br>\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>\n                    <code id='require'>If multiple search with connect (,) before</code>",
+                        "description": "<h4>Find records with condition get result desire</h4>\r\n                    <code>Type: <b id='require'>String<b></code><br>\r\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\r\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>\r\n                    <code id='require'>If multiple search with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "fullname<=>nguyễn văn a"
@@ -734,7 +734,7 @@
                     {
                         "name": "order_by",
                         "in": "query",
-                        "description": "<h4>Sort records by colunm</h4>\n                    <code>Type: <b id='require'>String</b></code><br>\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\n                    <code id='require'>If multiple order with connect (,) before</code>",
+                        "description": "<h4>Sort records by colunm</h4>\r\n                    <code>Type: <b id='require'>String</b></code><br>\r\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\r\n                    <code id='require'>If multiple order with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "id:DESC"
@@ -742,7 +742,7 @@
                     {
                         "name": "fields",
                         "in": "query",
-                        "description": "<h4>Get only the desired columns</h4>\n                    <code>Type: <b id='require'>String<b></code>",
+                        "description": "<h4>Get only the desired columns</h4>\r\n                    <code>Type: <b id='require'>String<b></code>",
                         "required": false,
                         "explode": true,
                         "example": "id,fullname,phone"
@@ -862,7 +862,7 @@
                 "description": "<h2>This API will Create a customer with json form below</h2><br><code>Press try it out button to modified</code>",
                 "operationId": "store",
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>fullname</th>\n                    <td>This is full name of customer</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>email</th>\n                    <td>This is email of customer</td>\n                    <td>True if without phone</td>\n                </tr>\n                <tr>\n                    <th>phone</th>\n                    <td>This is phone number of customer</td>\n                    <td>True if without email</td>\n                </tr>\n                <tr>\n                    <th>address</th>\n                    <td>This is address of customer</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>province</th>\n                    <td>This is province of customer</td>\n                    <td>false</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>fullname</th>\r\n                    <td>This is full name of customer</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>email</th>\r\n                    <td>This is email of customer</td>\r\n                    <td>True if without phone</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>phone</th>\r\n                    <td>This is phone number of customer</td>\r\n                    <td>True if without email</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>address</th>\r\n                    <td>This is address of customer</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>province</th>\r\n                    <td>This is province of customer</td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -981,7 +981,7 @@
                     {
                         "name": "customerId",
                         "in": "path",
-                        "description": "<h4>This is the id of the customer you are looking for</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the customer you are looking for</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true
                     }
                 ],
@@ -1081,7 +1081,7 @@
                     {
                         "name": "customerId",
                         "in": "path",
-                        "description": "<h4>This is the id of the customer you need delete</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the customer you need delete</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -1155,13 +1155,13 @@
                     {
                         "name": "customerId",
                         "in": "path",
-                        "description": "<h4>This is the id of the customer you need update</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the customer you need update</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
                 ],
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>fullname</th>\n                    <td>This is full name of customer</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>email</th>\n                    <td>This is email of customer</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>phone</th>\n                    <td>This is phone num of customer</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>address</th>\n                    <td>This is address of customer</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>province</th>\n                    <td>This is province of customer</td>\n                    <td>false</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>fullname</th>\r\n                    <td>This is full name of customer</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>email</th>\r\n                    <td>This is email of customer</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>phone</th>\r\n                    <td>This is phone num of customer</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>address</th>\r\n                    <td>This is address of customer</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>province</th>\r\n                    <td>This is province of customer</td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1267,7 +1267,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "<h4>Number of page to get</h4>\n                    <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>Number of page to get</h4>\r\n                    <code>Type: <b id='require'>Number</b></code>",
                         "required": false,
                         "explode": true,
                         "example": 1
@@ -1275,7 +1275,7 @@
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "<h4>Total number of records to get</h4>\n                    <code>Type: <b id='require'>Number<b></code>",
+                        "description": "<h4>Total number of records to get</h4>\r\n                    <code>Type: <b id='require'>Number<b></code>",
                         "required": false,
                         "explode": true,
                         "example": 5
@@ -1283,7 +1283,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "<h4>Find records with condition get result desire</h4>\n                    <code>Type: <b id='require'>String<b></code><br>\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>\n                    <code id='require'>If multiple search with connect (,) before</code>",
+                        "description": "<h4>Find records with condition get result desire</h4>\r\n                    <code>Type: <b id='require'>String<b></code><br>\r\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\r\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>\r\n                    <code id='require'>If multiple search with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "event_title<=>Gọi điện hỏi thăm"
@@ -1291,7 +1291,7 @@
                     {
                         "name": "order_by",
                         "in": "query",
-                        "description": "<h4>Sort records by colunm</h4>\n                    <code>Type: <b id='require'>String</b></code><br>\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\n                    <code id='require'>If multiple order with connect (,) before</code>",
+                        "description": "<h4>Sort records by colunm</h4>\r\n                    <code>Type: <b id='require'>String</b></code><br>\r\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\r\n                    <code id='require'>If multiple order with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "id:DESC"
@@ -1299,7 +1299,7 @@
                     {
                         "name": "fields",
                         "in": "query",
-                        "description": "<h4>Get only the desired columns</h4>\n                    <code>Type: <b id='require'>String<b></code>",
+                        "description": "<h4>Get only the desired columns</h4>\r\n                    <code>Type: <b id='require'>String<b></code>",
                         "required": false,
                         "explode": true,
                         "example": "event_title,event_source,remind_time,remind_type"
@@ -1411,7 +1411,7 @@
                 "description": "<h2>This API will Create a event with json form below</h2><br><code>Press try it out button to modified</code>",
                 "operationId": "store",
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>event_title</th>\n                    <td>Title of ticket</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>event_type</th>\n                    <td>Category of event</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>Note</th>\n                    <td>Note of event</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>event_location</th>\n                    <td>event venue</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>remind_time</th>\n                    <td>time to remind</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>remind_type</th>\n                    <td>type remind of event</td>\n                    <td>true ('date','daily','weekly','monthly','yearly')</td>\n                </tr>\n                <tr>\n                    <th>handling_team</th>\n                    <td>handling parts</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>handling_agent</th>\n                    <td>agent handling this event</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>event_source</th>\n                    <td>source event</td>\n                    <td>true (contact,agent,customer)</td>\n                </tr>\n                <tr>\n                    <th>event_source_id</th>\n                    <td>id of source event</td>\n                    <td>true</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>event_title</th>\r\n                    <td>Title of ticket</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>event_type</th>\r\n                    <td>Category of event</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>Note</th>\r\n                    <td>Note of event</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>event_location</th>\r\n                    <td>event venue</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>remind_time</th>\r\n                    <td>time to remind</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>remind_type</th>\r\n                    <td>type remind of event</td>\r\n                    <td>true ('date','daily','weekly','monthly','yearly')</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>handling_team</th>\r\n                    <td>handling parts</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>handling_agent</th>\r\n                    <td>agent handling this event</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>event_source</th>\r\n                    <td>source event</td>\r\n                    <td>true (contact,agent,customer)</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>event_source_id</th>\r\n                    <td>id of source event</td>\r\n                    <td>true</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1664,7 +1664,7 @@
                     {
                         "name": "eventId",
                         "in": "path",
-                        "description": "<h4>This is the id of the event you are looking for</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the event you are looking for</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -1765,7 +1765,7 @@
                     {
                         "name": "eventId",
                         "in": "path",
-                        "description": "<h4>This is the id of the event you need delete</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the event you need delete</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -1839,13 +1839,13 @@
                     {
                         "name": "eventId",
                         "in": "path",
-                        "description": "<h4>This is the id of the event you need update</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the event you need update</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
                 ],
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>event_tile</th>\n                    <td>Title of ticket</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>event_type</th>\n                    <td>Category of event</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>Note</th>\n                    <td>Note of event</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>event_location</th>\n                    <td>event venue</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>remind_time</th>\n                    <td>time to remind</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>remind_type</th>\n                    <td>type remind of event</td>\n                    <td>false ('date','daily','weekly','monthly','yearly')</td>\n                </tr>\n                <tr>\n                    <th>handling_team</th>\n                    <td>handling parts</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>handling_agent</th>\n                    <td>agent handling this event</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>event_source</th>\n                    <td>source event</td>\n                    <td>false (contact,agent,customer)</td>\n                </tr>\n                <tr>\n                    <th>event_source_id</th>\n                    <td>id of source event</td>\n                    <td>false</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>event_tile</th>\r\n                    <td>Title of ticket</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>event_type</th>\r\n                    <td>Category of event</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>Note</th>\r\n                    <td>Note of event</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>event_location</th>\r\n                    <td>event venue</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>remind_time</th>\r\n                    <td>time to remind</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>remind_type</th>\r\n                    <td>type remind of event</td>\r\n                    <td>false ('date','daily','weekly','monthly','yearly')</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>handling_team</th>\r\n                    <td>handling parts</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>handling_agent</th>\r\n                    <td>agent handling this event</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>event_source</th>\r\n                    <td>source event</td>\r\n                    <td>false (contact,agent,customer)</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>event_source_id</th>\r\n                    <td>id of source event</td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1986,7 +1986,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "<h4>Number of page to get</h4>\n                    <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>Number of page to get</h4>\r\n                    <code>Type: <b id='require'>Number</b></code>",
                         "required": false,
                         "explode": true,
                         "example": 1
@@ -1994,7 +1994,7 @@
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "<h4>Total number of records to get</h4>\n                    <code>Type: <b id='require'>Number<b></code>",
+                        "description": "<h4>Total number of records to get</h4>\r\n                    <code>Type: <b id='require'>Number<b></code>",
                         "required": false,
                         "explode": true,
                         "example": 5
@@ -2002,7 +2002,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "<h4>Find records with condition get result desire</h4>\n                    <code>Type: <b id='require'>String<b></code><br>\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>\n                    <code id='require'>If multiple search with connect (,) before</code>",
+                        "description": "<h4>Find records with condition get result desire</h4>\r\n                    <code>Type: <b id='require'>String<b></code><br>\r\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\r\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>\r\n                    <code id='require'>If multiple search with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "title<=>Gọi nhỡ"
@@ -2010,7 +2010,7 @@
                     {
                         "name": "order_by",
                         "in": "query",
-                        "description": "<h4>Sort records by colunm</h4>\n                    <code>Type: <b id='require'>String</b></code><br>\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\n                    <code id='require'>If multiple order with connect (,) before</code>",
+                        "description": "<h4>Sort records by colunm</h4>\r\n                    <code>Type: <b id='require'>String</b></code><br>\r\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\r\n                    <code id='require'>If multiple order with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "id:DESC"
@@ -2018,7 +2018,7 @@
                     {
                         "name": "fields",
                         "in": "query",
-                        "description": "<h4>Get only the desired columns</h4>\n                    <code>Type: <b id='require'>String<b></code>",
+                        "description": "<h4>Get only the desired columns</h4>\r\n                    <code>Type: <b id='require'>String<b></code>",
                         "required": false,
                         "explode": true,
                         "example": "title,status,content"
@@ -2170,7 +2170,7 @@
                 "description": "<h2>This API will Create a order with json form below</h2><br><code>Press try it out button to modified</code>",
                 "operationId": "store",
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>order_status</th>\n                    <td>This is status of order</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>order_id</th>\n                    <td>This is id of order</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>order_group</th>\n                    <td>This is order channel</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>order_description</th>\n                    <td>This is description of order</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>customer</th>\n                    <td>\n                        <table>\n                            <tr><td colspan='3'> <br> <b id='require'>(id customer or create customer with array below)</b></td></tr>\n                            <tr>\n                                <th>fullname</th>\n                                <td>This is name of customer</td>\n                                <td>true</td>\n                            </tr>\n                            <tr>\n                                <th>phone</th>\n                                <td>This is phone of customer</td>\n                                <td>true</td>\n                            </tr>\n                            <tr>\n                                <th>email</th>\n                                <td>This is email of customer</td>\n                                <td>true</td>\n                            </tr>\n                            <tr>\n                                <th>address</th>\n                                <td>This is address of customer</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>locate</th>\n                                <td>This is location of customer</td>\n                                <td>false</td>\n                            </tr>\n                        </table>\n                    </td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>contact</th>\n                    <td>\n                        <table>\n                            <tr><td colspan='3'> <br> <b id='require'>(id contact or create contact with array below)</b></td></tr>\n                            <tr>\n                                <th>fullname</th>\n                                <td>This is contact name of contact</td>\n                                <td>true</td>\n                            </tr>\n                            <tr>\n                                <th>phone</th>\n                                <td>This is contact phone of contact</td>\n                                <td>true</td>\n                            </tr>\n                            <tr>\n                                <th>email</th>\n                                <td>This is contact email of contact</td>\n                                <td>true</td>\n                            </tr>\n                            <tr>\n                                <th>address</th>\n                                <td>This is contact address of contact</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>locate</th>\n                                <td>This is contact location of contact</td>\n                                <td>false</td>\n                            </tr>\n                        </table>\n                    </td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>products</th>\n                    <td>\n                        <table>\n                            <tr>\n                                <th>image_product</th>\n                                <td>Image of product</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>code_product</th>\n                                <td>code of product</td>\n                                <td>true</td>\n                            </tr>\n                            <tr>\n                                <th>name_product</th>\n                                <td>Product name</td>\n                                <td>true</td>\n                            </tr>\n                            <tr>\n                                <th>cost_product</th>\n                                <td>cost of product</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>price_product</th>\n                                <td>Price product for sell</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>color_product</th>\n                                <td>Product color</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>option_product</th>\n                                <td>Option of product</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>gift_product</th>\n                                <td>gift when buy product</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>notes_product</th>\n                                <td>notes for product</td>\n                                <td>false</td>\n                            </tr>\n                        </table>\n                    </td>\n                    <td>true</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>order_status</th>\r\n                    <td>This is status of order</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>order_id</th>\r\n                    <td>This is id of order</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>order_group</th>\r\n                    <td>This is order channel</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>order_description</th>\r\n                    <td>This is description of order</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>customer</th>\r\n                    <td>\r\n                        <table>\r\n                            <tr><td colspan='3'> <br> <b id='require'>(id customer or create customer with array below)</b></td></tr>\r\n                            <tr>\r\n                                <th>fullname</th>\r\n                                <td>This is name of customer</td>\r\n                                <td>true</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>phone</th>\r\n                                <td>This is phone of customer</td>\r\n                                <td>true</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>email</th>\r\n                                <td>This is email of customer</td>\r\n                                <td>true</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>address</th>\r\n                                <td>This is address of customer</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>locate</th>\r\n                                <td>This is location of customer</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>contact</th>\r\n                    <td>\r\n                        <table>\r\n                            <tr><td colspan='3'> <br> <b id='require'>(id contact or create contact with array below)</b></td></tr>\r\n                            <tr>\r\n                                <th>fullname</th>\r\n                                <td>This is contact name of contact</td>\r\n                                <td>true</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>phone</th>\r\n                                <td>This is contact phone of contact</td>\r\n                                <td>true</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>email</th>\r\n                                <td>This is contact email of contact</td>\r\n                                <td>true</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>address</th>\r\n                                <td>This is contact address of contact</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>locate</th>\r\n                                <td>This is contact location of contact</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>products</th>\r\n                    <td>\r\n                        <table>\r\n                            <tr>\r\n                                <th>image_product</th>\r\n                                <td>Image of product</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>code_product</th>\r\n                                <td>code of product</td>\r\n                                <td>true</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>name_product</th>\r\n                                <td>Product name</td>\r\n                                <td>true</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>cost_product</th>\r\n                                <td>cost of product</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>price_product</th>\r\n                                <td>Price product for sell</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>color_product</th>\r\n                                <td>Product color</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>option_product</th>\r\n                                <td>Option of product</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>gift_product</th>\r\n                                <td>gift when buy product</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>notes_product</th>\r\n                                <td>notes for product</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n                    <td>true</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -2381,7 +2381,7 @@
                     {
                         "name": "orderCode",
                         "in": "path",
-                        "description": "<h4>This is the order code of the order you are looking for</h4>\n              <code>Type: <b id='require'>String</b></code>",
+                        "description": "<h4>This is the order code of the order you are looking for</h4>\r\n              <code>Type: <b id='require'>String</b></code>",
                         "required": true,
                         "example": "DH0001"
                     }
@@ -2506,7 +2506,7 @@
                     {
                         "name": "orderCode",
                         "in": "path",
-                        "description": "<h4>This is the id of the order you need delete</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the order you need delete</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -2580,7 +2580,7 @@
                     {
                         "name": "orderCode",
                         "in": "path",
-                        "description": "<h4>This is the code of the order you need update</h4>\n              <code>Type: <b id='require'>String</b></code>",
+                        "description": "<h4>This is the code of the order you need update</h4>\r\n              <code>Type: <b id='require'>String</b></code>",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2588,7 +2588,7 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <td>Description</td>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>order_status</th>\n                    <td>This is status of order</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>order_id</th>\n                    <td>This is id of order</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>order_group</th>\n                    <td>This is order channel</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>order_description</th>\n                    <td>This is description of order</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>products</th>\n                    <td>\n                        <table>\n                            <tr>\n                                <th>image_product</th>\n                                <td>Image of product</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>code_product</th>\n                                <td>code of product</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>name_product</th>\n                                <td>Product name</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>cost_product</th>\n                                <td>cost of product</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>price_product</th>\n                                <td>Price product for sell</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>color_product</th>\n                                <td>Product color</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>option_product</th>\n                                <td>Option of product</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>gift_product</th>\n                                <td>gift when buy product</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>notes_product</th>\n                                <td>notes for product</td>\n                                <td>false</td>\n                            </tr>\n                        </table>\n                    </td>\n                    <td>false</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <td>Description</td>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>order_status</th>\r\n                    <td>This is status of order</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>order_id</th>\r\n                    <td>This is id of order</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>order_group</th>\r\n                    <td>This is order channel</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>order_description</th>\r\n                    <td>This is description of order</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>products</th>\r\n                    <td>\r\n                        <table>\r\n                            <tr>\r\n                                <th>image_product</th>\r\n                                <td>Image of product</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>code_product</th>\r\n                                <td>code of product</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>name_product</th>\r\n                                <td>Product name</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>cost_product</th>\r\n                                <td>cost of product</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>price_product</th>\r\n                                <td>Price product for sell</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>color_product</th>\r\n                                <td>Product color</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>option_product</th>\r\n                                <td>Option of product</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>gift_product</th>\r\n                                <td>gift when buy product</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>notes_product</th>\r\n                                <td>notes for product</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -2733,7 +2733,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "<h4>Number of page to get</h4>\n                    <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>Number of page to get</h4>\r\n                    <code>Type: <b id='require'>Number</b></code>",
                         "required": false,
                         "explode": true,
                         "example": 1
@@ -2741,7 +2741,7 @@
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "<h4>Total number of records to get</h4>\n                    <code>Type: <b id='require'>Number<b></code>",
+                        "description": "<h4>Total number of records to get</h4>\r\n                    <code>Type: <b id='require'>Number<b></code>",
                         "required": false,
                         "explode": true,
                         "example": 5
@@ -2749,7 +2749,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "<h4>Find records with condition get result desire</h4>\n                    <code>Type: <b id='require'>String<b></code><br>\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>\n                    <code id='require'>If multiple search with connect (,) before</code>",
+                        "description": "<h4>Find records with condition get result desire</h4>\r\n                    <code>Type: <b id='require'>String<b></code><br>\r\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\r\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>\r\n                    <code id='require'>If multiple search with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "product_name<=>Iphone 13"
@@ -2757,7 +2757,7 @@
                     {
                         "name": "order_by",
                         "in": "query",
-                        "description": "<h4>Sort records by colunm</h4>\n                    <code>Type: <b id='require'>String</b></code><br>\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\n                    <code id='require'>If multiple order with connect (,) before</code>",
+                        "description": "<h4>Sort records by colunm</h4>\r\n                    <code>Type: <b id='require'>String</b></code><br>\r\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\r\n                    <code id='require'>If multiple order with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "id:DESC"
@@ -2765,7 +2765,7 @@
                     {
                         "name": "fields",
                         "in": "query",
-                        "description": "<h4>Get only the desired columns</h4>\n                    <code>Type: <b id='require'>String<b></code>",
+                        "description": "<h4>Get only the desired columns</h4>\r\n                    <code>Type: <b id='require'>String<b></code>",
                         "required": false,
                         "explode": true,
                         "example": "id,product_code,product_name,product_orig_price"
@@ -2929,7 +2929,7 @@
                 "description": "<h2>This API will Create a product with json form below</h2><br><code>Press try it out button to modified</code>",
                 "operationId": "store",
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>branch</th>\n                    <td>The branch product</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>product_is_active</th>\n                    <td>Product active (no = 0, yes = 1)</td>\n                    <td>false (default = 1)</td>\n                </tr>\n                <tr>\n                    <th>product_name</th>\n                    <td>The name of product</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>product_barcode</th>\n                    <td>Product barcode</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>product_stock</th>\n                    <td>Product stock</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>product_expire</th>\n                    <td>Date expire of product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>category_id</th>\n                    <td>Category of product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>unit_id</th>\n                    <td>Unit of product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>price</th>\n                    <td>The price of product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>cost_price</th>\n                    <td>The cost of product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>unlimited</th>\n                    <td>Allow to sell when this product is out of stock</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>is_surcharge</th>\n                    <td>Is there any extra charge for the product? (no = 0,yes = 1)</td>\n                    <td>false</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>branch</th>\r\n                    <td>The branch product</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>product_is_active</th>\r\n                    <td>Product active (no = 0, yes = 1)</td>\r\n                    <td>false (default = 1)</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>product_name</th>\r\n                    <td>The name of product</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>product_barcode</th>\r\n                    <td>Product barcode</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>product_stock</th>\r\n                    <td>Product stock</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>product_expire</th>\r\n                    <td>Date expire of product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>category_id</th>\r\n                    <td>Category of product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>unit_id</th>\r\n                    <td>Unit of product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>price</th>\r\n                    <td>The price of product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>cost_price</th>\r\n                    <td>The cost of product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>unlimited</th>\r\n                    <td>Allow to sell when this product is out of stock</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>is_surcharge</th>\r\n                    <td>Is there any extra charge for the product? (no = 0,yes = 1)</td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -3071,7 +3071,7 @@
                     {
                         "name": "productCode",
                         "in": "path",
-                        "description": "<h4>This is the code of the product you are looking for</h4>\n              <code>Type: <b id='require'>String</b></code>",
+                        "description": "<h4>This is the code of the product you are looking for</h4>\r\n              <code>Type: <b id='require'>String</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -3192,7 +3192,7 @@
                     {
                         "name": "productCode",
                         "in": "path",
-                        "description": "<h4>This is the id of the product you need delete</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the product you need delete</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -3266,7 +3266,7 @@
                     {
                         "name": "productCode",
                         "in": "path",
-                        "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>branch</th>\n                    <td>The branch product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>product_is_active</th>\n                    <td>Product active (no = 0, yes = 1)</td>\n                    <td>false (default = 1)</td>\n                </tr>\n                <tr>\n                    <th>product_name</th>\n                    <td>The name of product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>product_barcode</th>\n                    <td>Product barcode</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>product_stock</th>\n                    <td>Product stock</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>product_expire</th>\n                    <td>Date expire of product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>category_id</th>\n                    <td>Category of product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>unit_id</th>\n                    <td>Unit of product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>price</th>\n                    <td>The price of product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>cost_price</th>\n                    <td>The cost of product</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>unlimited</th>\n                    <td>Allow to sell when this product is out of stock</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>is_surcharge</th>\n                    <td>Is there any extra charge for the product? (no = 0,yes = 1)</td>\n                    <td>false</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                        "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>branch</th>\r\n                    <td>The branch product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>product_is_active</th>\r\n                    <td>Product active (no = 0, yes = 1)</td>\r\n                    <td>false (default = 1)</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>product_name</th>\r\n                    <td>The name of product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>product_barcode</th>\r\n                    <td>Product barcode</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>product_stock</th>\r\n                    <td>Product stock</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>product_expire</th>\r\n                    <td>Date expire of product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>category_id</th>\r\n                    <td>Category of product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>unit_id</th>\r\n                    <td>Unit of product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>price</th>\r\n                    <td>The price of product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>cost_price</th>\r\n                    <td>The cost of product</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>unlimited</th>\r\n                    <td>Allow to sell when this product is out of stock</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>is_surcharge</th>\r\n                    <td>Is there any extra charge for the product? (no = 0,yes = 1)</td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                         "required": true
                     }
                 ],
@@ -3411,7 +3411,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "<h4>Number of page to get</h4>\n                    <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>Number of page to get</h4>\r\n                    <code>Type: <b id='require'>Number</b></code>",
                         "required": false,
                         "explode": true,
                         "example": 1
@@ -3419,7 +3419,7 @@
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "<h4>Total number of records to get</h4>\n                    <code>Type: <b id='require'>Number<b></code>",
+                        "description": "<h4>Total number of records to get</h4>\r\n                    <code>Type: <b id='require'>Number<b></code>",
                         "required": false,
                         "explode": true,
                         "example": 5
@@ -3427,7 +3427,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "<h4>Find records with condition get result desire</h4>\n                    <code>Type: <b id='require'>String<b></code><br>\n                    <code>Seach type supported with <b id='require'><(like,=,!=)></b> </code><br>\n                    <code id='require'>If multiple search with connect (,) before</code>",
+                        "description": "<h4>Find records with condition get result desire</h4>\r\n                    <code>Type: <b id='require'>String<b></code><br>\r\n                    <code>Seach type supported with <b id='require'><(like,=,!=)></b> </code><br>\r\n                    <code id='require'>If multiple search with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "parent<=>0"
@@ -3435,7 +3435,7 @@
                     {
                         "name": "order_by",
                         "in": "query",
-                        "description": "<h4>Sort records by colunm</h4>\n                    <code>Type: <b id='require'>String</b></code><br>\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\n                    <code id='require'>If multiple order with connect (,) before</code>",
+                        "description": "<h4>Sort records by colunm</h4>\r\n                    <code>Type: <b id='require'>String</b></code><br>\r\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\r\n                    <code id='require'>If multiple order with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "id:DESC"
@@ -3443,7 +3443,7 @@
                     {
                         "name": "fields",
                         "in": "query",
-                        "description": "<h4>Get only the desired columns</h4>\n                    <code>Type: <b id='require'>String<b></code>",
+                        "description": "<h4>Get only the desired columns</h4>\r\n                    <code>Type: <b id='require'>String<b></code>",
                         "required": false,
                         "explode": true,
                         "example": "id,name,parent"
@@ -3560,7 +3560,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "<h4>Number of page to get</h4>\n                    <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>Number of page to get</h4>\r\n                    <code>Type: <b id='require'>Number</b></code>",
                         "required": false,
                         "explode": true,
                         "example": 1
@@ -3568,7 +3568,7 @@
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "<h4>Total number of records to get</h4>\n                    <code>Type: <b id='require'>Number<b></code>",
+                        "description": "<h4>Total number of records to get</h4>\r\n                    <code>Type: <b id='require'>Number<b></code>",
                         "required": false,
                         "explode": true,
                         "example": 5
@@ -3576,7 +3576,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "<h4>Find records with condition get result desire</h4>\n                    <code>Type: <b id='require'>String<b></code><br>\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s) </code><br>\n                    <code id='require'>If multiple search with connect (,) before</code>",
+                        "description": "<h4>Find records with condition get result desire</h4>\r\n                    <code>Type: <b id='require'>String<b></code><br>\r\n                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>\r\n                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s) </code><br>\r\n                    <code id='require'>If multiple search with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "title<=>example"
@@ -3584,7 +3584,7 @@
                     {
                         "name": "order_by",
                         "in": "query",
-                        "description": "<h4>Sort records by colunm</h4>\n                    <code>Type: <b id='require'>String</b></code><br>\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\n                    <code id='require'>If multiple order with connect (,) before</code>",
+                        "description": "<h4>Sort records by colunm</h4>\r\n                    <code>Type: <b id='require'>String</b></code><br>\r\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\r\n                    <code id='require'>If multiple order with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "id:DESC"
@@ -3592,7 +3592,7 @@
                     {
                         "name": "fields",
                         "in": "query",
-                        "description": "<h4>Get only the desired columns</h4>\n                    <code>Type: <b id='require'>String<b></code>",
+                        "description": "<h4>Get only the desired columns</h4>\r\n                    <code>Type: <b id='require'>String<b></code>",
                         "required": false,
                         "explode": true,
                         "example": "title,status,id"
@@ -3724,7 +3724,7 @@
                 "description": "<h2>This API will Create a ticket with json form below</h2><br><code>Press try it out button to modified</code>",
                 "operationId": "store",
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>title</th>\n                    <td>Title of ticket</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>content</th>\n                    <td>Content of ticket</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>channel</th>\n                    <td>Channel sent request</td>\n                    <td>false (default = api)</td>\n                </tr>\n                <tr>\n                    <th>priority</th>\n                    <td>Ticket importance</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>category</th>\n                    <td>category id of ticket</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>contact</th>\n                    <td>\n                        Use contact id if available <br> \n                        <table>\n                            <tr>\n                                <th>name</th>\n                                <td>Name of contact</td>\n                                <td>true</td>\n                            </tr>\n                            <tr>\n                                <th>email</th>\n                                <td>Email of contact</td>\n                                <td>true if without phone</td>\n                            </tr>\n                            <tr>\n                                <th>phone</th>\n                                <td>Phone of contact</td>\n                                <td>true if without email</td>\n                            </tr>\n                        </table>\n                    </td>\n                    <td>false</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>title</th>\r\n                    <td>Title of ticket</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>content</th>\r\n                    <td>Content of ticket</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>channel</th>\r\n                    <td>Channel sent request</td>\r\n                    <td>false (default = api)</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>priority</th>\r\n                    <td>Ticket importance</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>category</th>\r\n                    <td>category id of ticket</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>contact</th>\r\n                    <td>\r\n                        Use contact id if available <br> \r\n                        <table>\r\n                            <tr>\r\n                                <th>name</th>\r\n                                <td>Name of contact</td>\r\n                                <td>true</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>email</th>\r\n                                <td>Email of contact</td>\r\n                                <td>true if without phone</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>phone</th>\r\n                                <td>Phone of contact</td>\r\n                                <td>true if without email</td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -3871,7 +3871,7 @@
                     {
                         "name": "ticketId",
                         "in": "path",
-                        "description": "<h4>This is the id of the ticket you are looking for</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the ticket you are looking for</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -3976,7 +3976,7 @@
                     {
                         "name": "ticketId",
                         "in": "path",
-                        "description": "<h4>This is the id of the ticket you need delete</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the ticket you need delete</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -4050,7 +4050,7 @@
                     {
                         "name": "ticketId",
                         "in": "path",
-                        "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>title</th>\n                    <td>Title of ticket</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>content</th>\n                    <td>Content of ticket</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>channel</th>\n                    <td>Channel sent request</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>priority</th>\n                    <td>Ticket importance</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>category</th>\n                    <td>category id of ticket</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>contact</th>\n                    <td>\n                        Use contact id if available <br>\n                        <table>\n                            <tr>\n                                <th>name</th>\n                                <td>Name of contact</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>facebook_id</th>\n                                <td>Facebook code of contact</td>\n                                <td>false</td>\n                            </tr>\n                            <tr>\n                                <th>email</th>\n                                <td>Email of contact</td>\n                                <td>true if without phone</td>\n                            </tr>\n                            <tr>\n                                <th>phone</th>\n                                <td>Phone of contact</td>\n                                <td>true if without email</td>\n                            </tr>\n                        </table>\n                    </td>\n                    <td>false</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                        "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>title</th>\r\n                    <td>Title of ticket</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>content</th>\r\n                    <td>Content of ticket</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>channel</th>\r\n                    <td>Channel sent request</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>priority</th>\r\n                    <td>Ticket importance</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>category</th>\r\n                    <td>category id of ticket</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>contact</th>\r\n                    <td>\r\n                        Use contact id if available <br>\r\n                        <table>\r\n                            <tr>\r\n                                <th>name</th>\r\n                                <td>Name of contact</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>facebook_id</th>\r\n                                <td>Facebook code of contact</td>\r\n                                <td>false</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>email</th>\r\n                                <td>Email of contact</td>\r\n                                <td>true if without phone</td>\r\n                            </tr>\r\n                            <tr>\r\n                                <th>phone</th>\r\n                                <td>Phone of contact</td>\r\n                                <td>true if without email</td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                         "required": true
                     }
                 ],
@@ -4188,7 +4188,7 @@
                     {
                         "name": "ticketId",
                         "in": "path",
-                        "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>private</th>\n                    <td>(0: normal, 1: internal note)</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>content</th>\n                    <td>Content of comment</td>\n                    <td>true</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                        "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>private</th>\r\n                    <td>(0: normal, 1: internal note)</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>content</th>\r\n                    <td>Content of comment</td>\r\n                    <td>true</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                         "required": true
                     }
                 ],
@@ -4467,7 +4467,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "<h4>Number of page to get</h4>\n                    <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>Number of page to get</h4>\r\n                    <code>Type: <b id='require'>Number</b></code>",
                         "required": false,
                         "explode": true,
                         "example": 1
@@ -4475,7 +4475,7 @@
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "<h4>Total number of records to get</h4>\n                    <code>Type: <b id='require'>Number<b></code>",
+                        "description": "<h4>Total number of records to get</h4>\r\n                    <code>Type: <b id='require'>Number<b></code>",
                         "required": false,
                         "explode": true,
                         "example": 5
@@ -4483,7 +4483,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "<h4>Find records with condition get result desire</h4>\n                    <code>Type: <b id='require'>String<b></code><br>\n                    <code>Seach type supported with <b id='require'><(like,=,!=)></b> </code><br>\n                    <code id='require'>If multiple search with connect (,) before</code>",
+                        "description": "<h4>Find records with condition get result desire</h4>\r\n                    <code>Type: <b id='require'>String<b></code><br>\r\n                    <code>Seach type supported with <b id='require'><(like,=,!=)></b> </code><br>\r\n                    <code id='require'>If multiple search with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "fullname<like>Nguyễn"
@@ -4491,7 +4491,7 @@
                     {
                         "name": "order_by",
                         "in": "query",
-                        "description": "<h4>Sort records by colunm</h4>\n                    <code>Type: <b id='require'>String</b></code><br>\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\n                    <code id='require'>If multiple order with connect (,) before</code>",
+                        "description": "<h4>Sort records by colunm</h4>\r\n                    <code>Type: <b id='require'>String</b></code><br>\r\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\r\n                    <code id='require'>If multiple order with connect (,) before</code>",
                         "required": false,
                         "explode": true,
                         "example": "id:DESC"
@@ -4499,7 +4499,7 @@
                     {
                         "name": "fields",
                         "in": "query",
-                        "description": "<h4>Get only the desired columns</h4>\n                    <code>Type: <b id='require'>String<b></code>",
+                        "description": "<h4>Get only the desired columns</h4>\r\n                    <code>Type: <b id='require'>String<b></code>",
                         "required": false,
                         "explode": true,
                         "example": "fullname,phone,email"
@@ -4615,7 +4615,7 @@
                 "description": "<h2>This API will Create a agent with json form below</h2><br><code>Press try it out button to modified</code>",
                 "operationId": "store",
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>firstname</th>\n                    <td>The first name of agent</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>lastname</th>\n                    <td>The last name of agent</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>password</th>\n                    <td>Password (Password must contain at least one special character and number)</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>password_confirmation</th>\n                    <td>Confirm password (valid to password)</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>phone</th>\n                    <td>Phone number agent</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>email</th>\n                    <td>Email address agent</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>account_type</th>\n                    <td>Account type ( 'agent','supervisor','admin' )</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>perrmission</th>\n                    <td>Permission of agent</td>\n                    <td>true</td>\n                </tr>\n                <tr>\n                    <th>role</th>\n                    <td>Role of agent ('sales','cs','telephonist')</td>\n                    <td>true</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>firstname</th>\r\n                    <td>The first name of agent</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>lastname</th>\r\n                    <td>The last name of agent</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>password</th>\r\n                    <td>Password (Password must contain at least one special character and number)</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>password_confirmation</th>\r\n                    <td>Confirm password (valid to password)</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>phone</th>\r\n                    <td>Phone number agent</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>email</th>\r\n                    <td>Email address agent</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>account_type</th>\r\n                    <td>Account type ( 'agent','supervisor','admin' )</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>perrmission</th>\r\n                    <td>Permission of agent</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>role</th>\r\n                    <td>Role of agent ('sales','cs','telephonist')</td>\r\n                    <td>true</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -4752,7 +4752,7 @@
                     {
                         "name": "agentId",
                         "in": "path",
-                        "description": "<h4>This is the code of the agent you are looking for</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the code of the agent you are looking for</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -4849,7 +4849,7 @@
                     {
                         "name": "agentId",
                         "in": "path",
-                        "description": "<h4>This is the id of the agent you need delete</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the agent you need delete</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
@@ -4923,13 +4923,13 @@
                     {
                         "name": "agentId",
                         "in": "path",
-                        "description": "<h4>This is the id of the agent you need update</h4>\n              <code>Type: <b id='require'>Number</b></code>",
+                        "description": "<h4>This is the id of the agent you need update</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
                         "required": true,
                         "example": 1
                     }
                 ],
                 "requestBody": {
-                    "description": "<table id='my-custom-table'>\n                <tr>\n                    <th>Name</th>\n                    <th>Description</th>\n                    <td><b id='require'>Required</b></td>\n                </tr>\n                <tr>\n                    <th>firstname</th>\n                    <td>The first name of agent</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>lastname</th>\n                    <td>The last name of agent</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>password</th>\n                    <td>Password (Password must contain at least one special character and number)</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>password_confirmation</th>\n                    <td>Confirm password (valid to password)</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>phone</th>\n                    <td>Phone number agent</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>email</th>\n                    <td>Email address agent</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>account_type</th>\n                    <td>Account type ( 'agent','supervisor','admin' )</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>perrmission</th>\n                    <td>Permission of agent</td>\n                    <td>false</td>\n                </tr>\n                <tr>\n                    <th>role</th>\n                    <td>Role of agent ('sales','cs','telephonist')</td>\n                    <td>false</td>\n                </tr>\n            </table><br><code>Click Schema to view data property</code>",
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>firstname</th>\r\n                    <td>The first name of agent</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>lastname</th>\r\n                    <td>The last name of agent</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>password</th>\r\n                    <td>Password (Password must contain at least one special character and number)</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>password_confirmation</th>\r\n                    <td>Confirm password (valid to password)</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>phone</th>\r\n                    <td>Phone number agent</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>email</th>\r\n                    <td>Email address agent</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>account_type</th>\r\n                    <td>Account type ( 'agent','supervisor','admin' )</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>perrmission</th>\r\n                    <td>Permission of agent</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>role</th>\r\n                    <td>Role of agent ('sales','cs','telephonist')</td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
                     "required": true,
                     "content": {
                         "application/json": {
