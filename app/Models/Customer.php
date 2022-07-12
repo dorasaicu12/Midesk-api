@@ -45,11 +45,11 @@ class Customer extends Model
         /// search
         if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
 
-            if(strpos($req['search'], '=') !== false){
-                $key_search = explode('=', $req['search']);
+            if(strpos($req['search'], '<=>') !== false){
+                $key_search = explode('<=>', $req['search']);
                 $type = '=';
-            }else if(strpos($req['search'], 'like') !== false){
-                $key_search = explode('like', $req['search']);
+            }else if(strpos($req['search'], '<like>') !== false){
+                $key_search = explode('<like>', $req['search']);
                 $type = 'like';
                 $key_search[1] = '%'.$key_search[1].'%';
             }else if(strpos($req['search'], '<>') !== false){

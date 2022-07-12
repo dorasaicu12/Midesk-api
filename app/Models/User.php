@@ -36,6 +36,7 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
     
+    
     protected $table = 'table_users';
     /**
      * The attributes that are mass assignable.
@@ -119,5 +120,4 @@ class User extends Authenticatable implements JWTSubject
         }
         return self::$allPermissions;
     }
-
 }

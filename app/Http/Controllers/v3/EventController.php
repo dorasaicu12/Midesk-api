@@ -108,6 +108,10 @@ class EventController extends Controller
     *     }
     * )
     */
+    
+    protected $array_remind_type = ['date','daily','weekly','monthly','yearly'];
+    protected $array_event_source = ['agent','contact','customer'];
+    
     public function index(Request $request)
     {
         $req = $request->all();
@@ -552,7 +556,7 @@ class EventController extends Controller
     */
     public function update(Request $request, $id)
     {
-        $event = (new Event)->showOne($id);
+        $event = Event::where('id', $id)->first();
         if (!$event) {
             return MyHelper::response(false,'Event do not exist', [],404);
         }
@@ -627,6 +631,20 @@ class EventController extends Controller
         }
 
     }
+
+    public function eventForm()
+    {
+        $groupid = auth()->user()->groupid;
+        $data = [];
+        $data['category'] = (new EventType)->getAll();
+        $data['type_remind'] = $this->array_remind_type; 
+        $data['team'] = Team::select('team_id','team_name')->where('groupid',$groupid)->get();
+        $data['agent'] = TeamStaff::select('team_id','agent_id')->with(['Agent' => function ($q){
+            $q->select('id','fullname');
+        }])->where('groupid',$groupid)->get();
+        return MyHelper::response(true,'Create event successfully', $data,200);
+    }
+
 
     /**
     * @OA\Delete(
