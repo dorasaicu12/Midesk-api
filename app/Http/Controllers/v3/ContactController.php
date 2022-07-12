@@ -118,7 +118,7 @@ class ContactController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
-        $contacts = (new Contact)->getListDefault($req);
+        $contacts = (new Contact)->getDefault($req);
         return MyHelper::response(true,'Successfully',$contacts,200);
     }
 

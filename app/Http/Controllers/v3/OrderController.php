@@ -17,7 +17,7 @@ use App\Models\Product;
 use App\Models\Ticket;
 use App\Traits\ProcessTraits;
 use Illuminate\Support\Facades\Log;
-use App\Models\Customer;
+
 use Auth;
 use DB;
 /**
@@ -496,7 +496,7 @@ class OrderController extends Controller
                 $customer_locate = $request->customer['locate'];
 
                 $customer = new Customer;
-                $check_customer = $customer->checkCustomer($customer_phone,$customer_email);
+                $check_customer = Customer::where('phone',$customer_phone,$customer_email)->where('email',$customer_email)->first();
                 if(!$check_customer){
                     $customer->groupid       = $groupid;
                     $customer->fullname      = $customer_name;
@@ -507,6 +507,7 @@ class OrderController extends Controller
                     $id_customer = $customer->id;
                     $fullname_customer = $customer->fullname;
                 }else{
+
                     $id_customer = $check_customer->id;
                     $fullname_customer = $check_customer->fullname;
                 }

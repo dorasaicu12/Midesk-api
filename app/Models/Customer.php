@@ -20,7 +20,7 @@ class Customer extends Model
     const FROM = 0;
     const KEYS = 'fullname';
 
-    public function getDefault($req)
+    public function getListDefault($req)
     {
         $res = new self;
         /// paginate
