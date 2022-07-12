@@ -5,18 +5,37 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use Auth;
+use App\Traits\ModelsTraits;
+
 class Ticket extends Model
 {
+    use ModelsTraits;
+
     public $timestamps = false;
     public $fillabled = false;
-    protected $fillable = ['title','priority','status','category','assign_agent','assign_team','requester','groupid','createby','channel','requester_type','datecreate','is_delete','is_delete_date','is_delete_creby'];
+    protected $DELETE = [NULL,0];
+    protected $fillable = [
+                            'id',
+                            'ticket_id',
+                            'title',
+                            'priority',
+                            'status',
+                            'category',
+                            'assign_agent',
+                            'assign_team',
+                            'requester',
+                            'groupid',
+                            'createby',
+                            'channel',
+                            'requester_type',
+                            'datecreate',
+                            'is_delete',
+                            'is_delete_date',
+                            'is_delete_creby'
+                        ];
+                        
 	protected $table = 'ticket';
-    const DELETED = 1;
-    const DELETE = [NULL,0];
-    const ORDERBY = 'id:asc';
-    const FROM = 0;
-    const TAKE = 10;
-    const KEYS = 'title';
+
     function __construct()
     {
 		$groupid = auth::user()->groupid;
@@ -87,11 +106,31 @@ class Ticket extends Model
     }
     public function getTicketsDetail()
     {
-    	return $this->hasMany(TicketDetail::class,'ticket_id','id');
+    	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable());
     }
     public function getTicketAssign()
     {
         return $this->hasOne(User::class,'id','assign_agent');
+    }
+    public function getTicketTag()
+    {
+        return $this->hasOne(Tags::class,'id','tag');
+    }
+    public function getTicketLabel()
+    {
+        return $this->hasOne(TicketLabel::class,'id','label');
+    }
+    public function getTicketAssignTeam()
+    {
+        return $this->hasOne(Team::class,'team_id','assign_team');
+    }
+    public function getTicketPriority()
+    {
+        return $this->hasOne(TicketPriority::class,'id','priority');
+    }
+    public function getTicketCategory()
+    {
+        return $this->hasOne(TicketCategory::class,'id','category');
     }
 	static function insert($table,$ins,$returnID=true){
 		if($returnID) return DB::table($table)->insertGetId($ins);
@@ -141,10 +180,10 @@ class Ticket extends Model
 		return (array) $query->limit(1)->first();
 		// echo $query->toSql();		
 	}
-    static function showOne($id='')
+    public function showOne($id='')
     {
-        $delete = self::DELETE;
-        return self::with(['getTicketAssign'=> function ($q)
+        $delete = $this->DELETE;
+        $ticket = self::select($this->fillable)->with(['getTicketAssign'=> function ($q)
         {
             $q->select(['id','fullname']);
         },'getTicketsDetail.getTicketCreator' => function ($q)
@@ -155,10 +194,29 @@ class Ticket extends Model
         ->where(function($q) use ($delete) {
             $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
         })->first();
+        if (!$ticket) {
+            return [];
+        }
+        switch ($ticket->requester_type) {
+            case 'contact':
+                $ticket->requester_info = Contact::select('fullname','phone')->where(function($q) use ($delete) {
+                    $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+                })->find($ticket->requester);
+                break;
+            case 'agent':
+                $ticket->requester_info = User::select('fullname','phone')->find($ticket->requester);
+                break;
+            case 'customer':
+                $ticket->requester_info = Customer::select('fullname','phone')->where(function($q) use ($delete) {
+                    $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+                })->find($ticket->requester);
+                break;
+        }
+        return $ticket;
     }
     public function checkExist_mtmb($orid='',$prcode='')
     {
-        $delete = self::DELETE;
+        $delete = $this->DELETE;
         return self::leftjoin('product',function ($join='') {
             $join->on(self::getTable().'.mt_productid','=','product.id');
         })->where('mt_orderid',$orid)->where('product.product_code',$prcode)

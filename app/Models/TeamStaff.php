@@ -13,4 +13,8 @@ class TeamStaff extends Model
 	{
 		return $this->hasOne(User::class,'id','agent_id');
 	}
+	public function Team()
+	{
+		return $this->hasOne(Team::class,'team_id','team_id');
+	}
 }

@@ -70,7 +70,7 @@
                 <div class="title m-b-md">
                     MIDESK API
                 </div>
-                <a href="https://api-docs.midesk.vn">Reference document here</a>
+                <a href="{{ url()->current() }}/api/docs">Reference document here</a>
              
             </div>
         </div>

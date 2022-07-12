@@ -34,6 +34,38 @@
     .swagger-ui .topbar{
       background: linear-gradient(to bottom,#5fb85f,#5fb85f);
     }
+    .renderedMarkdown p{
+      margin: 2px!important;
+    }
+    .renderedMarkdown h4{
+      margin: 10px 0px 10px 0px!important;
+    }
+    .renderedMarkdown h2{
+      margin: 0px!important;
+    }
+    .renderedMarkdown code{
+      line-height: 30px
+    }
+    .swagger-ui .opblock-description-wrapper{
+      margin: 0px!important;
+    }
+    #require{
+      color: rgba(255,0,0,.6) !important;
+    }
+    .swagger-ui table thead tr td, .swagger-ui table thead tr th{
+      font-size: 20px!important;
+    }
+    #my-custom-table{
+      width: 50%!important;
+      margin-top: 10px!important;
+      font-size: 14px !important;
+    }
+    #my-custom-table tbody tr th{
+      text-align: left !important;
+    }
+    #my-custom-table tbody tr{
+      border-bottom: 1px solid rgba(255,0,0,.6) !important;
+    }
   </style>
 </head>
 

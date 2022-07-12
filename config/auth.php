@@ -72,7 +72,7 @@ return [
 
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\AuthByUser::class,
+            'model' => App\Models\User::class,
         ]
     ],
 

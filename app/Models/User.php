@@ -10,6 +10,9 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
+    
+    protected static $allPermissions = null;
+    const ACTIVE = 1;
 
     // Rest omitted for brevity
 
@@ -59,8 +62,11 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-
+    /**
+     * The roles user.
+     *
+     * @var array
+     */
     public function Roles()
     {
     	return $this->hasOne(UserType::class,'id','user_type_id');
