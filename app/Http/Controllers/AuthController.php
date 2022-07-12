@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\AuthByUser;
+use App\Models\User;
 use App\Models\Group;
+use App\Http\Functions\MyHelper;
 use Auth;
 use JWTAuth;
 /**
@@ -64,92 +65,26 @@ class AuthController extends Controller
     */
     public function login(Request $request)
     {   
-        $check_user = new AuthByUser;
-        $user = $check_user->Check($request->all());
-        if ($user) {
-            $token = JWTAuth::fromUser($user);
+        $check_user = new User;
+        $token = auth('api')->attempt($request->all());
+        if ($token) {
+            $user = auth()->user();
+            if ($user->active == 0) {   
+                return MyHelper::response(false,'Your account is locked, can\'t login',[],403);
+            }
             $token = $this->respondWithToken($token)->original;
-            $token['roles']=[
-            'name'=>$user['fullname'],
-            'level'=>$user['level']
-        ];
-        $token['permissions']=[
-            "dashboard_cskh" => [
-                "view"
-            ],
-            "report_cskh"=>[
-                "view"
-            ],
-            "dashboard"=> [
-                "view"
-            ],
-            "timeline"=> [
-                "view",
-                "edit",
-                "delete",
-                "view_data"
-            ],
-            "social"=>[
-                "view"
-            ],
-            "other_event"=> [
-                "view",
-                "add",
-                "edit",
-                "delete"
-            ],
-            "order"=> [
-                "view",
-                "edit",
-                "delete"
-            ],
-            "order_event"=> [
-                "view"
-            ],
-            "agent"=>[
-                "view",
-                "add",
-                "edit",
-                "delete"
-            ],
-            "customer"=>[
-                "view",
-                "add",
-                "edit",
-                "delete",
-                "view_data"
-            ],
-            "contact"=> [
-                "view",
-                "add",
-                "edit",
-                "delete",
-                "view_data"
-            ],
-            "report"=>[
-                "view"
-            ],
-            "setting"=> [
-                "view",
-                "edit",
-                "delete"
-            ],
-            "hide_phone"=> [
-                "view"
-            ],
-            "call_center" => [
-                "view",
-                "edit",
-                "delete"
-            ],
-            "webrtc"=>[
-                "view"
-            ]
-
-        ];
-            return response()->json($token, 201);
+            $typeRole = $user->Roles()->get('name')->pluck('name');
+            $permissions = $user->Permissions()->get(['page','action']);
+            $format_permisssions = [];
+            foreach ($permissions as $key => $permission) {
+                $format_permisssions[$permission['page']][] = $permission['action'];
+            }
+            $token['permissions'] = $format_permisssions;
+            $token['roles']['name'] = $user->class_staff;
+            $token['roles']['type'] = $typeRole;
+            return MyHelper::response(true,'Successfully',$token,200);
         }else{
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return MyHelper::response(false,'Unauthorized',[],401);
         }
     }
 

@@ -14,7 +14,9 @@ use App\Models\Ticket;
 use App\Models\OrderStatus;
 use App\Models\ModelsTrait;
 use Illuminate\Support\Facades\Log;
+use App\Models\Customer;
 use Auth;
+use DB;
 /**
  * @group  Order Management
  *
@@ -31,6 +33,17 @@ class OrderController extends Controller
         $orders = new Order;
         $orders = $orders->getDefault($req);
         return MyHelper::response(true,'Successfully',$orders,200);
+    }
+
+    public function show($id)
+    {
+        $customer = Order::ShowOne($id);
+        if($customer){
+            return MyHelper::response(true,'Successfully',$customer,200);
+        }else{
+            return MyHelper::response(false,'order not found',$customer,404);
+        }
+        
     }
 
 
@@ -52,8 +65,50 @@ class OrderController extends Controller
         }else{
             $id_contact = $id_contact->id;
         }
-        $product_list = $request->products;
+        //check customer
+        $customer_list=[$request->customer];
+        foreach($customer_list as $key2 =>$cus ){
+            $checkcustomer=Customer::where('phone', $cus['phone'] )->where('email',$cus['email'])->first();
+            if(!$checkcustomer){
+                //tao customer khi ko tim ra customer
+                $channel_list  = ['facebook', 'zalo', 'webform', 'email', 'web', 'api'];
+                $channel = 'api';
+                if (array_key_exists('channel', $request)) {
+                    if (in_array($request->channel, $channel_list)) {
+                        $channel = $request->channel;
+                    }
+                }
+                $customer['groupid']  = auth::user()->groupid;
+                $customer['fullname'] = $cus['fullname'];
+                $customer['phone']   = $cus['phone'] ?? null;
+                $customer['email']   = $cus['email'] ?? null;
+                $customer['address']   = $cus['address'] ?? null;
+                $customer['province']   = $cus['province'] ?? null;
+                $customer['createby']   = auth::user()->id;
+                $customer['datecreate']   = time();
+                $customer['channel']   = $channel;
         
+                DB::beginTransaction();
+                try {
+                    $response = Customer::create($customer);
+        
+                DB::commit();
+                $customer = Customer::ShowOne($response->id);
+                    //tao customer thanh cong
+
+                } catch (\Exception $ex) {
+        
+                DB::rollback();
+                    return MyHelper::response(false,$ex->getMessage(), [],500);
+                }
+                $id_customer = $customer->id;
+            }else{
+                $id_customer = $checkcustomer->id;
+            }
+        }
+
+
+        $product_list = $request->products;
         $message = [];
         foreach ($product_list as $key => $prd) {
             if (!$prd['code_product'] || !$prd['name_product']) {
@@ -79,7 +134,8 @@ class OrderController extends Controller
                 $id_product = $id_product->id;
             }
         }
-        return MyHelper::response(true,(empty($message) ? 'Created Order successfully' : $message ),[],200);
+        
+        return MyHelper::response(true,(empty($message) ? 'Created Order successfully' : $message ),[$id_customer],200);
     }
 
 

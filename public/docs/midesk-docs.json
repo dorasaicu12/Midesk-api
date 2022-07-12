@@ -111,7 +111,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "Condition to find contact ({$key}<=>{$value})",
+                        "description": "Condition to find contact ({$key}={$value})",
                         "required": false,
                         "explode": true
                     },
@@ -711,6 +711,155 @@
                 ]
             }
         },
+        "/api/v3/ticketCategory": {
+            "get": {
+                "tags": [
+                    "Ticket Category"
+                ],
+                "summary": "Get list category of ticket",
+                "description": "<h2>This API will Get list category of ticket with condition below</h2>",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "<h4>Number of page to get</h4>\r\n                    <code>Type: <b id='require'>Number</b></code>",
+                        "required": false,
+                        "explode": true,
+                        "example": 1
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "<h4>Total number of records to get</h4>\r\n                    <code>Type: <b id='require'>Number<b></code>",
+                        "required": false,
+                        "explode": true,
+                        "example": 5
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "<h4>Find records with condition get result desire</h4>\r\n                    <code>Type: <b id='require'>String<b></code><br>\r\n                    <code>Seach type supported with <b id='require'><(like,=,!=)></b> </code><br>\r\n                    <code id='require'>If multiple search with connect (,) before</code>",
+                        "required": false,
+                        "explode": true,
+                        "example": "parent<=>0"
+                    },
+                    {
+                        "name": "order_by",
+                        "in": "query",
+                        "description": "<h4>Sort records by colunm</h4>\r\n                    <code>Type: <b id='require'>String</b></code><br>\r\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\r\n                    <code id='require'>If multiple order with connect (,) before</code>",
+                        "required": false,
+                        "explode": true,
+                        "example": "id:DESC"
+                    },
+                    {
+                        "name": "fields",
+                        "in": "query",
+                        "description": "<h4>Get only the desired columns</h4>\r\n                    <code>Type: <b id='require'>String<b></code>",
+                        "required": false,
+                        "explode": true,
+                        "example": "id,name,parent"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "data": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string",
+                                                            "example": "109"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Yêu cầu"
+                                                        },
+                                                        "parent": {
+                                                            "type": "string",
+                                                            "example": "0"
+                                                        },
+                                                        "parent2": {
+                                                            "type": "string",
+                                                            "example": "109"
+                                                        },
+                                                        "level": {
+                                                            "type": "string",
+                                                            "example": "1"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "current_page": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "last_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "from": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "to": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "total": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://api-dev2021.midesk.vn/api/v3/ticketCategory"
+                                                },
+                                                "last_page": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/api/v3/ticket": {
             "get": {
                 "tags": [
@@ -1266,6 +1415,596 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Ticket not found"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v3/agent": {
+            "get": {
+                "tags": [
+                    "Agent"
+                ],
+                "summary": "Get list agent",
+                "description": "<h2>This API will Get list agent with condition below</h2>",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "<h4>Number of page to get</h4>\r\n                    <code>Type: <b id='require'>Number</b></code>",
+                        "required": false,
+                        "explode": true,
+                        "example": 1
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "<h4>Total number of records to get</h4>\r\n                    <code>Type: <b id='require'>Number<b></code>",
+                        "required": false,
+                        "explode": true,
+                        "example": 5
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "<h4>Find records with condition get result desire</h4>\r\n                    <code>Type: <b id='require'>String<b></code><br>\r\n                    <code>Seach type supported with <b id='require'><(like,=,!=)></b> </code><br>\r\n                    <code id='require'>If multiple search with connect (,) before</code>",
+                        "required": false,
+                        "explode": true,
+                        "example": "fullname<like>Nguyễn"
+                    },
+                    {
+                        "name": "order_by",
+                        "in": "query",
+                        "description": "<h4>Sort records by colunm</h4>\r\n                    <code>Type: <b id='require'>String</b></code><br>\r\n                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>\r\n                    <code id='require'>If multiple order with connect (,) before</code>",
+                        "required": false,
+                        "explode": true,
+                        "example": "id:DESC"
+                    },
+                    {
+                        "name": "fields",
+                        "in": "query",
+                        "description": "<h4>Get only the desired columns</h4>\r\n                    <code>Type: <b id='require'>String<b></code>",
+                        "required": false,
+                        "explode": true,
+                        "example": "fullname,phone,email"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "data": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string",
+                                                            "example": "1"
+                                                        },
+                                                        "firstname": {
+                                                            "type": "string",
+                                                            "example": "văn A"
+                                                        },
+                                                        "lastname": {
+                                                            "type": "string",
+                                                            "example": "Nguyễn"
+                                                        },
+                                                        "phone": {
+                                                            "type": "string",
+                                                            "example": "0987654321"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "abcxyz@gmail.com"
+                                                        },
+                                                        "address": {
+                                                            "type": "string",
+                                                            "example": "212/123b"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "current_page": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "last_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                },
+                                                "from": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "to": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "total": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://api-dev2021.midesk.vn/api/v3/agent"
+                                                },
+                                                "last_page": {
+                                                    "type": "string",
+                                                    "example": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Agent"
+                ],
+                "summary": "Create a agent",
+                "description": "<h2>This API will Create a agent with json form below</h2><br><code>Press try it out button to modified</code>",
+                "operationId": "store",
+                "requestBody": {
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>firstname</th>\r\n                    <td>The first name of agent</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>lastname</th>\r\n                    <td>The last name of agent</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>password</th>\r\n                    <td>Password (Password must contain at least one special character and number)</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>password_confirmation</th>\r\n                    <td>Confirm password (valid to password)</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>phone</th>\r\n                    <td>Phone number agent</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>email</th>\r\n                    <td>Email address agent</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>account_type</th>\r\n                    <td>Account type ( 'agent','supervisor','admin' )</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>perrmission</th>\r\n                    <td>Permission of agent</td>\r\n                    <td>true</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>role</th>\r\n                    <td>Role of agent ('sales','cs','telephonist')</td>\r\n                    <td>true</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "firstname",
+                                    "lastname",
+                                    "password",
+                                    "password_confirmation",
+                                    "phone",
+                                    "email",
+                                    "account_type",
+                                    "perrmission",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string",
+                                        "example": "Nguyễn"
+                                    },
+                                    "lastname": {
+                                        "type": "string",
+                                        "example": "Văn A"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "012345564"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "abcxyz@gmail.com"
+                                    },
+                                    "account_type": {
+                                        "type": "string",
+                                        "example": "agent"
+                                    },
+                                    "perrmission": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "cs"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Create Agent Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Create Agent Successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "agent_id": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Create Agent failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "firstname": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "the firstname field is required"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v3/agent/{agentId}": {
+            "get": {
+                "tags": [
+                    "Agent"
+                ],
+                "summary": "Find agent by agentId",
+                "description": "<h2>This API will find agent by {agentId} and return only a single record</h2>",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "agentId",
+                        "in": "path",
+                        "description": "<h4>This is the code of the agent you are looking for</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "firstname": {
+                                                    "type": "string",
+                                                    "example": "văn A"
+                                                },
+                                                "lastname": {
+                                                    "type": "string",
+                                                    "example": "Nguyễn"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "0987654321"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "abcxyz@gmail.com"
+                                                },
+                                                "address": {
+                                                    "type": "string",
+                                                    "example": "212/123b"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Will be return agent not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Agent not found"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Agent"
+                ],
+                "summary": "Delete a agent by agentId",
+                "description": "<h2>This API will delete a agent by agentId</h2>",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "agentId",
+                        "in": "path",
+                        "description": "<h4>This is the id of the agent you need delete</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete agent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Delete agent successfully"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Agent not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Agent not found"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v3/agent/{$agentId}": {
+            "put": {
+                "tags": [
+                    "Agent"
+                ],
+                "summary": "Update agent by agentId",
+                "description": "<h2>This API will update a agent by agentId and the value json form below</h2><br><code>Press try it out button to modified</code>",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "agentId",
+                        "in": "path",
+                        "description": "<h4>This is the id of the agent you need update</h4>\r\n              <code>Type: <b id='require'>Number</b></code>",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "<table id='my-custom-table'>\r\n                <tr>\r\n                    <th>Name</th>\r\n                    <th>Description</th>\r\n                    <td><b id='require'>Required</b></td>\r\n                </tr>\r\n                <tr>\r\n                    <th>firstname</th>\r\n                    <td>The first name of agent</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>lastname</th>\r\n                    <td>The last name of agent</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>password</th>\r\n                    <td>Password (Password must contain at least one special character and number)</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>password_confirmation</th>\r\n                    <td>Confirm password (valid to password)</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>phone</th>\r\n                    <td>Phone number agent</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>email</th>\r\n                    <td>Email address agent</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>account_type</th>\r\n                    <td>Account type ( 'agent','supervisor','admin' )</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>perrmission</th>\r\n                    <td>Permission of agent</td>\r\n                    <td>false</td>\r\n                </tr>\r\n                <tr>\r\n                    <th>role</th>\r\n                    <td>Role of agent ('sales','cs','telephonist')</td>\r\n                    <td>false</td>\r\n                </tr>\r\n            </table><br><code>Click Schema to view data property</code>",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "firstname",
+                                    "lastname",
+                                    "password",
+                                    "password_confirmation",
+                                    "phone",
+                                    "email",
+                                    "account_type",
+                                    "perrmission",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string",
+                                        "example": "Nguyễn"
+                                    },
+                                    "lastname": {
+                                        "type": "string",
+                                        "example": "Văn A"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "012345564"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "abcxyz@gmail.com"
+                                    },
+                                    "account_type": {
+                                        "type": "string",
+                                        "example": "agent"
+                                    },
+                                    "perrmission": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "cs"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Update agent successfully"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "[]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Will be return agent not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Agent not found"
                                         },
                                         "data": {
                                             "type": "string",

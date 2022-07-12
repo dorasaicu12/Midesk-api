@@ -45,11 +45,11 @@ class Order extends Model
         /// search
         if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
 
-            if(strpos($req['search'], '=') !== false){
-                $key_search = explode('=', $req['search']);
+            if(strpos($req['search'], '<=>') !== false){
+                $key_search = explode('<=>', $req['search']);
                 $type = '=';
-            }else if(strpos($req['search'], 'like') !== false){
-                $key_search = explode('like', $req['search']);
+            }else if(strpos($req['search'], '<like>') !== false){
+                $key_search = explode('<like>', $req['search']);
                 $type = 'like';
                 $key_search[1] = '%'.$key_search[1].'%';
             }else if(strpos($req['search'], '<>') !== false){
@@ -62,7 +62,7 @@ class Order extends Model
         if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
             $order_by = explode(',', $req['order_by']);
             foreach ($order_by as $key => $value) {
-                $c = explode(':', $value);
+                $c = explode('=', $value);
                 $by = $c[0];
                 $order = $c[1];
                 $res = $res->orderBy($by, $order);
@@ -80,5 +80,14 @@ class Order extends Model
         ->offset($from)
         ->limit($limit)
         ->paginate($limit)->appends(request()->query());
+    }
+
+
+    public static function ShowOne($id)
+    {
+        $delete = self::DELETE;
+        $groupid = auth::user()->groupid;
+        return self::where(function($q) use ($delete) {
+            })->find($id);
     }
 }

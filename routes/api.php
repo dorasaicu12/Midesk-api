@@ -34,6 +34,7 @@ Route::group(['prefix' => 'v3'], function () {
 
         Route::apiResource('order', 'OrderController')->except('create','edit');
         Route::apiResource('event', 'EventController')->except('create','edit');
+        Route::get('event/eventForm', 'EventController@eventForm');
 
     });
 

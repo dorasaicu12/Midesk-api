@@ -14,6 +14,7 @@ class Event extends Model
     const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
+    protected $fillable = ['event_title'];
 
 	public function getDefault($req)
     {
