@@ -32,9 +32,10 @@ Route::group(['prefix' => 'v3'], function () {
         Route::apiResource('customer', 'CustomerController')->except('create','edit');
         Route::apiResource('product', 'ProductController')->only('store');   
 
-        Route::apiResource('order', 'OrderController')->except('create','edit');
-        Route::apiResource('event', 'EventController')->except('create','edit');
-        Route::get('event/eventForm', 'EventController@eventForm');
+        Route::apiResource('order', 'OrderController');
+        Route::get('event/eventForm', 'EventController@eventForm')->name('event.form');
+        Route::apiResource('event', 'EventController');
+        Route::apiResource('agent', 'UserController');
 
     });
 
