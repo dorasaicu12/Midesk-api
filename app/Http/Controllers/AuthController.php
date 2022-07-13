@@ -103,12 +103,8 @@ class AuthController extends Controller
                 $format_permisssions[$permission['page']][] = $permission['action'];
             }
             $id=$user->id;
-             $team_infor=(new TeamStaff)->getTeamInfor($id);
-          
+            $team_infor=(new TeamStaff)->getTeamInfor($id);
 
-            $team=Teamstaff::where('agent_id',$id)->get();
-
-      
             $token['roles']['name'] = $user->class_staff;
             $token['roles']['type'] = $typeRole;
             $token['department'] = $team_infor;

@@ -582,7 +582,7 @@ trait ProcessTraits {
                 $html_msg .= $data['content'];
             }
         }
-        $ticket_detail->content_system = $html_msg;
+        $ticket_detail->content = $html_msg;
         $ticket_detail->save();
 
         $ndata = array(
