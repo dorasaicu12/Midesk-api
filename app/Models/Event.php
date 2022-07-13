@@ -16,7 +16,7 @@ class Event extends Model
     const FROM = 0;
     protected $fillable = ['event_title'];
 
-	public function getDefault($req)
+	public function getListDefault($req)
     {
         $res = new self;
         /// paginate
@@ -58,13 +58,13 @@ class Event extends Model
         if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
             $order_by = explode(',', $req['order_by']);
             foreach ($order_by as $key => $value) {
-                $c = explode(':', $value);
+                $c = explode('=', $value);
                 $by = $c[0];
                 $order = $c[1];
                 $res = $res->orderBy($by, $order);
             }
         }else{
-            $c = explode(':', self::ORDERBY);
+            $c = explode('=', self::ORDERBY);
             $by = $c[0];
             $order = $c[1];
             $res = $res->orderBy($by, $order);
