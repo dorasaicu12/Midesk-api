@@ -188,8 +188,9 @@ class TicketController extends Controller
     * )
     */
     public function show($id)
-    {
-        $ticket = Ticket::showOne($id);
+    { 
+        $ticket_var=new Ticket;
+        $ticket = $ticket_var->showOne($id);
         if($ticket){
             return MyHelper::response(true,'Successfully',$ticket,200);
         }else{

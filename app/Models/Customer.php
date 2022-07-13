@@ -58,6 +58,7 @@ class Customer extends Model
             }
             $res = $res->where($key_search[0],$type,$key_search[1]);
         }
+        //order by
 
         if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
             $order_by = explode(',', $req['order_by']);

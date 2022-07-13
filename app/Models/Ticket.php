@@ -180,7 +180,7 @@ class Ticket extends Model
 		return (array) $query->limit(1)->first();
 		// echo $query->toSql();		
 	}
-    public function showOne($id='')
+    public  function showOne($id='')
     {
         $delete = $this->DELETE;
         $ticket = self::select($this->fillable)->with(['getTicketAssign'=> function ($q)
