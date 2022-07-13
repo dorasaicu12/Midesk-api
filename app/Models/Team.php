@@ -8,5 +8,5 @@ class Team extends Model
 {
 	protected $guarded = [];
 	protected $table = 'team';
-
+     
 }

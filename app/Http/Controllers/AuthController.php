@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Group;
+use App\Models\Team;
+use App\Models\TeamStaff;
 use App\Http\Functions\MyHelper;
 use Auth;
 use JWTAuth;
@@ -100,9 +102,18 @@ class AuthController extends Controller
             foreach ($permissions as $key => $permission) {
                 $format_permisssions[$permission['page']][] = $permission['action'];
             }
-            $token['permissions'] = $format_permisssions;
+            $id=$user->id;
+             $team_infor=(new TeamStaff)->getTeamInfor($id);
+          
+
+            $team=Teamstaff::where('agent_id',$id)->get();
+
+      
             $token['roles']['name'] = $user->class_staff;
             $token['roles']['type'] = $typeRole;
+            $token['department'] = $team_infor;
+            $token['permissions'] = $format_permisssions;
+
             return MyHelper::response(true,'Successfully',$token,200);
         }else{
             return MyHelper::response(false,'Unauthorized',[],401);
