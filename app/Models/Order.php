@@ -29,12 +29,17 @@ class Order extends Model
     						'ord_customer_id',
     						'ord_customer_name'
     					];
+                        const DELETED = 1;
+                        const DELETE = [NULL,0];
+                        const ORDERBY = 'id:asc';
+                        const TAKE = 10;
+                        const FROM = 0;
 
 	public function checkExist($ord=''){
 		return self::select($this->fillable)->where('groupid',auth::user()->groupid)->where('ord_code',$ord)->first();
 	}
 
-	public function getDefault($req)
+	public function getListDefault($req)
     {
         $res = new self;
         /// paginate

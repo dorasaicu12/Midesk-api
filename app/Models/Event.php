@@ -64,7 +64,7 @@ class Event extends Model
                 $res = $res->orderBy($by, $order);
             }
         }else{
-            $c = explode('=', self::ORDERBY);
+            $c = explode(':', self::ORDERBY);
             $by = $c[0];
             $order = $c[1];
             $res = $res->orderBy($by, $order);
