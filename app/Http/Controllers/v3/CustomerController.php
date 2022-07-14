@@ -251,7 +251,7 @@ class CustomerController extends Controller
     */
     public function store(CustomerRequest $request)
     {
-
+             
         if($request->fullname==''){
             return MyHelper::response(false,'fullname field is required', [],400);
         }else{
