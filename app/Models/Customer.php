@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Auth;
-
+use App\Http\Functions\MyHelper;
+use DB;
 class Customer extends Model
 {
     public $timestamps = false;
@@ -89,5 +90,68 @@ class Customer extends Model
         return self::where(function($q) use ($delete) {
                 $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
             })->where([['groupid',$groupid],['id',$id]])->first();
+    }
+    public function createCustomer($customer){
+        $check_customer_by_email=self::where('email',$customer['email'])->first();
+        $check_customer_by_phone=self::where('phone',$customer['phone'])->first();
+
+        if($customer['phone']==''){
+            if($check_customer_by_email){
+                return MyHelper::response(false,'customer already exist', [],400);
+            } else{
+                DB::beginTransaction();
+                try {
+                    $response = self::create($customer);
+        
+                DB::commit();
+                $customer = self::ShowOne($response->id);
+                    return MyHelper::response(true,'Create customer successfully', ['id' => $customer->customer_id],200);
+                } catch (\Exception $ex) {
+        
+                DB::rollback();
+                    return MyHelper::response(false,$ex->getMessage(), [],500);
+                }
+            }
+        }else if($customer['email']==''){
+
+                 if($check_customer_by_phone){
+                return MyHelper::response(false,'customer already exist', [],400);
+            } else{
+                DB::beginTransaction();
+                try {
+                    $response = self::create($customer);
+        
+                DB::commit();
+                $customer = self::ShowOne($response->id);
+                    return MyHelper::response(true,'Create customer successfully', ['id' => $customer->customer_id],200);
+                } catch (\Exception $ex) {
+        
+                DB::rollback();
+                    return MyHelper::response(false,$ex->getMessage(), [],500);
+                }
+            }
+
+        }else{
+            if($check_customer_by_email){
+                return MyHelper::response(false,'customer already exist', [],400);
+ 
+            }else if($check_customer_by_phone){
+                return MyHelper::response(false,'customer already exist', [],400);
+            } else{
+                DB::beginTransaction();
+                try {
+                    $response = self::create($customer);
+        
+                DB::commit();
+                $customer = self::ShowOne($response->id);
+                    return MyHelper::response(true,'Create customer successfully', ['id' => $customer->customer_id],200);
+                } catch (\Exception $ex) {
+        
+                DB::rollback();
+                    return MyHelper::response(false,$ex->getMessage(), [],500);
+                }
+            }
+        }
+
     }
 }

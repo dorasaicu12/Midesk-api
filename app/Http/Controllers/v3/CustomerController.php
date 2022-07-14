@@ -271,19 +271,11 @@ class CustomerController extends Controller
             $customer['createby']   = auth::user()->id;
             $customer['datecreate']   = time();
             $customer['channel']   = $channel;
+
+           return (new customer)->createCustomer($customer);
+
     
-            DB::beginTransaction();
-            try {
-                $response = Customer::create($customer);
-    
-            DB::commit();
-            $customer = Customer::ShowOne($response->id);
-                return MyHelper::response(true,'Create customer successfully', ['id' => $customer->customer_id],200);
-            } catch (\Exception $ex) {
-    
-            DB::rollback();
-                return MyHelper::response(false,$ex->getMessage(), [],500);
-            }
+
         }
     }
 
