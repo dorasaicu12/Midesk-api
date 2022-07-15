@@ -520,15 +520,15 @@ class ContactController extends Controller
     public function destroy($id)
     {   
         $contact = (new Contact)->ShowOne($id);
-        $groupid = auth::user()->groupid;
-        $creby   = auth::user()->id;
-        $fullname   = auth::user()->fullname;
-        $contentLogDel=$fullname.' đã xóa liên hệ của ('.$contact->fullname.')';
+
         //check contact
         if (!$contact) {
             return MyHelper::response(false,'Contact Not Found', [],404);
         }else{
-
+            $groupid = auth::user()->groupid;
+            $creby   = auth::user()->id;
+            $fullname   = auth::user()->fullname;
+            $contentLogDel=$fullname.' đã xóa liên hệ của ('.$contact->fullname.')';
             DB::beginTransaction();
             try {
                 actionLog::insert(
