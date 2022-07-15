@@ -421,7 +421,7 @@ class ContactController extends Controller
     *     },
     * )
     */
-    public function update(ContactRequest $request,$id)
+    public function update(Request $request,$id)
     {
         $groupid = auth::user()->groupid;
         $creby   = auth::user()->id;
@@ -440,7 +440,7 @@ class ContactController extends Controller
         DB::beginTransaction();
         try {
             //Kiểm tra tồn tại contact hay không
-            $check_contact = (new Contact)->checkContact($phone,$email,$id);
+            $check_contact = (new Contact)->ShowOne($id);
             DB::commit();
 
             //Cập nhật Contact

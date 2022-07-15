@@ -97,7 +97,7 @@ class Customer extends Model
 
         if($customer['phone']==''){
             if($check_customer_by_email){
-                return MyHelper::response(false,'customer already exist', [],400);
+                return MyHelper::response(false,'customer already exist', ['id'=>$check_customer_by_email->id,'customer_id'=>$check_customer_by_email->customer_id],400);
             } else{
                 DB::beginTransaction();
                 try {
@@ -115,7 +115,7 @@ class Customer extends Model
         }else if($customer['email']==''){
 
                  if($check_customer_by_phone){
-                return MyHelper::response(false,'customer already exist', [],400);
+                return MyHelper::response(false,'customer already exist', ['id'=>$check_customer_by_phone->id,'customer_id'=>$check_customer_by_phone->customer_id],400);
             } else{
                 DB::beginTransaction();
                 try {
@@ -133,10 +133,10 @@ class Customer extends Model
 
         }else{
             if($check_customer_by_email){
-                return MyHelper::response(false,'customer already exist', [],400);
+                return MyHelper::response(false,'customer already exist', [$check_customer_by_phone->id,'customer_id'=>$check_customer_by_phone->customer_id],400);
  
             }else if($check_customer_by_phone){
-                return MyHelper::response(false,'customer already exist', [],400);
+                return MyHelper::response(false,'customer already exist', [$check_customer_by_phone->id,'customer_id'=>$check_customer_by_phone->customer_id],400);
             } else{
                 DB::beginTransaction();
                 try {
