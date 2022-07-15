@@ -10,6 +10,9 @@ use App\Models\Customer;
 use Carbon\Carbon;
 use Auth;
 use DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\customerContactRelation;
+use App\Models\Contact;
 /**
  * @group  Customer Management
  *
@@ -272,8 +275,81 @@ class CustomerController extends Controller
             $customer['datecreate']   = time();
             $customer['channel']   = $channel;
 
-           return (new customer)->createCustomer($customer);
+            
+        //     if($request->contact){
+        //         foreach($request->contact as $key=>$val){
+        //             $groupid = auth::user()->groupid;
+        //             $creby   = auth::user()->id;
+            
+        //             $fullname = $val['fullname'];
+        //             $phone    = $val['phone'] ?: "";
+        //             $email    = $val['email'] ?: "";
+        //             $address  = $val['address'] ?: "";    
+        //             $gender   = $val['gender'] ?: "";    
+                    
+        //             $channel_list  = ['facebook', 'zalo', 'webform', 'email', 'web', 'api'];
+        //             $channel = 'api';
+        //             if (array_key_exists('channel', $request->contact)) {
+        //                 if (in_array($val['channel'], $channel_list)) {
+        //                     $channel = $val['channel'];
+        //                 }
+        //             }
+        //             $time     = time();
+        //             $field = [];
+        //             DB::beginTransaction();
+        //             try {
+        //                 //Kiểm tra tồn tại contact hay không
+            
+        //                 $check_contact = (new Contact)->checkContact($phone,$email);
+        //                 DB::commit();
+            
+        //                 //Thêm mới Contact
+            
+        //                 if(!$check_contact){    
+        //                     $contact = new Contact();
+        //                     $contact->address     	= $address;
+        //                     $contact->groupid   	= $groupid;
+        //                     $contact->fullname   	= $fullname;
+        //                     $contact->phone    		= $phone;
+        //                     $contact->email      	= $email;                  
+        //                     $contact->gender     	= $gender;                  
+        //                     $contact->channel    	= $channel;
+        //                     $contact->datecreate 	= $time;
+        //                     $contact->creby      	= $creby;
+        //                     if (!empty($val['custom_field'])) {
+        //                         foreach ($val['custom_field'] as $key => $value) {
+        //                             $key = str_replace('dynamic_', '', $key);
+        //                             $check_field = CustomField::where('id',$key)->first();
+        //                             if (!$check_field) {
+        //                                 return MyHelper::response(true,'Custom Field '.$key.' Do not exists', null,200);
+        //                             }else{
+        //                                 $field[$key] = $value;
+        //                             }
+        //                         }
+        //                         $custom_field = json_encode($field);    
+        //                         $contact->custom_fields = $custom_field;
+        //                     }
+        //                     $contact->save();
+        //                     return (new customer)->createCustomer($customer);
+                            
+        //                     $id_cus=customer::where('email',$customer['email'])->first();
+                            
+                            
+        //                 }else{   
+        //                     return MyHelper::response(true,'Contact already exists', ['id' => $check_contact->id,'contact_id' => $check_contact->contact_id],200);
+        //                 }  
+            
+        //             } catch (\Exception $ex) {
+        //                 DB::rollback();
+        //                 return MyHelper::response(false,$ex->getMessage(), [],500);
+        //             }
+        //         }
+        //    }else{
+        //     return (new customer)->createCustomer($customer);
+        //    }
+        
 
+           return (new customer)->createCustomer($customer);
     
 
         }

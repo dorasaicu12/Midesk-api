@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Auth;
 use DB;
+use App\Models\actionLog;
+use App\Models\customerContactRelation;
 
 /**
  * @group  Contact Management
@@ -265,7 +267,7 @@ class ContactController extends Controller
     * )
     */
     public function store(ContactRequest $req)
-    {
+    { 
         $groupid = auth::user()->groupid;
         $creby   = auth::user()->id;
 
@@ -518,10 +520,33 @@ class ContactController extends Controller
     public function destroy($id)
     {   
         $contact = (new Contact)->ShowOne($id);
+        $groupid = auth::user()->groupid;
+        $creby   = auth::user()->id;
+        $fullname   = auth::user()->fullname;
+        $contentLogDel=$fullname.' đã xóa liên hệ của ('.$contact->fullname.')';
+        //check contact
         if (!$contact) {
             return MyHelper::response(false,'Contact Not Found', [],404);
         }else{
-            $contact->delete();
+
+            DB::beginTransaction();
+            try {
+                actionLog::insert(
+                    array(
+                        'groupid'=>$groupid,
+                         'created_by'=>$creby,
+                         'title'=>'contact',
+                         'content'=>$contact->channel.':'.$contentLogDel,
+                         'detail'=>json_encode($contact)
+                    )
+                );
+                customerContactRelation::where('contact_id',$contact->id)->where('groupid',$groupid)->delete();
+                $contact->delete();
+                DB::commit();
+            } catch (\Exception $ex) {
+                DB::rollback();
+                return MyHelper::response(false,$ex->getMessage(), [],500);
+            }
         }
         return MyHelper::response(true,'Delete Contact Successfully', [],200);
     }
