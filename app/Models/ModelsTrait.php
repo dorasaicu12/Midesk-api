@@ -185,18 +185,20 @@ trait ModelsTrait {
             $tdetail['private'] = $private;
             $ticket_detail = $this->create_comment($ticket->id,$tdetail,$action);
 
-            $ndata = array(
-                'assign_agent' => $assign_agent,
-                'assign_team'  => $assign_team,
-                'ticket_detail'=> $ticket_detail,
-                'message'      => $message,
-                'content'      => $content,
-                'channel'      => $channel,
-                'status'      => $status
-            );
 
-            $this->create_notifications($ndata);
+
+            
             if ($action == 'create') {
+                $ndata = array(
+                    'assign_agent' => $assign_agent,
+                    'assign_team'  => $assign_team,
+                    'ticket_detail'=> $ticket_detail,
+                    'message'      => $message,
+                    'content'      => $content,
+                    'channel'      => $channel,
+                    'status'      => $status
+                );
+                $this->create_notifications($ndata);
                 return MyHelper::response(true,'Created Ticket Successfully', ['id' => $ticket_detail->id,'ticket_id' => "#".$ticket_detail->ticket_id],200);
             }else{
                 return MyHelper::response(true,'Updated Ticket Successfully', [],200);

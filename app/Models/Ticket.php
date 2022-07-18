@@ -14,6 +14,12 @@ class Ticket extends Model
     public $timestamps = false;
     public $fillabled = false;
     protected $DELETE = [NULL,0];
+    const DELETED = 1;
+    const DELETE = [NULL,0];
+    const SORT = 'id';
+    const ORDERBY = 'id:asc';
+    const TAKE = 10;
+    const FROM = 0;
     protected $fillable = [
                             'id',
                             'ticket_id',

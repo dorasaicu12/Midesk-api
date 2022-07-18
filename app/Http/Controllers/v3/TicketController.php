@@ -134,8 +134,14 @@ class TicketController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
-        $tickets = (new Ticket)->getListDefault($req,'getTicketsDetail:id,title,content,content_system,ticket_id,status,type,private,file_name');
+        $tickets = (new Ticket)->getDefault($req,'getTicketsDetail:id,title,content,content_system,ticket_id,status,type,private,file_name');
+        // $tickets['ticket_id']='#'.$tickets['ticket_id'];
+        foreach($tickets as $val){
+           $val['ticket_id']='#'.$val['ticket_id'];
+        }
         return MyHelper::response(true,'Successfully',$tickets,200);
+
+        
     }
     
     /**
@@ -191,11 +197,14 @@ class TicketController extends Controller
     { 
         $ticket_var=new Ticket;
         $ticket = $ticket_var->showOne($id);
+
         if($ticket){
+            $ticket['ticket_id']='#'.$ticket['ticket_id'];
             return MyHelper::response(true,'Successfully',$ticket,200);
         }else{
             return MyHelper::response(false,'Ticket not found',$ticket,404);
         }
+
         return MyHelper::response(true,'Successfully',$ticket,200);
     }
     /**

@@ -10,6 +10,7 @@ use App\Http\Functions\CheckTrigger;
 use App\Http\Requests\v3\ContactRequest;
 use App\Models\TicketDetail;
 use Illuminate\Support\Facades\Log;
+use App\Models\Contact;
 
 trait ProcessTraits {
 
@@ -89,6 +90,9 @@ trait ProcessTraits {
             }
             if ($id_t) {
                 // Cập nhật phiếu
+                $ticket2 = Ticket::where('id',$id_t)->first();
+                // echo $ticket2['id'];
+                // exit;
                 $ticket = Ticket::where('id',$id_t)->first();
                 if (!$ticket) {
                     return MyHelper::response(false,'Ticket not found!', [],404); 
@@ -98,6 +102,20 @@ trait ProcessTraits {
                 $assign_team    = array_key_exists('assign_team', $req) ? $req['assign_team'] : $ticket->assign_team;
                 $assign_agent    = array_key_exists('assign_agent', $req) ? $req['assign_agent'] : $ticket->assign_agent;
                 $ticket->requester      = $requester ?? $ticket->requester;
+                $request = array_filter($req);
+                // phần lọc riêng giá trị giữa create và update
+                // if (array_key_exists('cotact_id', $req)) {
+                //     $contact_id = intval($req['cotact_id']);
+                //     $check_contact = Contact::where('id',$contact_id)->first();
+                //     if($check_contact){
+                //         $requestcontact = array_filter($req['contact']);
+                //         $check_contact->update($requestcontact);
+                //     }else{
+                //         return MyHelper::response(false,'Contact Not found', [],400);
+                //     }
+                // }                   
+                $val=$ticket->update($request);
+                
             }else{   
                 //Tạo phiếu
                 $input = [
@@ -107,6 +125,7 @@ trait ProcessTraits {
                     'requester' => $requester,
                 ];
                 //Check Trigger
+                
                 $output = CheckTrigger::check_trigger_ticket_roundrobin($input);
                 $priority     = array_key_exists('priority', $output) ? $output['priority'] : $priority;
                 $category     = array_key_exists('category',$output) ? $output['category'] : $category;
@@ -129,7 +148,16 @@ trait ProcessTraits {
                     $tdetail['mt_orderid'] = $ticket->mt_orderid;
                     $tdetail['mt_productid'] = $ticket->mt_productid;
                 }
+                // phần lọc riêng giá trị giữa create và update
+                $ticket->title          = $title;
+                $ticket->status         = $status;
+                $ticket->channel        = $channel;
+                $ticket->dateupdate     = $time;
+                $ticket->priority       = $priority;
+                $ticket->category       = $category;
+                $ticket->label          = $label;
             }
+            //chức năng chung giữa update và create
             if (!empty($req['custom_field'])) {
                 foreach ($req['custom_field'] as $key => $value) {
                     $key = str_replace('dynamic_', '', $key);
@@ -143,14 +171,8 @@ trait ProcessTraits {
                 $custom_field = json_encode($field);
                 $ticket->custom_fields  = $custom_field;
             }
-            $ticket->title          = $title;
-            $ticket->status         = $status;
-            $ticket->channel        = $channel;
-            $ticket->dateupdate     = $time;
-            $ticket->priority       = $priority;
-            $ticket->category       = $category;
-            $ticket->label          = $label;
-            $ticket->save();
+            $ticket->save(); 
+
 
             // sla
             $sladata  = array(
@@ -208,8 +230,8 @@ trait ProcessTraits {
                 'channel'      => $channel,
                 'status'      => $status
             );
-
             $this->create_notifications($ndata);
+            
             if ($action == 'create') {
                 return MyHelper::response(true,'Created Ticket Successfully', ['id' => $ticket_detail->id,'ticket_id' => "#".$ticket_detail->ticket_id],200);
             }else{
