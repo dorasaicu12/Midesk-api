@@ -693,7 +693,10 @@ class TicketController extends Controller
             $teamid = $element['team_id'];
             unset($element['agent_id']);
             unset($element['team_id']);
-            $teams[$teamid][] = $element->Agent;
+            $teams[$teamid][] =[
+                'id'=>$element->Agent['id'],
+                'fullname'=>$element->Agent['fullname'],
+            ] ;
         }
         $data['teams'] = $teams;
         $data['priority'] = TicketPriority::all()->toArray();
@@ -755,7 +758,7 @@ class TicketController extends Controller
     public function macroList()
     {
         $groupid = auth()->user()->groupid;
-        $list = Macro::where([['groupid',$groupid],['public',1]])->get();
+        $list['priority'] =TicketPriority::all()->toArray();;
         return MyHelper::response(true,'Successfully', $list,200);
     }
 

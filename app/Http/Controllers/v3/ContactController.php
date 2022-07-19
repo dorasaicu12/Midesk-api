@@ -276,7 +276,6 @@ class ContactController extends Controller
         $email    = $req->email ?: "";
         $address  = $req->address ?: "";    
         $gender   = $req->gender ?: "";    
-        
         $channel_list  = ['facebook', 'zalo', 'webform', 'email', 'web', 'api'];
         $channel = 'api';
         if (array_key_exists('channel', $req)) {
@@ -306,6 +305,9 @@ class ContactController extends Controller
                 $contact->channel    	= $channel;
                 $contact->datecreate 	= $time;
                 $contact->creby      	= $creby;
+                if($req->honor !=''){
+                    $contact->honor     	= $req->honor;
+                }
                 if (!empty($req->custom_field)) {
                     foreach ($req->custom_field as $key => $value) {
                         $key = str_replace('dynamic_', '', $key);
@@ -450,8 +452,8 @@ class ContactController extends Controller
 
                 $request = array_filter($request->all());   
                 $request['channel']    	= $channel;
-                $request['datecreate'] 	= $time;
-                $request['creby']      	= $creby;
+                $request['dateupdate'] 	= $time;
+                $request['creby_update']      	= $creby;
                 if (!empty($request->custom_field)) {
                     foreach ($request->custom_field as $key => $value) {
                         $key = str_replace('dynamic_', '', $key);

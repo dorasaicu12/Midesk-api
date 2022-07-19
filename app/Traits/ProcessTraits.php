@@ -219,8 +219,9 @@ trait ProcessTraits {
             sleep(1);
             $tdetail['content'] = $content;
             $tdetail['private'] = $private;
-            $ticket_detail = $this->create_comment($ticket->id,$tdetail,$action);
-
+            if($req['content']!=''){
+                $ticket_detail = $this->create_comment($ticket->id,$tdetail,$action);
+                
             $ndata = array(
                 'assign_agent' => $assign_agent,
                 'assign_team'  => $assign_team,
@@ -231,6 +232,7 @@ trait ProcessTraits {
                 'status'      => $status
             );
             $this->create_notifications($ndata);
+            }
             
             if ($action == 'create') {
                 return MyHelper::response(true,'Created Ticket Successfully', ['id' => $ticket_detail->id,'ticket_id' => "#".$ticket_detail->ticket_id],200);
@@ -514,8 +516,11 @@ trait ProcessTraits {
             if (intval($data['private']) == 1) {
                 $data['private'] = 1;
                 $ms = 'private';
-            }else{
-                $data['private'] = 0;
+            }else if(intval($data['private']) == 2){
+                $data['private'] = 2;
+                $ms = 'private';
+            } else{
+                $data['private'] = 0; 
                 $ms = 'public';
             }
         }else{
