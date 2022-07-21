@@ -11,7 +11,7 @@ class Customer extends Model
     public $timestamps = false;
     protected $table = 'customer';
 
-    protected $fillable = ['groupid','fullname','phone','email','address','province','createby','datecreate','channel'];
+    protected $fillable = ['groupid','fullname','phone','email','address','province','createby','datecreate','channel','dateupdate','createby_update'];
     
     const DELETED = 1;
     const DELETE = [NULL,0];
@@ -105,7 +105,7 @@ class Customer extends Model
         
                 DB::commit();
                 $customer = self::ShowOne($response->id);
-                    return MyHelper::response(true,'Create customer successfully', ['id' => $customer->customer_id],200);
+                    return MyHelper::response(true,'Create customer successfully', ['id' => $customer->id,'customer_id' => $customer->customer_id],200);
                 } catch (\Exception $ex) {
         
                 DB::rollback();
@@ -123,7 +123,7 @@ class Customer extends Model
         
                 DB::commit();
                 $customer = self::ShowOne($response->id);
-                    return MyHelper::response(true,'Create customer successfully', ['id' => $customer->customer_id],200);
+                    return MyHelper::response(true,'Create customer successfully', ['id' => $customer->id,'customer_id' => $customer->customer_id],200);
                 } catch (\Exception $ex) {
         
                 DB::rollback();
@@ -144,7 +144,7 @@ class Customer extends Model
         
                 DB::commit();
                 $customer = self::ShowOne($response->id);
-                    return MyHelper::response(true,'Create customer successfully', ['id' => $customer->customer_id],200);
+                    return MyHelper::response(true,'Create customer successfully', ['id' => $customer->id,'customer_id' => $customer->customer_id],200);
                 } catch (\Exception $ex) {
         
                 DB::rollback();

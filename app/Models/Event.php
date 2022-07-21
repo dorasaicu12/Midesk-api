@@ -14,7 +14,8 @@ class Event extends Model
     const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
-    protected $fillable = ['event_title'];
+    protected $fillable = ['event_title','remind_time','event_assign_agent','event_assign_team','note','event_location','remind_type','event_source','event_source_id','updated_by'];
+    protected $dateFormat = 'Y-m-d H:i:s';
 
 	public function getListDefault($req)
     {
@@ -58,7 +59,7 @@ class Event extends Model
         if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
             $order_by = explode(',', $req['order_by']);
             foreach ($order_by as $key => $value) {
-                $c = explode('=', $value);
+                $c = explode(':', $value);
                 $by = $c[0];
                 $order = $c[1];
                 $res = $res->orderBy($by, $order);

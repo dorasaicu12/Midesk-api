@@ -28,6 +28,7 @@ class OrderRequest extends FormRequest
         switch($this->method())
         {
             case 'POST':
+                
                 if (is_array(request('contact'))) {
                     $rules["contact.fullname"]  = "required|max:50|min:3";
                     $rules["contact.phone"]  = "required_without:contact.email";

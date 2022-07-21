@@ -320,15 +320,16 @@ class ProductController extends Controller
         $groupid = auth::user()->groupid;
 
         // check branch_id
-        if (array_key_exists('branch', $request)) {
             $check_branch = Branch::where([ ['groupid',$groupid],['id',$request->branch] ])->first();
+
+
+        if(isset($request->branch)){
             if (!$check_branch) {
                 return MyHelper::response(false,'Branch do not exist',[],403);
             }
         }
-        
         // check unit_id
-        if (array_key_exists('unit_id', $request)) {
+        if (isset($request->unit_id)) {
             $check_unit = ProductUnit::where([ ['groupid',$groupid],['id',$request->unit_id] ])->first();
             if (!$check_unit) {
                 return MyHelper::response(false,'Product unit do not exist',[],403);            
@@ -336,8 +337,9 @@ class ProductController extends Controller
         }
 
         // check category_id
-        if (array_key_exists('category_id', $request)) {
+        if (isset($request->category_id)) {
             $check_cate = ProductCategory::where([ ['groupid',$groupid],['id',$request->category_id] ])->first();
+            
             if (!$check_cate) {
                 return MyHelper::response(false,'Product category do not exist',[],403);
             }
@@ -507,20 +509,21 @@ class ProductController extends Controller
         $product->setSelectColumn('product_code');
         $product->setDeleteValue('1');
         $product = $product->showOne($prod_code);
+
         if (!$product) {
-            return MyHelper::response(false,'Resource not found',[],403);    
+            return MyHelper::response(false,'Product not found',[],404);    
         }
         $groupid = auth::user()->groupid;
         // check branch_id
-        if (array_key_exists('branch', $request)) {
+
+        if(isset($request->branch)){
             $check_branch = Branch::where([ ['groupid',$groupid],['id',$request->branch] ])->first();
             if (!$check_branch) {
                 return MyHelper::response(false,'Branch do not exist',[],403);
             }
         }
-        
         // check unit_id
-        if (array_key_exists('unit_id', $request)) {
+        if (isset($request->unit_id)) {
             $check_unit = ProductUnit::where([ ['groupid',$groupid],['id',$request->unit_id] ])->first();
             if (!$check_unit) {
                 return MyHelper::response(false,'Product unit do not exist',[],403);            
@@ -528,25 +531,27 @@ class ProductController extends Controller
         }
 
         // check category_id
-        if (array_key_exists('category_id', $request)) {
+        if (isset($request->category_id)) {
             $check_cate = ProductCategory::where([ ['groupid',$groupid],['id',$request->category_id] ])->first();
+            
             if (!$check_cate) {
                 return MyHelper::response(false,'Product category do not exist',[],403);
             }
         }
 
-        $product->branch_id = $request->branch ?? null;
-        $product->product_unit_id = $request->unit_id ?? null;
-        $product->product_category_id = $request->category_id ?? null;
-        $product->product_code = $request->product_code;
-        $product->product_is_active = $request->product_is_active ?? null;
-        $product->product_name = $request->product_name;
-        $product->product_full_name = $request->product_name;
+
+        $product->branch_id = $request->branch ?? $product['branch_id'];
+        $product->product_unit_id = $request->unit_id ?? $product['product_unit_id'];
+        $product->product_category_id = $request->category_id ?? $product['product_category_id'];
+        $product->product_code = $request->product_code ?? $product['product_code'];
+        $product->product_is_active = $request->product_is_active ?? $product['product_is_active'];
+        $product->product_name = $request->product_name ?? $product['product_name'];
+        $product->product_full_name = $request->product_name ?? $product['product_name'];
         $product->product_barcode = $request->product_barcode ?? null;
         $product->product_stock = $request->product_stock ?? null;
         $product->product_day_expire = $request->product_expire ?? null;
-        $product->product_price = $request->price ?? null;
-        $product->product_orig_price = $request->cost_price ?? null;
+        $product->product_price = $request->price ?? $product['product_price'];
+        $product->product_orig_price = $request->cost_price ?? $product['product_orig_price'];
         $product->product_unlimited = $request->unlimited ?? null;
         $product->is_surcharge = $request->is_surcharge ?? null;
         $product->updated_at = date('Y-m-d H:i:s');

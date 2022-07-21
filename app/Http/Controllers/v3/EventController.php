@@ -304,6 +304,7 @@ class EventController extends Controller
     */
     public function store(EventRequest $request)
     {
+
         $title = $request->event_title;
         $event_type = $request->event_type;
         $check_event_type = (new EventType)->find($event_type);
@@ -315,7 +316,7 @@ class EventController extends Controller
         if (strlen($request->remind_time) == 10) {
             $request->remind_time = $request->remind_time . '00:00:00';
         }
-        $remind_time = Carbon::createFromFormat('d/m/Y H:i:s', $request->remind_time)->format('Y-m-d H:i:s');
+        $remind_time = Carbon::parse( $request->remind_time)->format('Y-m-d H:i:s');
         $remind_type = $request->remind_type;
 
         if (!in_array($remind_type, $this->array_remind_type)) {
@@ -330,7 +331,7 @@ class EventController extends Controller
 
         $agent_id = $request->handling_agent;
         $check_agent = (new TeamStaff)->where('team_id',$check_team->team_id)->get()->pluck('agent_id')->toArray();
-        if (!in_array($agent_id, $check_agent)) {
+        if (!in_array($agent_id,$check_agent)) {
             return MyHelper::response(false,'handling_agent field do not match', [],403);
         }
 
@@ -357,12 +358,14 @@ class EventController extends Controller
             }
         }
 
+
+
         $event = new Event;
         $event->event_title = $title;
         $event->event_type = $event_type;
         $event->note = $note;
         $event->event_location = $event_location;
-        $event->remind_time = $remind_time;
+        $event->remind_time = $request->remind_time;
         $event->remind_type = $remind_type;
         $event->event_assign_team = $team_id;
         $event->event_assign_agent = $agent_id;
@@ -557,6 +560,7 @@ class EventController extends Controller
     public function update(Request $request, $id)
     {
         $event = Event::where('id', $id)->first();
+        $request['updated_by']=auth()->user()->id;;
         if (!$event) {
             return MyHelper::response(false,'Event do not exist', [],404);
         }
@@ -566,7 +570,8 @@ class EventController extends Controller
 	        if (strlen($request['remind_time']) == 10) {
 	            $request['remind_time'] = $request['remind_time'] . '00:00:00';
 	        }
-        	$remind_time = Carbon::createFromFormat('d/m/Y H:i:s', $request['remind_time'])->format('Y-m-d H:i:s');
+        	// $remind_time = Carbon::createFromFormat('d/m/Y H:i:s', $request['remind_time'])->format('Y-m-d H:i:s');
+            $remind_time = Carbon::parse($request['remind_time'])->format('Y-m-d H:i:s');
         	$request['remind_time'] = $remind_time;
 	    }
 
@@ -583,9 +588,10 @@ class EventController extends Controller
         	}else{
 	            return MyHelper::response(false,'handling_team field do not match', [],403);
         	}
+            
         	if (array_key_exists('handling_agent', $request)) {
 	        	$check_agent = (new TeamStaff)->where('team_id',$check_team->team_id)->get()->pluck('agent_id')->toArray();
-	        	if ($check_agent) {
+	        	if (in_array(json_decode( $request['handling_agent']),$check_agent)) {
 	        		$request['event_assign_agent'] = $request['handling_agent'];
 	        	}else{
 		            return MyHelper::response(false,'handling_agent field do not match', [],403);

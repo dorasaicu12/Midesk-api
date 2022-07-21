@@ -194,10 +194,11 @@ class OrderController extends Controller
     public function show($ordid)
     {
         $order = (new Order)->checkExist($ordid);
+        $order2=Order::where('ord_code',$ordid)->first();
         if (!$order) {
             return MyHelper::response(false,'Order not found',[],404);
         }
-        return MyHelper::response(true,'Successfully',$order,200);
+        return MyHelper::response(true,'Successfully',$order2,200);
     }
 
     /**
@@ -435,6 +436,11 @@ class OrderController extends Controller
         $ord_total = 0;
         $id_ticket = $request->ticket_id;
         $order_detail = [];
+    //check order exits
+        $order=Order::where('ord_code',$ord_id)->first();  
+        if ($order) {
+        return MyHelper::response(true,'Order already exist',['order_id'=>$order->ord_code],200);
+    }
         // check order status
         $id_ord_status = OrderStatus::where([['groupid',$groupid],['id',$ord_status]])->first();
         if (!$id_ord_status) {
@@ -760,6 +766,9 @@ class OrderController extends Controller
         $ord_total = 0;
         $id_ticket = $request->ticket_id;
         $order_detail = [];
+        
+            //check order exits
+
         // check order status
         if (!$ordid) {
             return MyHelper::response(false,'OrderId not found!',[],404);
@@ -788,6 +797,15 @@ class OrderController extends Controller
         if ($id_ticket) {
             if ($ticket = Ticket::find($id_ticket)) {
                 $code_ticket = $ticket->ticket_id; 
+            }
+        }
+
+        if(isset($ord_id)){
+            if($order->ord_code !=$ord_id){
+                $order2=Order::where('ord_code',$ord_id)->first();  
+                if ($order2) {
+                return MyHelper::response(true,'Order already exist',['order_id'=>$order2->ord_code],200);
+               }
             }
         }
         DB::beginTransaction();

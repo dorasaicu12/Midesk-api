@@ -13,4 +13,5 @@ class Agent extends Model
 
     protected $table = 'table_users';
     
+    
 }

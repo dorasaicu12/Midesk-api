@@ -29,7 +29,8 @@ class ProductRequest extends FormRequest
             case 'POST':
                 return [
                     'product_code' => 'required',
-                    'product_name' => 'required'
+                    'product_name' => 'required',
+                    'branch'  => 'required'
                 ];
                 break;
             case 'PUT':

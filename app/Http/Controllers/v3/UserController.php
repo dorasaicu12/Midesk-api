@@ -283,6 +283,11 @@ class UserController extends Controller
     {   
         $data = array_filter($req->all());
         $groupid = auth()->user()->groupid;
+
+        $checkAgent=Agent::where('email',$req['email'])->first();
+        if($checkAgent){
+            return MyHelper::response(false,'agent already exist', ['id'=>$checkAgent->id],400);
+        }
         if (!in_array($data['account_type'], ['admin','agent','supervisor'])) {
             return MyHelper::response(false,'account_type do not match',[],422);  
         }
@@ -431,6 +436,15 @@ class UserController extends Controller
     {
         $data = array_filter($request->all());
         $groupid = auth()->user()->groupid;
+        
+        if(isset($request['email'])){
+            $checkAgent=Agent::where('email',$request['email'])->first();
+            if($checkAgent){
+                return MyHelper::response(false,'this email already exist in another agent ', ['id'=>$checkAgent->id,'email'=>$checkAgent->email],400);
+            } 
+        }
+
+
 
         if (array_key_exists('account_type', $data) && !in_array($data['account_type'], ['admin','agent','supervisor'])) {
             return MyHelper::response(false,'account_type do not match',[],403);  
@@ -446,17 +460,23 @@ class UserController extends Controller
         }
         $agent = Agent::find($id);
         if (!$agent) {
-            return MyHelper::response(false,'Agent not found',[],200);
+            return MyHelper::response(false,'Agent not found',[],404);
         }
         DB::beginTransaction();
         try {
             $fullname = $agent->fullname;
-            if ($data['firstname'] && !$data['lastname']) {
-                $fullname = $data['firstname'].' '.$agent->lastname;
-            }
-            if (!$data['firstname'] && $data['lastname']) {
-                $fullname = $agent->firstname.' '.$data['lastname'];
-            }
+          
+                if (isset($data['firstname']) && !isset($data['lastname'])) {
+                    $fullname = $data['firstname'].' '.$agent->lastname;
+                }
+                if (!isset($data['firstname']) && isset($data['lastname'])) {
+                    $fullname = $agent->firstname.' '.$data['lastname'];
+                }
+                if(isset($data['firstname']) && isset($data['lastname'])){
+                    $fullname = $data['firstname'].' '.$data['lastname'];
+                }
+            
+
             $res['lastname'] = $data['lastname'] ?? $agent->lastname;
             $res['firstname'] = $data['firstname'] ?? $agent->firstname;
             $res['fullname'] = $fullname;
@@ -464,7 +484,10 @@ class UserController extends Controller
             $res['level'] = $data['account_type'] ?? $agent->level;
             $res['phone'] = $data['phone'] ?? $agent->phone;
             $res['email'] = $data['email'] ?? $agent->email;
-            $res['password'] = $data['password'] ? md5($data['password']) : $agent->password;
+            if(isset($data['password'])){
+                $res['password'] = $data['password'] ? md5($data['password']) : $agent->password;
+            }
+            
             $res['dateupdate'] = time();
             $res['class_staff'] = $data['role'] ?? $agent->class_staff;
             $res['user_type_id'] = $data['perrmission'] ?? $agent->user_type_id;

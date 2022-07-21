@@ -444,6 +444,9 @@ class CustomerController extends Controller
         }else{
             $request = array_filter($request->all());   
             $request['dateupdate'] 	= time();
+            $request['createby_update']=auth::user()->id;
+            // echo json_decode($request);
+            // exit;
             $check_customer->update($request);
             if(!$check_customer){
                 return MyHelper::response(false,'Updated Customer Failed', [],500);
