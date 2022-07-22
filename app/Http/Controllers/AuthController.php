@@ -105,7 +105,7 @@ class AuthController extends Controller
             $id=$user->id;
             $team_infor=(new TeamStaff)->getTeamInfor($id);
 
-            $token['agent_id']=$user->id;
+            $token['data_user']['agent_id']=$user->id;
             $token['data_user']['email']=$user->email;
             $token['data_user']['firstname']=$user->firstname;
             $token['data_user']['lastname']=$user->lastname;
