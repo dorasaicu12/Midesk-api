@@ -24,6 +24,7 @@ use App\Models\Macro;
 use App\Traits\ProcessTraits;
 use Auth;
 use DB;
+use App\Models\Tags;
 /**
  * @group  Tickets Management
  *
@@ -139,6 +140,8 @@ class TicketController extends Controller
         foreach($tickets as $val){
            $val['ticket_id']='#'.$val['ticket_id'];
         }
+              
+
         return MyHelper::response(true,'Successfully',$tickets,200);
 
         
@@ -197,6 +200,30 @@ class TicketController extends Controller
     { 
         $ticket_var=new Ticket;
         $ticket = $ticket_var->showOne($id);
+
+
+      
+           if($ticket['tag']!=null){
+            $tags= explode(',', $ticket['tag']);
+             foreach($tags as $val){
+                $team=Tags::where('id',$val)->get();
+
+                foreach($team as $k2 => $val2){
+                    $team_infor[]=[
+                        'id'  =>$val2['id'],
+                        'name'=>$val2['name']
+                    ];
+                   
+                }
+             }
+            
+              
+            }else{
+                $team_infor[]=[null];
+            }
+         
+        
+        $ticket['tags']= $team_infor;
 
         if($ticket){
             $ticket['ticket_id']='#'.$ticket['ticket_id'];

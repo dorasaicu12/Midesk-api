@@ -437,12 +437,7 @@ class UserController extends Controller
         $data = array_filter($request->all());
         $groupid = auth()->user()->groupid;
         
-        if(isset($request['email'])){
-            $checkAgent=Agent::where('email',$request['email'])->first();
-            if($checkAgent){
-                return MyHelper::response(false,'this email already exist in another agent ', ['id'=>$checkAgent->id,'email'=>$checkAgent->email],400);
-            } 
-        }
+
 
 
 
@@ -461,6 +456,16 @@ class UserController extends Controller
         $agent = Agent::find($id);
         if (!$agent) {
             return MyHelper::response(false,'Agent not found',[],404);
+        }
+
+        if(isset($request['email'])){
+            if($request['email']!=$agent->email){
+                $checkAgent=Agent::where('email',$request['email'])->first();
+                if($checkAgent){
+                    return MyHelper::response(false,'this email already exist in another agent ', ['id'=>$checkAgent->id,'email'=>$checkAgent->email],400);
+                } 
+            }
+
         }
         DB::beginTransaction();
         try {

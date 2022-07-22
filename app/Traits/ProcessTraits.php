@@ -11,6 +11,11 @@ use App\Http\Requests\v3\ContactRequest;
 use App\Models\TicketDetail;
 use Illuminate\Support\Facades\Log;
 use App\Models\Contact;
+use App\Models\Tags;
+use App\Models\TicketLabel;
+
+use App\Models\TeamStaff;
+use App\Models\Team;
 
 trait ProcessTraits {
 
@@ -54,7 +59,67 @@ trait ProcessTraits {
         $label    = $req['label'] ?? null;
         $status   = array_key_exists('status', $req) ? $req['status'] : 'new';  
         $private  = array_key_exists('private',$req) ? 1 : 0;    
-        $channel  = 'api';    
+        $channel  = 'api';
+
+        
+        //kiem tra tag co ton tai hay ko
+        if(isset($req['tags'])){
+            $tag=    $req['tags'];
+            
+            $tags= explode(',', $tag);
+            
+            foreach(explode(',', $tag) as $val){
+              $tagcheck= Tags::where('id',$val)->first();
+               if(!$tagcheck){
+                $message=array();
+                   $message[]=['message'=>'tag '.$val.' can not be found'];
+               }
+   
+            }
+            
+            if(is_array($message)){
+               foreach($message as $v ){
+                   foreach($v as $v2){
+                       return MyHelper::response(false,$v2, [],404); 
+                   }
+                }
+            }
+        }
+
+      
+        if (array_key_exists('label', $req)) {
+          $checklable=  TicketLabel::where('id',$req['label'])->first();
+          if(!$checklable){
+            return MyHelper::response(false,'label can not be found', [],404); 
+          }
+         $label_creaby= $checklable['createby'];
+         $req['label_creby']=$checklable['createby'];
+        }
+
+        //check handle agent va handle team 
+        if (array_key_exists('assign_team', $req)) {
+            $team_id = $req['assign_team'];
+            $check_team = (new Team)->where('team_id',$team_id)->first();
+            if (!$check_team) {
+                return MyHelper::response(false,'assign_team field do not match', [],403);
+            }
+        }
+
+        if (array_key_exists('assign_agent', $req) && array_key_exists('assign_team', $req)) {
+            $team_id = $req['assign_team'];
+            $check_team = (new Team)->where('team_id',$team_id)->first();
+            if (!$check_team) {
+                return MyHelper::response(false,'assign_team field do not match', [],403);
+            }
+            $agent_id = $req['assign_agent'];
+            $check_agent = (new TeamStaff)->where('team_id',$check_team->team_id)->get()->pluck('agent_id')->toArray();
+            if (!in_array($agent_id,$check_agent)) {
+                return MyHelper::response(false,'assign_agent field do not match', [],403);
+            }
+        }
+
+
+       
         if (array_key_exists('channel', $req)) {
             $cn = str_replace(' ', '_', strtolower($req['channel']));
             if (in_array($cn, $channel_list)) {
@@ -102,6 +167,9 @@ trait ProcessTraits {
                 $assign_team    = array_key_exists('assign_team', $req) ? $req['assign_team'] : $ticket->assign_team;
                 $assign_agent    = array_key_exists('assign_agent', $req) ? $req['assign_agent'] : $ticket->assign_agent;
                 $ticket->requester      = $requester ?? $ticket->requester;
+                if(isset($req['tags'])){
+                    $req['tag']=$req['tags'];
+                }
                 $request = array_filter($req);
                 // phần lọc riêng giá trị giữa create và update
                 // if (array_key_exists('cotact_id', $req)) {
@@ -130,9 +198,10 @@ trait ProcessTraits {
                 $priority     = array_key_exists('priority', $output) ? $output['priority'] : $priority;
                 $category     = array_key_exists('category',$output) ? $output['category'] : $category;
                 $assign_agent = array_key_exists('assign_agent',$output) ? $output['assign_agent'] : 0;
-                $assign_team  = array_key_exists('assign_team',$output) ? $output['assign_team'] : 0;
+                $assign_team  = array_key_exists('assign_team', $output) ? $output['assign_team'] : 0;
                 $status       = array_key_exists('status',$output) ? $output['status'] : 'new';
                 $label        = array_key_exists('label',$output) ? $output['label'] : null;
+                
                 $ticket = new Ticket;
                 $ticket->requester      = $requester;
                 $ticket->requester_type = 'contact';
@@ -155,7 +224,9 @@ trait ProcessTraits {
                 $ticket->dateupdate     = $time;
                 $ticket->priority       = $priority;
                 $ticket->category       = $category;
-                $ticket->label          = $label;
+                $ticket->label          = $req['label'] ?? null;
+                $ticket->label_creby          =$label_creaby ?? null;
+                $ticket->tag          = $tag;
             }
             //chức năng chung giữa update và create
             if (!empty($req['custom_field'])) {

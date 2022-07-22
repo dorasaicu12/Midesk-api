@@ -38,6 +38,8 @@ Route::group(['prefix' => 'v3'], function () {
 
         Route::apiResource('order', 'OrderController');
         Route::get('event/eventForm', 'EventController@eventForm')->name('event.form');
+        Route::post('event/ticket/{id}', 'EventController@EventTicket')->name('event.ticket');
+        
         Route::apiResource('event', 'EventController');
         Route::apiResource('agent', 'UserController');
     });

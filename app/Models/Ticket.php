@@ -37,7 +37,10 @@ class Ticket extends Model
                             'datecreate',
                             'is_delete',
                             'is_delete_date',
-                            'is_delete_creby'
+                            'is_delete_creby',
+                            'tag',
+                            'label',
+                            'label_creby',
                         ];
                         
 	protected $table = 'ticket';

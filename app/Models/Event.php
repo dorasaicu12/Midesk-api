@@ -14,7 +14,7 @@ class Event extends Model
     const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
-    protected $fillable = ['event_title','remind_time','event_assign_agent','event_assign_team','note','event_location','remind_type','event_source','event_source_id','updated_by'];
+    protected $fillable = ['event_title','remind_time','event_assign_agent','event_assign_team','note','event_location','remind_type','event_source','event_source_id','updated_by','contact_id'];
     protected $dateFormat = 'Y-m-d H:i:s';
 
 	public function getListDefault($req)

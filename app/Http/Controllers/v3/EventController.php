@@ -5,6 +5,9 @@ namespace App\Http\Controllers\v3;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\Ticket;
+use App\Models\Order;
+
 use App\Models\Contact;
 use App\Models\EventType;
 use App\Http\Functions\MyHelper;
@@ -14,6 +17,7 @@ use App\Models\User;
 use App\Models\Customer;
 use App\Models\TeamStaff;
 use Carbon\Carbon;
+use DB;
 
 class EventController extends Controller
 {
@@ -358,6 +362,35 @@ class EventController extends Controller
             }
         }
 
+        if(isset($request['ticket_id'])){
+            $ticket = Ticket::where('id',$request['ticket_id'])->first();
+            if($ticket){
+                $ticket_id=$request['ticket_id'];
+            }else{
+                return MyHelper::response(false,'ticket not found',[],404);
+            }
+        }
+        if(isset($request['contact_id'])){
+            $contact = Contact::where('id',$request['contact_id'])->first();
+            if($contact){
+                $contact_id=$request['contact_id'];
+            }else{
+                return MyHelper::response(false,'contact not found',[],404);
+            }
+        }
+
+
+        if(isset($request['order_id'])){
+            $order = Order::where('id',$request['order_id'])->first();
+            if($order){
+                $order_id=$request['order_id'];
+            }else{
+                return MyHelper::response(false,'order not found',[],404);
+            }
+        }
+
+        
+
 
 
         $event = new Event;
@@ -371,6 +404,10 @@ class EventController extends Controller
         $event->event_assign_agent = $agent_id;
         $event->event_source_id = $event_source_id;
         $event->event_source = $event_source;
+        $event->ticket_id = $ticket_id ?? null;
+        $event->contact_id =  $contact_id ?? null;
+        $event->order_id =  $order_id ?? null;
+       
         $event->groupid = auth()->user()->groupid;
         $event->created_by = auth()->user()->id;
         
@@ -630,11 +667,47 @@ class EventController extends Controller
 	            return MyHelper::response(false,'Event type field do not exist', [],403);
 	        }	
        	}
+
+           DB::beginTransaction();
+           try {
+            DB::commit();
+           if(isset($request['ticket_id'])){
+            $ticket = Ticket::where('id',$request['ticket_id'])->first();
+            if($ticket){
+                $event->ticket_id=$request['ticket_id'];
+                $event->save();
+            }else{
+                return MyHelper::response(false,'ticket not found',[],404);
+            }
+        }
+        if(isset($request['contact_id'])){
+            $contact = Contact::where('id',$request['contact_id'])->first();
+            if(!$contact){
+                return MyHelper::response(false,'contact not found',[],404);
+            }else{
+                $event->contact_id=$request['contact_id'];
+                $event->save();
+            }
+        }
+        if(isset($request['order_id'])){
+            $order = Order::where('id',$request['order_id'])->first();
+            if(!$order){
+                return MyHelper::response(false,'order not found',[],404);
+            }else{
+                $event->order_id=$request['order_id'];
+                $event->save();
+            }
+        }
+        
         if ($event->update($request)) {
         	return MyHelper::response(true,'Update event successfully', [],200);
         }else{
             return MyHelper::response(false,'Update event failed', [],403);
         }
+    } catch (\Exception $ex) {
+        DB::rollback();
+        return MyHelper::response(false,$ex->getMessage(), [],403);
+    }
 
     }
 
@@ -687,6 +760,103 @@ class EventController extends Controller
             $eventact = Event::find($id);
             $eventact->delete();
             return MyHelper::response(true,'Delete Event Successfully', [],200);
+        }
+    }
+
+
+        /**
+    * @OA\POST(
+    *     path="/api/v3/event/ticket/{eventId}",
+    *     tags={"Event"},
+    *     summary="Create a new ticket id for event ",
+    *     description="<h2>This API will create a ticket_id in a event by ticketId and the value json form below</h2><br>",
+    *     operationId="EventTicket",
+    *     @OA\Parameter(
+    *       name="eventId",
+    *       in="path",
+    *       description="<table id='my-custom-table'>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <td><b id='require'>Required</b></td>
+                </tr>
+                <tr>
+                    <th>private</th>
+                    <td>(0: normal, 1: internal note)</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <th>content</th>
+                    <td>Content of comment</td>
+                    <td>true</td>
+                </tr>
+            </table><br><code>Click Schema to view data property</code>",
+    *       required=true,
+    *     ),
+    *     @OA\RequestBody(
+    *       required=true,
+    *       @OA\JsonContent(
+    *         required={"private","content"},
+    *         @OA\Property(property="ticket_id", type="string", example="4491"),
+    *     
+    *       ),
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="add a ticket_id successfully",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="true"),
+    *              @OA\Property(property="message", type="string", example="add a ticket_id successfully successfully"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="If $evenId do not exist or invalid will be return ticket not found",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="contact not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=405,
+    *         description="If $ticketId already exist on a event will be return this event already have ticket",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="this event already have ticket"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
+
+
+    public function EventTicket(Request $request,$id)
+    {
+        $event = Event::where('id', $id)->first();
+        if (!$event) {            
+            return MyHelper::response(false,'Event not found',[],404);
+        }else{      
+            if($event->ticket_id){
+                return MyHelper::response(true,'this event already have ticket',['event_id'=>$event->id,'ticket_id'=>$event->ticket_id],200); 
+            }else{
+                if(isset($request['ticket_id'])){
+                    $ticket = Ticket::where('id',$request['ticket_id'])->first();
+                    if($ticket){
+                        $event->ticket_id=$request['ticket_id'];
+                        $event->save();
+                        return MyHelper::response(true,'add ticket successfully',['event_id'=>$event->id,'ticket_id'=>$event->ticket_id],200); 
+                    }else{
+                        return MyHelper::response(false,'ticket not found',[],404);
+                    }
+                }else{
+                    return MyHelper::response(false,'please enter ticket_id',[],500);
+                }
+            }  
         }
     }
 }
