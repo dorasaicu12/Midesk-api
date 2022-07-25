@@ -77,6 +77,7 @@ class PermissionMiddleware
                     'product' => 'product',
                     'ticketCategory' => 'ticketCategory',
                     'agent' => 'agent',
+                    'chat' => 'chat',
                 ];
         return $args[$route];
     }

@@ -111,7 +111,7 @@ class AuthController extends Controller
             $token['data_user']['lastname']=$user->lastname;
             $token['data_user']['fullname']=$user->fullname; 
             $token['data_user']['level']=$user->level;
-            $token['data_user']['extension']=$user->extension;
+            $token['data_user']['extension']=$user->call_extension;
             
             $token['roles']['name'] = $user->class_staff;
             $token['roles']['type'] = $typeRole;
