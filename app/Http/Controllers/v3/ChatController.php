@@ -21,6 +21,8 @@ use App\Models\customerContactRelation;
 
 use App\Models\Chat;
 
+use Illuminate\Support\Facades\Schema;
+
 class ChatController extends Controller
 {
     /**
@@ -123,10 +125,36 @@ class ChatController extends Controller
     public function index(Request $request)
     {
        $req = $request->all();
+       
+       //check column exits
+       if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+        $columns['fields']=Schema::getColumnListing('social_history');  
+        $f= rtrim($req['fields'],',');
+        
+        $field= explode(',',$req['fields']);
+
+        $temp = [];
+        $message='';
+        foreach($field as $key => $value){
+            if(!in_array($value, $temp)){
+                $temp[]=$value;
+                $check_array=in_array($value, $columns['fields']);
+                if(!$check_array){
+                    $message .='column '.$value.' can not be found';
+                }else{
+                    $message='';
+                }
+            }
+            if($message !=''){
+                return MyHelper::response(false,$message, [],404); 
+            }
+           
+        }
+       }
+
+       
        $chats = (new Chat)->getDefault($req);
        return MyHelper::response(true,'Successfully',$chats,200);
-       echo 'asdasd';
-       exit;
     }
 
     /**

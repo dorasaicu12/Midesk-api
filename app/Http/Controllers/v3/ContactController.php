@@ -121,6 +121,13 @@ class ContactController extends Controller
     {
         $req = $request->all();
         $contacts = (new Contact)->getDefault($req);
+
+        foreach($contacts as $key => $value) {
+            $contacts[$key]['relation']=['id'=>$value['relation_id'],'title'=>$value['relation_title'],'color'=>$value['relation_color']];
+        }
+
+    
+        
         return MyHelper::response(true,'Successfully',$contacts,200);
     }
 
@@ -182,6 +189,7 @@ class ContactController extends Controller
             Log::channel('contact_history')->info('Contact notfound',['id'=>$id]);
             return MyHelper::response(false,'Contact not found',[],404);
         }else{
+            $contact['relation']=['id'=>$contact['relation_id'],'title'=>$contact['relation_title'],'color'=>$contact['relation_color']];
             return MyHelper::response(true,'Successfully',$contact,200);
         }
         return MyHelper::response(true,'Successfully',$contact,200);    

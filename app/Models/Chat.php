@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use Auth;
+use Illuminate\Support\Facades\Schema;
+use App\Http\Functions\MyHelper;
 
 class Chat extends Model
 {
@@ -17,6 +19,10 @@ class Chat extends Model
     const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
+    
+    public $fillable_group = '
+     id,name,phone,tag,email,channel,groupid,assign_agent,assign_team,message
+    ';
 
     function __construct()
     {
@@ -44,11 +50,13 @@ class Chat extends Model
         }
         /// select
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+
             $res = $res->selectRaw('id,'.$req['fields']);
         }else{
             if (auth::user()->groupid == '196') {
                 $res = $res->selectRaw('id,'.$this->fillable_group);
             }
+            $res = $res->selectRaw('id,'.$this->fillable_group);
         }
         
         /// search
@@ -89,5 +97,7 @@ class Chat extends Model
         ->offset($from)
         ->limit($limit)
         ->paginate($limit)->appends(request()->query());
+
+        //appends(request()->query()) dùng để sinh ra các đường link để paginate trong laravel 
     }
 }
