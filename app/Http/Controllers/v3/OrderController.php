@@ -18,6 +18,8 @@ use App\Models\Ticket;
 use App\Traits\ProcessTraits;
 use Illuminate\Support\Facades\Log;
 
+use App\Http\Functions\CheckField;
+
 use Auth;
 use DB;
 /**
@@ -132,6 +134,24 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $checkFileds= CheckField::check_fields($req,'order');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+            $checkFileds= CheckField::check_order($req,'order');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $checkFileds= CheckField::CheckSearch($req,'order');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           } 
         $orders = new Order;
         $orders->setDeleteColumn('flag_delete');
         $orders = $orders->getListDefault($req);
@@ -193,6 +213,7 @@ class OrderController extends Controller
 
     public function show($ordid)
     {
+        
         $order = (new Order)->checkExist($ordid);
         $order2=Order::where('ord_code',$ordid)->first();
         if (!$order) {
@@ -502,7 +523,7 @@ class OrderController extends Controller
                 $customer_locate = $request->customer['locate'];
 
                 $customer = new Customer;
-                $check_customer = Customer::where('phone',$customer_phone,$customer_email)->where('email',$customer_email)->first();
+                $check_customer = Customer::where('phone',$customer_phone)->where('email',$customer_email)->first();
                 if(!$check_customer){
                     $customer->groupid       = $groupid;
                     $customer->fullname      = $customer_name;

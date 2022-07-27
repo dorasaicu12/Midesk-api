@@ -5,7 +5,10 @@ namespace App\Http\Controllers\v3;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\CustomerRequest;
+
 use App\Http\Functions\MyHelper;
+use App\Http\Functions\CheckField;
+
 use App\Models\Customer;
 use Carbon\Carbon;
 use Auth;
@@ -13,6 +16,8 @@ use DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\customerContactRelation;
 use App\Models\Contact;
+
+use Illuminate\Support\Facades\Schema;
 /**
  * @group  Customer Management
  *
@@ -115,6 +120,26 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
+        
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $checkFileds= CheckField::check_fields($req,'customer');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+            $checkFileds= CheckField::check_order($req,'customer');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $checkFileds= CheckField::CheckSearch($req,'customer');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }     
+        
         $customers = (new Customer)->getListDefault($req);
         return MyHelper::response(true,'Successfully',$customers,200);
     }

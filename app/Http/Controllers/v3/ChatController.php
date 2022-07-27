@@ -125,7 +125,6 @@ class ChatController extends Controller
     public function index(Request $request)
     {
        $req = $request->all();
-       
        //check column exits
        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
         $columns['fields']=Schema::getColumnListing('social_history');  
@@ -140,17 +139,95 @@ class ChatController extends Controller
                 $temp[]=$value;
                 $check_array=in_array($value, $columns['fields']);
                 if(!$check_array){
-                    $message .='column '.$value.' can not be found';
+                    $message .='Column '.$value.' can not be found.';
                 }else{
                     $message='';
                 }
             }
             if($message !=''){
-                return MyHelper::response(false,$message, [],404); 
-            }
-           
+                 $message2=$message;
+            } 
         }
+            if(isset($message2)){
+                return MyHelper::response(false,$message2,[],404);
+            }
        }
+
+
+       if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+        
+        $columns['fields']=Schema::getColumnListing('social_history');  
+        $message='';
+        
+        if(strpos($req['search'], '<=>') !== false){
+            $key_search = explode('<=>', $req['search']);
+            $check_array=in_array($key_search[0], $columns['fields']);
+            if(!$check_array){
+                $message .='Search column '.$key_search[0].' can not be found.';
+            }else{
+                $message='';
+            }
+            
+        }else if(strpos($req['search'], '<like>') !== false){
+            $key_search = explode('<like>', $req['search']);
+            $check_array=in_array($key_search[0], $columns['fields']);
+            if(!$check_array){
+                $message .='Search column '.$key_search[0].' can not be found.';
+            }else{
+                $message='';
+            }
+            
+        
+            $key_search[1] = '%'.$key_search[1].'%';
+        }else if(strpos($req['search'], '<>') !== false){
+            $key_search = explode('<>', $req['search']);
+            $check_array=in_array($key_search[0], $columns['fields']);
+            if(!$check_array){
+                $message .='Search column '.$key_search[0].' can not be found.';
+            }else{
+                $message='';
+            }
+            
+        }
+
+        if($message !== ''){
+            return MyHelper::response(false,$message,[],404);
+        }
+        
+    }
+
+
+       
+       if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+        $columns['fields']=Schema::getColumnListing('social_history');  
+        $order_by = explode(',', $req['order_by']);
+        $message='';
+        $temp = [];
+        foreach ($order_by as $key => $value) {
+            
+                $c = explode(':', $value);
+                $by = $c[0];
+                $order = $c[1];
+
+                if(!in_array($by, $temp)){
+                    $temp[]=$by;
+                    $check_array=in_array($by, $columns['fields']);
+                    if(!$check_array){
+                        $message .='Column '.$by.' can not be found.';
+                    }else{
+                        $message='';
+                    }
+                }
+                if($message !=''){
+                     $message2=$message;
+                }
+            
+
+        }
+        if(isset($message2)){
+            return MyHelper::response(false,$message2,[],404);
+        }
+    }
 
        
        $chats = (new Chat)->getDefault($req);

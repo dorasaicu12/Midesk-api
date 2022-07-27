@@ -10,6 +10,7 @@ use App\Models\Agent;
 use App\Models\UserType;
 use App\Traits\ProcessTraits;
 use Auth;
+use App\Http\Functions\CheckField;
 use DB;
 /**
  * @group  agents Management
@@ -111,6 +112,24 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $checkFileds= CheckField::check_fields($req,'table_users');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+            $checkFileds= CheckField::check_order($req,'table_users');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $checkFileds= CheckField::CheckSearch($req,'table_users');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           } 
         $agents = new Agent();
         $agents = $agents->setDeleteColumn('active');
         $agents = $agents->setDeleteValue(1);

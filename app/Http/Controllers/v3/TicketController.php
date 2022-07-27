@@ -8,6 +8,8 @@ use App\Http\Requests\TicketRequest;
 use Illuminate\Support\Str;
 use App\Http\Functions\CheckTrigger;
 use App\Http\Functions\MyHelper;
+use App\Http\Functions\CheckField;
+
 use App\Models\CustomField;
 use App\Models\Ticket;
 use App\Models\TicketDetail;
@@ -25,6 +27,8 @@ use App\Traits\ProcessTraits;
 use Auth;
 use DB;
 use App\Models\Tags;
+
+use Illuminate\Support\Facades\Schema;
 /**
  * @group  Tickets Management
  *
@@ -135,16 +139,36 @@ class TicketController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
-        $tickets = (new Ticket)->getDefault($req,'getTicketsDetail:id,title,content,content_system,ticket_id,status,type,private,file_name');
-        // $tickets['ticket_id']='#'.$tickets['ticket_id'];
-        foreach($tickets as $val){
-           $val['ticket_id']='#'.$val['ticket_id'];
-        }
-              
 
+
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $checkFileds= CheckField::check_fields($req,'ticket');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           
+           if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+            $checkFileds= CheckField::check_order($req,'ticket');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           
+           if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $checkFileds= CheckField::CheckSearch($req,'ticket');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+
+           $tickets = (new Ticket)->getDefault($req,'getTicketsDetail:id,title,content,content_system,ticket_id,status,type,private,file_name');
+           // $tickets['ticket_id']='#'.$tickets['ticket_id'];
+           foreach($tickets as $val){
+              $val['ticket_id']='#'.$val['ticket_id'];
+           }
+            
         return MyHelper::response(true,'Successfully',$tickets,200);
-
-        
     }
     
     /**

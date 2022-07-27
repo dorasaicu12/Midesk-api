@@ -4,7 +4,10 @@ namespace App\Http\Controllers\v3;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 use App\Http\Functions\MyHelper;
+use App\Http\Functions\CheckField;
+
 use App\Models\Contact;
 use App\Models\Group;
 use App\Models\CustomField;
@@ -17,7 +20,7 @@ use Auth;
 use DB;
 use App\Models\actionLog;
 use App\Models\customerContactRelation;
-
+use Illuminate\Support\Facades\Schema;
 /**
  * @group  Contact Management
  *
@@ -120,8 +123,30 @@ class ContactController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
-        $contacts = (new Contact)->getDefault($req);
 
+
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $checkFileds= CheckField::check_fields($req,'contact');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           
+           if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+            $checkFileds= CheckField::check_order($req,'contact');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }         
+           
+           if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $checkFileds= CheckField::CheckSearch($req,'contact');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }  
+           
+        $contacts = (new Contact)->getDefault($req);
         foreach($contacts as $key => $value) {
             $contacts[$key]['relation']=['id'=>$value['relation_id'],'title'=>$value['relation_title'],'color'=>$value['relation_color']];
         }

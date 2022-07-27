@@ -27,7 +27,8 @@ class Order extends Model
     						'ord_rest_of_total',
     						'ord_ship',
     						'ord_customer_id',
-    						'ord_customer_name'
+    						'ord_customer_name',
+                            'ticket_id',
     					];
                         const DELETED = 1;
                         const DELETE = [NULL,0];
@@ -81,7 +82,7 @@ class Order extends Model
         if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
             $order_by = explode(',', $req['order_by']);
             foreach ($order_by as $key => $value) {
-                $c = explode('=', $value);
+                $c = explode(':', $value);
                 $by = $c[0];
                 $order = $c[1];
                 $res = $res->orderBy($by, $order);

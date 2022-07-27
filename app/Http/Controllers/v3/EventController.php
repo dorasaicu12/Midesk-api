@@ -10,7 +10,10 @@ use App\Models\Order;
 
 use App\Models\Contact;
 use App\Models\EventType;
+
 use App\Http\Functions\MyHelper;
+use App\Http\Functions\CheckField;
+
 use App\Http\Requests\EventRequest;
 use App\Models\Team;
 use App\Models\User;
@@ -119,6 +122,25 @@ class EventController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $checkFileds= CheckField::check_fields($req,'event');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+            $checkFileds= CheckField::check_order($req,'event');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $checkFileds= CheckField::CheckSearch($req,'event');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           } 
+           
         $events = (new Event)->getListDefault($req);
         return MyHelper::response(true,'Successfully',$events,200);
     }

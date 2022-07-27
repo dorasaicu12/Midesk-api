@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Functions\MyHelper;
 use App\Models\TicketCategory;
+use App\Http\Functions\CheckField;
 /**
  * @group  Product Management
  *
@@ -106,6 +107,24 @@ class TicketCategoryController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $checkFileds= CheckField::check_fields($req,'ticket_category');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+            $checkFileds= CheckField::check_order($req,'ticket_category');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $checkFileds= CheckField::CheckSearch($req,'ticket_category');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           } 
         $category = new TicketCategory();
         $category = $category->setDeleteColumn('is_show');
         $category = $category->setDeleteValue([NULL,1]);
