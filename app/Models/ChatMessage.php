@@ -8,10 +8,10 @@ use Auth;
 use Illuminate\Support\Facades\Schema;
 use App\Http\Functions\MyHelper;
 
-class Chat extends Model
+class ChatMessage extends Model
 {
     public $timestamps = false;
-    protected $table = 'social_history';
+    protected $table = 'social_message';
 
     const DELETED = 1;
     const DELETE = [NULL,0];
@@ -21,7 +21,18 @@ class Chat extends Model
     const FROM = 0;
     
     public $fillable_group = '
-     id,name,phone,tag,email,channel,groupid,assign_agent,assign_team,message,id_channel,id_page,datecreate
+    table_users.fullname,
+    table_users.id as iduser,
+    table_users.picture,
+    social_message.id,
+    social_message.title,
+    social_message.channel,
+    social_message.groupid,
+    social_message.assign_agent,
+    social_message.assign_team,
+    social_message.message,
+    social_message.datecreate,
+    social_message.replyby
     ';
 
     function __construct()
@@ -50,13 +61,19 @@ class Chat extends Model
         }
         /// select
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $array = explode(',',$req['fields']);
+            if(in_array('table_users.id',$array) && in_array('social_message.id',$array)){
+                unset($array[array_search('table_users.id',$array)]);
+                array_push($array,"table_users.id as User_id");
+                $req['fields']= implode(",",$array);
+            }
 
-            $res = $res->selectRaw('id,'.$req['fields']);
+            $res = $res->selectRaw('table_users.id as id_user,'.'replyby,'.'social_message.id,'.$req['fields']);
         }else{
             if (auth::user()->groupid == '196') {
-                $res = $res->selectRaw('id,'.$this->fillable_group);
+                $res = $res->selectRaw('social_message.id,'.$this->fillable_group);
             }
-            $res = $res->selectRaw('id,'.$this->fillable_group);
+            $res = $res->selectRaw('social_message.id,'.$this->fillable_group);
         }
         
         /// search
@@ -90,13 +107,17 @@ class Chat extends Model
                 $c = explode(':', $value);
                 $by = $c[0];
                 $order = $c[1];
-                $res = $res->orderBy($by, $order);
+                $res = $res->orderBy('social_message.'.$by, $order);
             }
         }
-        $delete = self::DELETE;
-        return $res->where(function($q) use ($delete) {
-                
-            })
+        $delete=1;
+        
+        return $res->leftJoin('table_users', function($join) {
+            $join->on('social_message.replyby', '=', 'table_users.id');
+          })
+          ->where(function($q) use ($delete) {
+            $q->where('type','inbox');
+        })
         ->offset($from)
         ->limit($limit)
         ->paginate($limit)->appends(request()->query());

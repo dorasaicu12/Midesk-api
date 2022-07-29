@@ -251,6 +251,8 @@ class TicketController extends Controller
 
         if($ticket){
             $ticket['ticket_id']='#'.$ticket['ticket_id'];
+            $ticket['datecreate']=date('Y-m-d H:i:s',$ticket['datecreate']);
+            $ticket['dateupdate']=date('Y-m-d H:i:s',$ticket['dateupdate']);
             return MyHelper::response(true,'Successfully',$ticket,200);
         }else{
             return MyHelper::response(false,'Ticket not found',$ticket,404);

@@ -35,12 +35,13 @@ class Ticket extends Model
                             'channel',
                             'requester_type',
                             'datecreate',
+                            'dateupdate',
                             'is_delete',
                             'is_delete_date',
                             'is_delete_creby',
                             'tag',
                             'label',
-                            'label_creby',
+                            'label_creby', 
                         ];
                         
 	protected $table = 'ticket';

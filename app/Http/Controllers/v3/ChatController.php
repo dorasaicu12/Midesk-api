@@ -231,6 +231,15 @@ class ChatController extends Controller
 
        
        $chats = (new Chat)->getDefault($req);
+       
+        foreach($chats as $value){
+            if(isset($value['datecreate'])){
+            $value['datecreate']= date('Y-m-d H:i:s',$value['datecreate']);
+        }
+           }
+      
+
+       
        return MyHelper::response(true,'Successfully',$chats,200);
     }
 

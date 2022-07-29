@@ -166,6 +166,7 @@ trait ProcessTraits {
                 $message = 'vừa cập nhật phiếu';
                 $assign_team    = array_key_exists('assign_team', $req) ? $req['assign_team'] : $ticket->assign_team;
                 $assign_agent    = array_key_exists('assign_agent', $req) ? $req['assign_agent'] : $ticket->assign_agent;
+                $ticket->dateupdate     = $time;
                 $ticket->requester      = $requester ?? $ticket->requester;
                 if(isset($req['tags'])){
                     $req['tag']=$req['tags'];
@@ -208,7 +209,7 @@ trait ProcessTraits {
                 $ticket->assign_agent   = $assign_agent;
                 $ticket->assign_team    = $assign_team;
                 $ticket->createby       = $creby;
-                $ticket->datecreate     = $time;
+                
                 $ticket->groupid        = $groupid;
                 if ($groupid == '103') {
                     $ticket->mt_orderid     = array_key_exists('mt_orderid',$req) ? $req['mt_orderid'] : null;
@@ -219,9 +220,9 @@ trait ProcessTraits {
                 }
                 // phần lọc riêng giá trị giữa create và update
                 $ticket->title          = $title;
+                $ticket->datecreate     = $time;
                 $ticket->status         = $status;
                 $ticket->channel        = $channel;
-                $ticket->dateupdate     = $time;
                 $ticket->priority       = $priority;
                 $ticket->category       = $category;
                 $ticket->label          = $req['label'] ?? null;
