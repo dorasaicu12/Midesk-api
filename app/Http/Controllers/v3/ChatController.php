@@ -126,8 +126,14 @@ class ChatController extends Controller
     {
        $req = $request->all();
        //check column exits
+
        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
-        $columns['fields']=Schema::getColumnListing('social_history');  
+
+        $columns['fields']=Schema::getColumnListing('social_history');
+        $checkid=explode(',',$req['fields']);
+        if (in_array('key_id',$checkid)){
+            $columns['fields']=array_merge($columns['fields'],['key_id']); 
+        }
         $f= rtrim($req['fields'],',');
         
         $field= explode(',',$req['fields']);
@@ -231,10 +237,21 @@ class ChatController extends Controller
 
        
        $chats = (new Chat)->getDefault($req);
+       $check[]=$chats;
        
         foreach($chats as $value){
-            if(isset($value['datecreate'])){
+        if(isset($value['datecreate'])){
             $value['datecreate']= date('Y-m-d H:i:s',$value['datecreate']);
+            
+        }
+        if(isset($value['channel'])){
+            $check_field = Chat::where('id',$value['id'])->first();
+            if($value['channel']=='facebook'){
+                $value['id_key']=$check_field['fb_key'];
+            }elseif($value['channel']=='zalo'){
+                $value['key_id']=$check_field['zalo_key'];
+            }
+            
         }
            }
       

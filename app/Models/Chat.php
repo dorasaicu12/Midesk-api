@@ -21,7 +21,7 @@ class Chat extends Model
     const FROM = 0;
     
     public $fillable_group = '
-     id,name,phone,tag,email,channel,groupid,assign_agent,assign_team,message,id_channel,id_page,datecreate
+     id,name,phone,tag,email,channel,groupid,assign_agent,assign_team,message,id_channel,id_page,datecreate,fb_key,zalo_key
     ';
 
     function __construct()
@@ -51,6 +51,12 @@ class Chat extends Model
         /// select
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
 
+            $array = explode(',',$req['fields']);
+            if(in_array('key_id',$array)){
+                unset($array[array_search('key_id',$array)]);
+                array_push($array,"channel");
+                $req['fields']= implode(",",$array);
+            }
             $res = $res->selectRaw('id,'.$req['fields']);
         }else{
             if (auth::user()->groupid == '196') {

@@ -102,4 +102,51 @@ class CheckField{
             return $message;
         }
      }
+
+     static function check_chat_field($req){
+        //check column exits
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+         $columns['table']=['social_message','table_users'];
+         $columns['fields']=array_merge(Schema::getColumnListing('social_message'),Schema::getColumnListing('table_users'));
+         $order_by = explode(',', $req['fields']);
+         $message='';
+         $temp = [];
+         foreach ($order_by as $key => $value) {
+             $c = explode('.', $value);
+             $by = $c[0];
+             $order = $c[1];
+ 
+             if(!in_array($by, $temp)){
+                 $temp[]=$by;
+                 $check_array2=in_array($by,$columns['table']);
+                 if(!$check_array2){
+                     $message .='Order by table '.$by.' can not be found.';
+                 }
+                 if(!in_array($order, $columns['fields'])){
+                     $message .='Order by columms '.$order.' can not be found.';
+                 }
+             }
+             if($message !=''){
+                  $message2=$message;
+             }
+     }
+         foreach ($order_by as $key => $value) {
+                 $c = explode('.', $value);
+                 $by = $c[0];
+                 $order = $c[1];
+                 if(!in_array($order, $columns['fields'])){
+                   
+                     $message .='Order by columms '.$order.' can not be found.';
+                 }
+                 if($message !=''){
+                      $message2=$message;
+                 }
+         }
+          if(isset($message2)){
+             return $message2;
+          }
+            
+
+        }
+     }
 }
