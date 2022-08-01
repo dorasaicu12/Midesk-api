@@ -21,18 +21,17 @@ class ChatMessage extends Model
     const FROM = 0;
     
     public $fillable_group = '
-    table_users.fullname,
-    table_users.id as iduser,
-    table_users.picture,
     social_message.id,
-    social_message.title,
-    social_message.channel,
     social_message.groupid,
-    social_message.assign_agent,
-    social_message.assign_team,
+    social_message.channel,
+    social_message.name,
     social_message.message,
     social_message.datecreate,
-    social_message.replyby
+    social_message.type,
+    social_message.status,
+    table_users.id as userId,
+    social_message.replyby,
+    social_message.reply
     ';
 
     function __construct()
