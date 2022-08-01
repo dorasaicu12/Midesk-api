@@ -2,6 +2,7 @@
 namespace App\Http\Functions;
 use Illuminate\Support\Facades\Schema;
 use App\Http\Functions\MyHelper;
+use DB;
 
 class CheckField{
      static function check_fields($req,$name){
@@ -84,6 +85,7 @@ class CheckField{
             }else{
                 $message='';
             }
+
             
         
             $key_search[1] = '%'.$key_search[1].'%';
@@ -148,5 +150,42 @@ class CheckField{
             
 
         }
+     }
+     static function check_exist_of_value($req,$name){
+        $message='';
+
+        if(strpos($req['search'], '<=>') !== false){
+            $key_search = explode('<=>', $req['search']);
+            $check_exits=DB::table($name)->where($key_search[0], '=', $key_search[1])->first();
+            if($check_exits == null){
+                $message .=$key_search[1].' not found.';
+            }else{
+                $message='';
+            }
+            
+        }else if(strpos($req['search'], '<like>') !== false){
+            $key_search = explode('<like>', $req['search']);
+            $check_exits=DB::table($name)->where($key_search[0], 'like', '%'.$key_search[1].'%')->first();
+            if($check_exits == null){
+                $message .=$key_search[1].' not found.';
+            }else{
+                $message='';
+            }
+        }else if(strpos($req['search'], '<>') !== false){
+            $key_search = explode('<like>', $req['search']);
+            $check_exits=DB::table($name)->where($key_search[0], 'like', '%'.$key_search[1].'%')->first();
+            if($check_exits == null){
+                $message .=$key_search[1].' not found.';
+            }else{
+                $message='';
+            }
+            
+        }
+
+        
+        if(isset($message)){
+            return $message;
+         }
+
      }
 }

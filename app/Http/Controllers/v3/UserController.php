@@ -129,6 +129,11 @@ class UserController extends Controller
              if($checkFileds){
                 return MyHelper::response(false,$checkFileds,[],404);
              }
+             $checksearch= CheckField::check_exist_of_value($req,'table_users');
+
+             if($checksearch){
+                return MyHelper::response(false,$checksearch,[],404);
+             }
            } 
         $agents = new Agent();
         $agents = $agents->setDeleteColumn('active');

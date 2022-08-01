@@ -156,9 +156,14 @@ class TicketController extends Controller
            }
            
            if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
-            $checkFileds= CheckField::CheckSearch($req,'ticket');
+            $checkFileds= CheckField::CheckSearch($req,'ticket_2');
              if($checkFileds){
                 return MyHelper::response(false,$checkFileds,[],404);
+             }
+             $checksearch= CheckField::check_exist_of_value($req,'ticket_2');
+
+             if($checksearch){
+                return MyHelper::response(false,$checksearch,[],404);
              }
            }
 
@@ -167,6 +172,8 @@ class TicketController extends Controller
            foreach($tickets as $val){
               $val['ticket_id']='#'.$val['ticket_id'];
            }
+
+           
             
         return MyHelper::response(true,'Successfully',$tickets,200);
     }

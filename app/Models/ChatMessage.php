@@ -40,7 +40,7 @@ class ChatMessage extends Model
 
     }
 
-    public function getDefault($req)
+    public function getDefault($req,$id,$id_page,$channel,$key_id)
     {
         $res = new self;
         /// paginate
@@ -116,7 +116,11 @@ class ChatMessage extends Model
           })
           ->where(function($q) use ($delete) {
             $q->where('type','inbox');
-        })
+        })->where('chat_id',$id)
+        ->where('channel',$channel)
+        ->where('id_page',$id_page)
+        ->where('key_id',$key_id)
+        ->where('social_message.groupid',auth::user()->groupid)
         ->offset($from)
         ->limit($limit)
         ->paginate($limit)->appends(request()->query());

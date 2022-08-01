@@ -151,6 +151,11 @@ class OrderController extends Controller
              if($checkFileds){
                 return MyHelper::response(false,$checkFileds,[],404);
              }
+             $checksearch= CheckField::check_exist_of_value($req,'order');
+
+             if($checksearch){
+                return MyHelper::response(false,$checksearch,[],404);
+             }
            } 
         $orders = new Order;
         $orders->setDeleteColumn('flag_delete');

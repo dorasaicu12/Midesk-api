@@ -139,6 +139,11 @@ class EventController extends Controller
              if($checkFileds){
                 return MyHelper::response(false,$checkFileds,[],404);
              }
+             $checksearch= CheckField::check_exist_of_value($req,'event');
+
+             if($checksearch){
+                return MyHelper::response(false,$checksearch,[],404);
+             }
            } 
            
         $events = (new Event)->getListDefault($req);

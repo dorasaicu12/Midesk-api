@@ -138,6 +138,11 @@ class CustomerController extends Controller
              if($checkFileds){
                 return MyHelper::response(false,$checkFileds,[],404);
              }
+             $checksearch= CheckField::check_exist_of_value($req,'customer');
+
+             if($checksearch){
+                return MyHelper::response(false,$checksearch,[],404);
+             }
            }     
         
         $customers = (new Customer)->getListDefault($req);
