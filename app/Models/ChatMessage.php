@@ -40,7 +40,7 @@ class ChatMessage extends Model
 
     }
 
-    public function getDefault($req,$id,$id_page,$channel,$key_id)
+    public function getDefault($req,$id_page,$id_key)
     {
         $res = new self;
         /// paginate
@@ -114,17 +114,16 @@ class ChatMessage extends Model
         return $res->leftJoin('table_users', function($join) {
             $join->on('social_message.replyby', '=', 'table_users.id');
           })
-          ->where(function($q) use ($delete) {
+          ->where(function($q) use ($delete,$id_page,$id_key) {
             $q->where('type','inbox');
-        })->where('chat_id',$id)
+            // $q->where('channel',$channel);
+            $q->where('id_page',$id_page);
+            $q->where('key_id',$id_key);
+        })
         ->where('social_message.groupid',auth::user()->groupid)
         ->offset($from)
         ->limit($limit)
         ->paginate($limit)->appends(request()->query());
         //appends(request()->query()) dùng để sinh ra các đường link để paginate trong laravel 
-
-        // ->where('channel',$channel)
-        // ->where('id_page',$id_page)
-        // ->where('key_id',$key_id)
     }
 }

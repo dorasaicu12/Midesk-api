@@ -75,22 +75,9 @@ class MessageController extends Controller
 
     }
 
-    public function chatlist($id,Request $request)
+    public function chatlist($id_page,$id_key,Request $request)
     {
        $req = $request->all();
-       
-       //check va lay id_page,channel,key_id
-        $check_chat=Chat::where('id',$id)->first();
-        if(!$check_chat){
-            return MyHelper::response(false,'chat not found',[],404);
-        }
-        $id_page= $check_chat['id_page'];
-        $channel=$check_chat['channel'];
-        if($channel=='zalo'){
-            $key_id=$check_chat['zalo_key'];
-        }elseif($channel=='facebook'){
-            $key_id=$check_chat['fb_key'];
-        }
         
         //check column exits
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
@@ -114,7 +101,7 @@ class MessageController extends Controller
           }
         }
         
-        $chats = (new ChatMessage)->getDefault($req,$id,$id_page,$channel,$key_id);
+        $chats = (new ChatMessage)->getDefault($req,$id_page,$id_key);
         $value2='';
          foreach($chats as $value){
              if(isset($value['datecreate'])){
