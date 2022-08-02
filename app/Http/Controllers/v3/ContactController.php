@@ -144,7 +144,7 @@ class ContactController extends Controller
              if($checkFileds){
                 return MyHelper::response(false,$checkFileds,[],404);
              }
-             $checksearch= CheckField::check_exist_of_value($req,'contact_2');
+             $checksearch= CheckField::check_exist_of_value($req,'contact_'.auth::user()->groupid.'');
 
              if($checksearch){
                 return MyHelper::response(false,$checksearch,[],404);

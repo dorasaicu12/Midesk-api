@@ -160,7 +160,7 @@ class TicketController extends Controller
              if($checkFileds){
                 return MyHelper::response(false,$checkFileds,[],404);
              }
-             $checksearch= CheckField::check_exist_of_value($req,'ticket_2');
+             $checksearch= CheckField::check_exist_of_value($req,'ticket_'.auth::user()->groupid.'');
 
              if($checksearch){
                 return MyHelper::response(false,$checksearch,[],404);

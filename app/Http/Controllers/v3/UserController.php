@@ -130,7 +130,6 @@ class UserController extends Controller
                 return MyHelper::response(false,$checkFileds,[],404);
              }
              $checksearch= CheckField::check_exist_of_value($req,'table_users');
-
              if($checksearch){
                 return MyHelper::response(false,$checksearch,[],404);
              }
