@@ -101,7 +101,7 @@ class Chat extends Model
         }
         $delete = self::DELETE;
         return $res->where(function($q) use ($delete) {
-                
+            $q->where('type','inbox');
             })
         ->offset($from)
         ->limit($limit)
