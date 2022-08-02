@@ -117,14 +117,14 @@ class ChatMessage extends Model
           ->where(function($q) use ($delete) {
             $q->where('type','inbox');
         })->where('chat_id',$id)
-        ->where('channel',$channel)
-        ->where('id_page',$id_page)
-        ->where('key_id',$key_id)
         ->where('social_message.groupid',auth::user()->groupid)
         ->offset($from)
         ->limit($limit)
         ->paginate($limit)->appends(request()->query());
-
         //appends(request()->query()) dùng để sinh ra các đường link để paginate trong laravel 
+
+        // ->where('channel',$channel)
+        // ->where('id_page',$id_page)
+        // ->where('key_id',$key_id)
     }
 }
