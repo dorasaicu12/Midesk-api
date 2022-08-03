@@ -227,15 +227,11 @@ class ChatController extends Controller
                 if($message !=''){
                      $message2=$message;
                 }
-            
-
         }
         if(isset($message2)){
             return MyHelper::response(false,$message2,[],404);
         }
     }
-
-       
        $chats = (new Chat)->getDefault($req);
        $check[]=$chats;
        
@@ -249,14 +245,11 @@ class ChatController extends Controller
             if($value['channel']=='facebook'){
                 $value['id_key']=$check_field['fb_key'];
             }elseif($value['channel']=='zalo'){
-                $value['key_id']=$check_field['zalo_key'];
+                $value['id_key']=$check_field['zalo_key'];
             }
             
         }
            }
-      
-
-       
        return MyHelper::response(true,'Successfully',$chats,200);
     }
 

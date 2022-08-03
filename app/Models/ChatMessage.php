@@ -63,7 +63,7 @@ class ChatMessage extends Model
             $array = explode(',',$req['fields']);
             if(in_array('table_users.id',$array) && in_array('social_message.id',$array)){
                 unset($array[array_search('table_users.id',$array)]);
-                array_push($array,"table_users.id as User_id");
+                array_push($array,"table_users.id as userId");
                 $req['fields']= implode(",",$array);
             }
 
