@@ -75,7 +75,7 @@ class MessageController extends Controller
 
     }
 
-    public function chatlist($id_page,$id_key,Request $request)
+    public function chatlist($channel,$id_page,$id_key,Request $request)
     {
        $req = $request->all();
         
@@ -101,7 +101,7 @@ class MessageController extends Controller
           }
         }
         
-        $chats = (new ChatMessage)->getDefault($req,$id_page,$id_key);
+        $chats = (new ChatMessage)->getDefault($req,$channel,$id_page,$id_key);
         $value2='';
          foreach($chats as $value){
              if(isset($value['datecreate'])){
