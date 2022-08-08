@@ -180,9 +180,7 @@ class CheckField{
                 $message='';
             }
             
-        }
-
-        
+        }       
         if(isset($message)){
             return $message;
          }

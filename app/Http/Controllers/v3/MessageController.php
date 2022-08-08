@@ -75,10 +75,9 @@ class MessageController extends Controller
 
     }
 
-    public function chatlist($channel,$id_page,$id_key,Request $request)
+    public function chatlist($id_page,$id_key,Request $request)
     {
        $req = $request->all();
-        
         //check column exits
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
          $checkFileds= CheckField::check_chat_field($req);
@@ -101,14 +100,19 @@ class MessageController extends Controller
           }
         }
         
-        $chats = (new ChatMessage)->getDefault($req,$channel,$id_page,$id_key);
+        $chats = (new ChatMessage)->getDefault($req,$id_page,$id_key);
         $value2='';
          foreach($chats as $value){
              if(isset($value['datecreate'])){
              $value['datecreate']= date('Y-m-d H:i:s',$value['datecreate']);
-         }
+             }
             $value2.=$value;
+            if(isset($value['url'])){
+                 $value['url']=str_replace(array('[', '\\', ']', '"'), '', $value['url']);
             }
+            }
+
+                
             if(!$value2){
                 return MyHelper::response(false,'Chat does not exits',[],404);
             }
