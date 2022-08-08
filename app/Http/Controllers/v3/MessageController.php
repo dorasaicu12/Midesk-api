@@ -79,6 +79,7 @@ class MessageController extends Controller
     {
        $req = $request->all();
         //check column exits
+        $groupid=auth::user()->groupid;
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
          $checkFileds= CheckField::check_chat_field($req);
          if($checkFileds){
@@ -108,15 +109,23 @@ class MessageController extends Controller
              }
             $value2.=$value;
             if(isset($value['url'])){
-                 $value['url']=str_replace(array('[', '\\', ']', '"'), '', $value['url']);
+               $d= ChatMessage::where('id',$value['id'])->first();
+                $year_folder  = date('Y',$d['datecreate']);
+                $month_folder = date('m',$d['datecreate']);
+                $day_folder   = date('d',$d['datecreate']);
+                 $u=str_replace(array('[', '\\', ']', '"'), '', $value['url']);
+                 $link_img = "https://cskh.midesk.vn/upload/facebook_image_2021/".$groupid."/".$year_folder."/".$month_folder."/".$day_folder."/".$u;
+                 if($value['url'] !=='' && $value['url']!== null){
+                    $value['url']=$link_img;
+                 }
+                 
             }
             }
 
                 
             if(!$value2){
                 return MyHelper::response(false,'Chat does not exits',[],404);
-            }
-
+            }             
         return MyHelper::response(true,'Successfully',$chats,200);
     }
 
