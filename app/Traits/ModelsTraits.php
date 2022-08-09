@@ -123,7 +123,8 @@ trait ModelsTraits {
                 })
         ->where('groupid',$groupid)
         ->offset($from)
-        ->limit($limit)->get();
+        ->limit($limit)
+        ->paginate($limit)->appends(request()->query());
         return $res;
     }
 

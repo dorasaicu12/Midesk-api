@@ -455,7 +455,7 @@ class OrderController extends Controller
         $message = [];
         $product_list = $request->products;
         $ord_status = $request->order_status;
-        $ord_id = $request->order_id;
+        $ord_id = $request->order_id ?? 'DH'.rand(10000,1000000);
         $ord_group = $request->order_group;
         $ord_description = $request->order_description;
         $ord_address = $request->order_address;
@@ -465,7 +465,7 @@ class OrderController extends Controller
     //check order exits
         $order=Order::where('ord_code',$ord_id)->first();  
         if ($order) {
-        return MyHelper::response(true,'Order already exist',['order_id'=>$order->ord_code],200);
+        return MyHelper::response(true,'Order already exist',['id'=>$order->id,'order_code'=>$order->ord_code],200);
     }
         // check order status
         $id_ord_status = OrderStatus::where([['groupid',$groupid],['id',$ord_status]])->first();
@@ -631,7 +631,7 @@ class OrderController extends Controller
             $order->ord_rest_of_total = $ord_total;
             $order->save();
             $ordCode = $order->find($order->id)->ord_code;
-            return MyHelper::response(true,(empty($message) ? 'Created Order successfully' : $message ),['order_code' => $ordCode],200);
+            return MyHelper::response(true,(empty($message) ? 'Created Order successfully' : $message ),['id'=>$order->find($order->id)->id,'order_code' => $ordCode],200);
         } catch (\Exception $ex) {
             DB::rollback();
             return MyHelper::response(false,$ex->getMessage(), [],403);
@@ -792,7 +792,12 @@ class OrderController extends Controller
         $ord_total = 0;
         $id_ticket = $request->ticket_id;
         $order_detail = [];
-        
+        if(isset($request->ticket_id)){
+            $check_ticket=Ticket::where('id',$request->ticket_id)->first();
+            if(!$check_ticket){
+                return MyHelper::response(false,'ticket not found!',[],404);
+            }
+        }
             //check order exits
 
         // check order status
