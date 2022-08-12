@@ -80,7 +80,6 @@ class MessageController extends Controller
 
        $req = $request->all();
         //check column exits
-        $groupid=auth::user()->groupid;
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
          $checkFileds= CheckField::check_chat_field($req);
          if($checkFileds){

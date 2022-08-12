@@ -41,7 +41,7 @@ class ChatMessage extends Model
 
     }
 
-    public function getDefault($req,$groupid,$id_page,$id_key)
+    public function getDefault($req,$groupid2,$id_page,$id_key)
     {
         $res = new self;
         /// paginate
@@ -115,12 +115,12 @@ class ChatMessage extends Model
         return $res->leftJoin('table_users', function($join) {
             $join->on('social_message.replyby', '=', 'table_users.id');
           })
-          ->where(function($q) use ($delete,$id_page,$id_key,$groupid) {
+          ->where(function($q) use ($delete,$id_page,$id_key,$groupid2) {
             $q->where('type','inbox');
             // $q->where('channel',$channel);
             $q->where('id_page',$id_page);
             $q->where('key_id',$id_key);
-            $q->where('social_message.groupid',$groupid);
+            $q->where('social_message.groupid',$groupid2);
         })
         ->offset($from)
         ->limit($limit)
