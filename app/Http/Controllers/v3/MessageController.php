@@ -105,9 +105,9 @@ class MessageController extends Controller
         $chats = (new ChatMessage)->getDefault($req,$groupid,$id_page,$id_key);
         $value2='';
          foreach($chats as $value){
-             if(isset($value['datecreate'])){
-             $value['datecreate']= date('Y-m-d H:i:s',$value['datecreate']);
-             }
+            //  if(isset($value['datecreate'])){
+            //  $value['datecreate']= date('Y-m-d H:i:s',$value['datecreate']);
+            //  }
             $value2.=$value;
             if(isset($value['url'])){
                $d= ChatMessage::where('id',$value['id'])->first();
