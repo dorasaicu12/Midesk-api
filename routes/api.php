@@ -44,6 +44,8 @@ Route::group(['prefix' => 'v3'], function () {
         Route::apiResource('chat', 'ChatController');
         Route::get('chat/chatdetail/{id}/{key}', 'MessageController@chatlist')->name('chat.detail');
         Route::apiResource('chatdetail', 'MessageController');
+
+        Route::apiResource('marco', 'MarcoController');
         
         Route::apiResource('event', 'EventController');
         Route::apiResource('agent', 'UserController');

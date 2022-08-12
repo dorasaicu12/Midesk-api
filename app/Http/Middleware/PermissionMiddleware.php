@@ -79,6 +79,7 @@ class PermissionMiddleware
                     'agent' => 'agent',
                     'chat' => 'chat',
                     'chatdetail'=>'chatdetail',
+                    'marco'=>'marco',
                 ];
         return $args[$route];
     }

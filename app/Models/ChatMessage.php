@@ -68,7 +68,7 @@ class ChatMessage extends Model
                 $req['fields']= implode(",",$array);
             }
 
-            $res = $res->selectRaw('table_users.id as id_user,'.'replyby,'.'social_message.id,'.$req['fields']);
+            $res = $res->selectRaw('table_users.id as user_id,'.'replyby,'.'social_message.id,'.$req['fields']);
         }else{
             if (auth::user()->groupid == '196') {
                 $res = $res->selectRaw('social_message.id,'.$this->fillable_group);
