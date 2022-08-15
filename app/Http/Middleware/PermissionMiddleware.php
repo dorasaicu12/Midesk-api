@@ -80,6 +80,8 @@ class PermissionMiddleware
                     'chat' => 'chat',
                     'chatdetail'=>'chatdetail',
                     'marco'=>'marco',
+                    'quickchat'=>'quickchat',
+                    'label'=>'label',
                 ];
         return $args[$route];
     }

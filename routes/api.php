@@ -46,6 +46,8 @@ Route::group(['prefix' => 'v3'], function () {
         Route::apiResource('chatdetail', 'MessageController');
 
         Route::apiResource('marco', 'MarcoController');
+        Route::apiResource('quickchat', 'QuickChatController');
+        Route::apiResource('label', 'LabelController');
         
         Route::apiResource('event', 'EventController');
         Route::apiResource('agent', 'UserController');
