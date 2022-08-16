@@ -113,7 +113,7 @@ class MessageController extends Controller
                 $year_folder  = date('Y',$d['datecreate']);
                 $month_folder = date('m',$d['datecreate']);
                 $day_folder   = date('d',$d['datecreate']);
-                 $u=str_replace(array('[',']'), '', $value['url']);
+                 $u=str_replace(array('[',']','"'), '', $value['url']);
                 //  $link_img = "https://cskh.midesk.vn/upload/facebook_image_2021/".$groupid."/".$year_folder."/".$month_folder."/".$day_folder."/".$u;
                  if($value['url'] !=='' && $value['url']!== null){
                     $value['url']= [$u];

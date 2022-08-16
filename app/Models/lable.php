@@ -91,8 +91,6 @@ class lable extends Model
         ->limit($limit)
         ->paginate($limit)->appends(request()->query());
     }
-
-
     public static function ShowOne($id)
     {
         $delete = self::DELETE;
