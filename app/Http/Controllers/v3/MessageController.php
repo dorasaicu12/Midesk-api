@@ -120,6 +120,9 @@ class MessageController extends Controller
                  }
                  
             }
+              if($value['url']==null){
+                $value['url']=[""];
+              }
             }
 
                 
