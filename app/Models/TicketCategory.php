@@ -56,7 +56,7 @@ class TicketCategory extends Model
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
             $res = $res->selectRaw('id,'.$req['fields']);
         }
-        /// search
+        /// search. 
         if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
 
             if(strpos($req['search'], '<=>') !== false){
@@ -68,7 +68,7 @@ class TicketCategory extends Model
                 $key_search[1] = '%'.$key_search[1].'%';
             }else if(strpos($req['search'], '<>') !== false){
                 $key_search = explode('like', $req['search']);
-                $type = '<>';
+                $type = '<>'; // [] => "[]"
             }
             $res = $res->where($key_search[0],$type,$key_search[1]);
         }
