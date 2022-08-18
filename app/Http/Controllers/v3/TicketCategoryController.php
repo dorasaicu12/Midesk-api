@@ -6,7 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Functions\MyHelper;
 use App\Models\TicketCategory;
+use App\Models\Order;
+use Carbon\Carbon;
+use App\Models\Contact;
+use App\Models\Customer;
+use App\Models\Product;
+use App\Models\Ticket;
+use App\Traits\ProcessTraits;
+use Illuminate\Support\Facades\Log;
+
 use App\Http\Functions\CheckField;
+
+use Auth;
+use DB;
 /**
  * @group  Product Management
  *
@@ -135,5 +147,129 @@ class TicketCategoryController extends Controller
         $category = $category->setDeleteValue([NULL,1]);
         $category = $category->getListDefault($req);
         return MyHelper::response(true,'Successfully',$category,200);
+    }
+     /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+      $groupid = auth::user()->groupid;
+      $creby   = auth::user()->id;
+      $time     = time();
+      $name=$request->name;
+      $level=$request->level;
+      $parent=$request->parent;
+      $type=$request->type && 'all';
+      $is_Show=$request->is_Show;
+      if($level==1){
+         $parent=0;
+      }
+      if($parent !==0){
+         $checkparent= (new TicketCategory)->checkExist($parent);
+         if(!$checkparent){
+            return MyHelper::response(false,'parent of ticket category not found',[],404);
+         }
+      }
+      DB::beginTransaction();
+      try {
+      DB::commit();
+      $order = new TicketCategory;
+      $order->groupid=$groupid;
+      $order->name=$name;
+      $order->type=$type;
+      $order->level=$level;
+      $order->parent=$parent;
+      $order->createby=$creby;
+      $order->datecreate=$time;
+      $order->save();
+      if($level !==1){
+         $category = $order->showOne($order->id);
+         if($level==3){
+            $value=TicketCategory::where('parent',$parent)->get()->pluck('id')->toArray();
+            $parent2s= implode(',', $value);
+            $category->parent2=$parent2s;
+         }elseif($level==2 ){
+            $category->parent2=$order->id; 
+         }else{
+            $category->parent2=$order->id;
+         }
+         $category->save();
+      }
+      return MyHelper::response(true,'Created ticket category successfully',['id'=>$order->id],200);
+  } catch (\Exception $ex) {
+      DB::rollback();
+      return MyHelper::response(false,$ex->getMessage(), [],403);
+  }
+      
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+      $TicketCategory = (new TicketCategory)->checkExist($id);
+      if(!$TicketCategory){
+          return MyHelper::response(false,'ticket category not found',[],404);
+      }else{
+
+          return MyHelper::response(true,'successfully',$TicketCategory,200);
+      }
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+      $TicketCategory = (new TicketCategory)->checkExist($id);
+      if (!$TicketCategory) {
+          return MyHelper::response(false,'TicketCategory Not Found', [],404);
+      }else{
+          $TicketCategory->delete();
+      }
+      return MyHelper::response(true,'Delete TicketCategory Successfully', [],200);
     }
 }
