@@ -116,7 +116,7 @@ class MessageController extends Controller
                  $u=str_replace(array('[',']','"'), '', $value['url']);
                 //  $link_img = "https://cskh.midesk.vn/upload/facebook_image_2021/".$groupid."/".$year_folder."/".$month_folder."/".$day_folder."/".$u;
                  if($value['url'] !=='' && $value['url']!== null){
-                    $value['url']= '['.$u.']';
+                    $value['url']= '['.'"'.$u.'"'.']';
                  }
                  
             }
