@@ -18,6 +18,7 @@ Route::group(['prefix' => 'v3'], function () {
 
     Route::group(['prefix' => 'auth'], function () {
         Route::post('login', 'AuthController@login')->name('login');
+        Route::post('refresh', 'AuthController@refresh')->name('refresh');
     });
 
     Route::group(['middleware' => ['auth:api', 'CheckCustomer'], 'namespace' => 'v3'], function () {
@@ -43,6 +44,7 @@ Route::group(['prefix' => 'v3'], function () {
 
         Route::apiResource('chat', 'ChatController');
         Route::get('chat/chatdetail/{groupid}/{id}/{key}', 'MessageController@chatlist')->name('chat.detail');
+        Route::post('upload', 'MessageController@upload')->name('upload.file');
         Route::apiResource('chatdetail', 'MessageController');
 
         Route::apiResource('marco', 'MarcoController');

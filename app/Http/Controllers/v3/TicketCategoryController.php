@@ -264,6 +264,7 @@ class TicketCategoryController extends Controller
         $time     = time();
         $name=$request->name;
         $level=$request->level;
+        $sort=$request->sort;
         $type=$request->type && 'all';
         $is_Show=$request->is_Show;
         if(isset($level)){
@@ -285,13 +286,11 @@ class TicketCategoryController extends Controller
                      return MyHelper::response(false,'TicketCategory"s parent Not Found', [],404);
                   }
                   $value=TicketCategory::where('parent',$parent)->get()->pluck('id')->toArray();
-                  unset($value[array_search($id,$value)]);
                   array_push($value,$id);
                   $parent2s= implode(',', $value);
                   $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parent2s]);
                }else{
-                  $value=TicketCategory::where('parent',$TicketCategory->parent)->get()->pluck('id')->toArray();
-                  unset($value[array_search($id,$value)]);
+                  $value=TicketCategory::where('parent',$TicketCategory->parent)->get()->pluck('id')->toArray();                  
                   array_push($value,$id);
                   $parent2s= implode(',', $value);
                   $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parent2s]);

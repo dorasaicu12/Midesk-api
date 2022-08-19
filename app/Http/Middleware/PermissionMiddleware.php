@@ -82,6 +82,8 @@ class PermissionMiddleware
                     'marco'=>'marco',
                     'quickchat'=>'quickchat',
                     'label'=>'label',
+                    'refresh'=>'refresh',
+                    'upload'=>'upload'
                 ];
         return $args[$route];
     }

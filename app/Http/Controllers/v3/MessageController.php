@@ -195,4 +195,23 @@ class MessageController extends Controller
     {
         //
     }
-}
+    public function upload(Request $request){
+        if(!$request->hasFile('file')) {
+            return response()->json(['upload_file_not_found'], 400);
+        }
+        $files = $request->file('file'); 
+        $errors = [];  
+        foreach ($files as $file) {      
+     
+            $extension = $file->getClientOriginalExtension(); 
+                foreach($request->file as $mediaFiles) {
+                    $path = $mediaFiles->store('public/files/'.date('Y').'/'.date('m').'');
+                    $name = $mediaFiles->getClientOriginalName();
+                }
+                $r=str_replace(array('public'), 'storage', $path);
+                return MyHelper::response(true,'upload file successfully',['file path'=>$r],200);
+     
+        }
+    }
+    
+    }

@@ -20,29 +20,8 @@ class Ticket extends Model
     const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
-    protected $fillable = [
-                            'id',
-                            'ticket_id',
-                            'title',
-                            'priority',
-                            'status',
-                            'category',
-                            'assign_agent',
-                            'assign_team',
-                            'requester',
-                            'groupid',
-                            'createby',
-                            'channel',
-                            'requester_type',
-                            'datecreate',
-                            'dateupdate',
-                            'is_delete',
-                            'is_delete_date',
-                            'is_delete_creby',
-                            'tag',
-                            'label',
-                            'label_creby', 
-                        ];
+    protected $fillable ='id,ticket_id,title,priority,status,assign_agent,assign_team,priority,channel,datecreate,dateupdate';
+                        
                         
 	protected $table = 'ticket';
 
@@ -53,7 +32,7 @@ class Ticket extends Model
     }
     function getDefault($req)
     {
-    	$res = self::with('getTicketsDetail');
+    	$res = new self;
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
@@ -71,9 +50,21 @@ class Ticket extends Model
     		$limit = self::TAKE;
     	}
     	/// select
-    	if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
-    		$res->selectRaw('id,'.$req['fields']);
-    	}
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+
+            $array = explode(',',$req['fields']);
+            if(in_array('key_id',$array)){
+                unset($array[array_search('key_id',$array)]);
+                array_push($array,"channel");
+                $req['fields']= implode(",",$array);
+            }
+            $res = $res->selectRaw('id,'.$req['fields']);
+        }else{
+            if (auth::user()->groupid == '196') {
+                $res = $res->selectRaw('id,'.$this->fillable);
+            }
+            $res = $res->selectRaw('id,'.$this->fillable);
+        }
     	/// search
     	if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
 
@@ -114,6 +105,7 @@ class Ticket extends Model
     	->limit($limit)
     	->paginate($limit)->appends(request()->query());
     }
+    
     public function getTicketsDetail()
     {
     	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable());
@@ -193,7 +185,7 @@ class Ticket extends Model
     public  function showOne($id='')
     {
         $delete = $this->DELETE;
-        $ticket = self::select($this->fillable)->with(['getTicketAssign'=> function ($q)
+        $ticket = self::selectRaw($this->fillable)->with(['getTicketAssign'=> function ($q)
         {
             $q->select(['id','fullname']);
         },'getTicketsDetail.getTicketCreator' => function ($q)
@@ -224,6 +216,7 @@ class Ticket extends Model
         }
         return $ticket;
     }
+    
     public function checkExist_mtmb($orid='',$prcode='')
     {
         $delete = $this->DELETE;

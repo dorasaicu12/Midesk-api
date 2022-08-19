@@ -24,7 +24,7 @@ class AuthController extends Controller
     */
     public function __construct()
     {
-        $this->middleware('auth:site', ['except' => ['login']]);
+        $this->middleware('auth:site', ['except' => ['login','refresh','logout']]);
     }
     /**
     * @OAS\SecurityScheme(
