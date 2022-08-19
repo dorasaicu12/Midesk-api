@@ -205,7 +205,7 @@ class MessageController extends Controller
      
             $extension = $file->getClientOriginalExtension(); 
                 foreach($request->file as $mediaFiles) {
-                    $path = $mediaFiles->store('public/uploads/'.date('Y').'/'.date('m').'');
+                    $path = $mediaFiles->store('public');
                     $name = $mediaFiles->getClientOriginalName();
                 }
                 $r=str_replace(array('public'), 'storage', $path);
