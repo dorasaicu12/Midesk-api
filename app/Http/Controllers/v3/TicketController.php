@@ -231,9 +231,10 @@ class TicketController extends Controller
     { 
         $ticket_var=new Ticket;
         $ticket = $ticket_var->showOne($id);
-
-
-      
+        if($ticket){
+            $ticket['ticket_id']='#'.$ticket['ticket_id'];
+            $ticket['datecreate']=date('Y-m-d H:i:s',$ticket['datecreate']);
+            $ticket['dateupdate']=date('Y-m-d H:i:s',$ticket['dateupdate']);            
            if($ticket['tag']!=null){
             $tags= explode(',', $ticket['tag']);
              foreach($tags as $val){
@@ -246,20 +247,12 @@ class TicketController extends Controller
                     ];
                    
                 }
-             }
-            
-              
+             }        
             }else{
                 $team_infor[]=[null];
             }
-         
         
         $ticket['tags']= $team_infor;
-
-        if($ticket){
-            $ticket['ticket_id']='#'.$ticket['ticket_id'];
-            $ticket['datecreate']=date('Y-m-d H:i:s',$ticket['datecreate']);
-            $ticket['dateupdate']=date('Y-m-d H:i:s',$ticket['dateupdate']);
             return MyHelper::response(true,'Successfully',$ticket,200);
         }else{
             return MyHelper::response(false,'Ticket not found',$ticket,404);

@@ -20,7 +20,7 @@ class Ticket extends Model
     const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
-    protected $fillable ='id,ticket_id,title,priority,status,assign_agent,assign_team,priority,channel,datecreate,dateupdate';
+    protected $fillable ='id,ticket_id,title,priority,status,assign_agent,assign_team,priority,tag,label,channel,datecreate,dateupdate';
                         
                         
 	protected $table = 'ticket';

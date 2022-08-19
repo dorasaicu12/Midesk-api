@@ -10,8 +10,8 @@ class TicketDetail extends Model
 	public $timestamps = false;
 	
     protected $table = 'ticket_detail';
-    protected $fillable = ['ticket_id','title','content','groupid','type','createby','createby_level','datecreate','status','private'];
-
+    protected $fillable = ['id','ticket_id','title','content','createby'];
+    // protected $fillable = ['ticket_id','title','content','groupid','type','createby','createby_level','datecreate','status','private'];
     function __construct()
     {
         $groupid = auth::user()->groupid;
