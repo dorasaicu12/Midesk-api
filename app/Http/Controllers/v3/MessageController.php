@@ -22,8 +22,9 @@ use App\Models\customerContactRelation;
 use App\Http\Functions\CheckField;
 
 use App\Models\ChatMessage;
-
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\File; 
 
 class MessageController extends Controller
 {
@@ -199,19 +200,34 @@ class MessageController extends Controller
         if(!$request->hasFile('file')) {
             return response()->json(['upload_file_not_found'], 400);
         }
-        $files = $request->file('file'); 
-        $errors = [];  
-        foreach ($files as $file) {      
-     
-            $extension = $file->getClientOriginalExtension(); 
-                foreach($request->file as $mediaFiles) {
-                    $path = $mediaFiles->store('public/uploads/'.date('Y').'/'.date('m').'');
-                    $name = $mediaFiles->getClientOriginalName();
-                }
-                $r=str_replace(array('public'), 'storage', $path);
-                return MyHelper::response(true,'upload file successfully',['file path'=>$r],200);
-     
+        $files = $request->file('file')->store('public'); 
+        $r=str_replace(array('public'), 'public/storage', $files);
+        try {
+            $client = new Client([
+                // Base URI is used with relative requests
+                'base_uri' => 'http://api.resmush.it',
+            ]);
+            $response = $client->request('POST', "?qlty=92", [
+                'multipart' => [
+                    [
+                        'name'     => 'files', // name value requires by endpoint
+                        'contents' => fopen(base_path().'/'.$r, 'r'),
+                        'filename' => $r,
+                        'headers'  => array('Content-Type' => mime_content_type(base_path().'/'.$r))
+                    ]
+                ]
+            ]);
+            if (200 == $response->getStatusCode()) {
+                $response = $response->getBody();
+                
+                $arr_result = json_decode($response);
+            }
+        } catch (\Exception $e) {
+            echo $e->getMessage();
         }
+        File::delete(base_path().'/'.$r);
+        return MyHelper::response(true,'upload file successfully',[$arr_result],200);
+
     }
     
     }

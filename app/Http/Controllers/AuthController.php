@@ -156,9 +156,22 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function refresh()
+    public function refresh($id)
     {
-        return $this->respondWithToken(auth()->refresh());
+        $user = auth()->user();
+        // if(!isset($user->id)){
+        //     return MyHelper::response(false,'unauthenticated',[],401);
+        // }
+        // $id2=$user->id;
+        // echo $id2;
+        echo json_encode($user);
+        exit;
+        $id2=$user->id;
+        if($id != $id2){
+            return MyHelper::response(false,'unauthenticated',[],401);
+        }
+        $token= $this->respondWithToken(auth()->refresh());
+        return MyHelper::response(true,'Successfully',$token,200);
     }
 
     /**

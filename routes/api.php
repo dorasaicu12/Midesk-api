@@ -18,7 +18,7 @@ Route::group(['prefix' => 'v3'], function () {
 
     Route::group(['prefix' => 'auth'], function () {
         Route::post('login', 'AuthController@login')->name('login');
-        Route::post('refresh', 'AuthController@refresh')->name('refresh');
+        Route::post('refresh/{id}', 'AuthController@refresh')->name('refresh');
     });
 
     Route::group(['middleware' => ['auth:api', 'CheckCustomer'], 'namespace' => 'v3'], function () {
