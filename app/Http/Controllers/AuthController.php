@@ -158,16 +158,11 @@ class AuthController extends Controller
      */
     public function refresh($id)
     {
-        $user = auth()->user();
-        // if(!isset($user->id)){
-        //     return MyHelper::response(false,'unauthenticated',[],401);
-        // }
-        // $id2=$user->id;
-        // echo $id2;
-        echo json_encode($user);
-        exit;
-        $id2=$user->id;
-        if($id != $id2){
+        $user = auth::user()->id;
+        if(!isset($user)){
+            return MyHelper::response(false,'unauthenticated',[],401);
+        }
+        if($user != $id){
             return MyHelper::response(false,'unauthenticated',[],401);
         }
         $token= $this->respondWithToken(auth()->refresh());
