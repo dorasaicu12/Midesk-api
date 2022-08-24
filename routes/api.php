@@ -55,3 +55,7 @@ Route::group(['prefix' => 'v3'], function () {
         Route::apiResource('agent', 'UserController');
     });
 });
+
+       Route::group(['prefix' => 'v2','middleware' => ['auth:api', 'CheckCustomer'], 'namespace' => 'v2'], function () {
+       Route::apiResource('ticket', 'TicketController');
+     });
