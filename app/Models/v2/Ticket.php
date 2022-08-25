@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\v2;
 
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use Auth;
 use App\Traits\ModelsTraits;
-
 class Ticket extends Model
 {
     use ModelsTraits;
@@ -20,24 +19,7 @@ class Ticket extends Model
     const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
-    protected $fillable ='id,
-    ticket_id,
-    title,
-    priority,
-    status,
-    assign_agent,
-    assign_team,
-    priority,tag,
-    label,
-    label_creby,
-    tag,
-    channel,
-    datecreate,
-    dateupdate,
-    requester_type,
-    is_delete,
-    is_delete_date
-    ';
+    protected $fillable ='id,ticket_id,title,priority,status,assign_agent,assign_team,priority,tag,label,channel,datecreate,dateupdate';
                         
                         
 	protected $table = 'ticket';
@@ -49,7 +31,7 @@ class Ticket extends Model
     }
     function getDefault($req)
     {
-    	$res =  self::with('getTicketsDetail');
+    	$res = new self;
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
