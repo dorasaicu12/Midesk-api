@@ -11,6 +11,7 @@ use App\Models\TeamStaff;
 use App\Http\Functions\MyHelper;
 use Auth;
 use JWTAuth;
+use App\Models\AuthByUser;
 /**
  * @group  Authentication
  *
@@ -158,14 +159,22 @@ class AuthController extends Controller
      */
     public function refresh($id)
     {
-        $user = auth::user()->id;
-        if(!isset($user)){
-            return MyHelper::response(false,'unauthenticated',[],401);
+        
+        $user=User::where('id','=',$id)->first();
+        $userToken=JWTAuth::fromUser($user);
+        $token= $this->respondWithToken($userToken);
+        
+        return MyHelper::response(true,'Successfully',$token,200);
+        exit;
+        
+        if(!isset(auth::user()->id)){
+            return MyHelper::response(false,'unauthenticated',[],408);
         }
+        $user = auth::user()->id;
         if($user != $id){
             return MyHelper::response(false,'unauthenticated',[],401);
         }
-        $token= $this->respondWithToken(auth()->refresh());
+        $token= $this->respondWithToken(auth('api')->refresh());
         return MyHelper::response(true,'Successfully',$token,200);
     }
 
