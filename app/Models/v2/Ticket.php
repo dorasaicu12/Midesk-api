@@ -187,9 +187,9 @@ class Ticket extends Model
         $ticket = self::selectRaw($this->fillable)->with(['getTicketAssign'=> function ($q)
         {
             $q->select(['id']);
-        },'getTicketsDetail.getTicketCreator' => function ($q)
+        },'getTicketsDetail' => function ($q)
         {
-            $q->select(['id','fullname','picture',DB::raw("'https://dev2021.midesk.vn/upload/images/userthumb/' as path"),]);
+            // $q->select(['id','fullname','picture',DB::raw("'https://dev2021.midesk.vn/upload/images/userthumb/' as path"),]);
         }])
         ->where('id',$id)
         ->where(function($q) use ($delete) {

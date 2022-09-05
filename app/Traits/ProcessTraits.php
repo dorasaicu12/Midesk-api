@@ -616,12 +616,12 @@ trait ProcessTraits {
                 }
                 $ticket_detail->file_multiple = json_encode($ar);
             }else{
-                $fname = md5($data['file'][0]->getClientOriginalName(). time()).'.'.$data['file'][0]->getClientOriginalExtension();
-                $data['file'][0]->move(public_path().'/files/', $fname);  
+                $fname = md5($data['file'][0]->getClientOriginalName(). time()).'.'.$data['file'][0]->getClientOriginalExtension(); 
                 $ticket_detail->file_original = $data['file'][0]->getClientOriginalName();
                 $ticket_detail->file_extension = $data['file'][0]->getClientOriginalExtension();
                 $ticket_detail->file_size = $data['file'][0]->getSize();
                 $ticket_detail->file_name = $fname;
+                $data['file'][0]->move(public_path().'/files/', $fname); 
             }
         }
         ///// end upload file //////

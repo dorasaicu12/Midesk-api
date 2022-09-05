@@ -6,7 +6,7 @@ use App\Http\Functions\AuthUser;
 use App\Http\Functions\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-
+use App\Http\Functions\MyHelper;
 class PermissionMiddleware
 {
     /**
@@ -85,6 +85,7 @@ class PermissionMiddleware
                     'refresh'=>'refresh',
                     'upload'=>'upload'
                 ];
+
         return $args[$route];
     }
 

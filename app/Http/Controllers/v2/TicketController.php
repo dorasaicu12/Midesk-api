@@ -38,9 +38,9 @@ class TicketController extends Controller
 
     /**
     * @OA\Get(
-    *     path="/api/v3/ticket",
+    *     path="/api/v2/ticket",
     *     tags={"Ticket"},
-    *     summary="Get list ticket",
+    *     summary="Get list ticket for app",
     *     description="<h2>This API will Get list ticket with condition below</h2>",
     *     operationId="index",
     *     @OA\Parameter(
@@ -176,9 +176,9 @@ class TicketController extends Controller
     
     /**
     * @OA\Get(
-    *     path="/api/v3/ticket/{ticketId}",
+    *     path="/api/v2/ticket/{ticketId}",
     *     tags={"Ticket"},
-    *     summary="Find ticket by ticketId",
+    *     summary="Find ticket by ticketId for app",
     *     description="<h2>This API will find ticket by {ticketId} and return only a single record</h2>",
     *     operationId="show",
     *     @OA\Parameter(
@@ -258,9 +258,9 @@ class TicketController extends Controller
     }
     /**
     * @OA\POST(
-    *     path="/api/v3/ticket",
+    *     path="/api/v2/ticket",
     *     tags={"Ticket"},
-    *     summary="Create a ticket",
+    *     summary="Create a ticket for app",
     *     description="<h2>This API will Create a ticket with json form below</h2><br><code>Press try it out button to modified</code>",
     *     operationId="store",
     *     @OA\RequestBody(
@@ -381,9 +381,9 @@ class TicketController extends Controller
     
     /**
     * @OA\Put(
-    *     path="/api/v3/ticket/{$ticketId}",
+    *     path="/api/v2/ticket/{$ticketId}",
     *     tags={"Ticket"},
-    *     summary="Update ticket by ticketId",
+    *     summary="Update ticket by ticketId for app",
     *     description="<h2>This API will update a ticket by ticketId and the value json form below</h2><br><code>Press try it out button to modified</code>",
     *     operationId="update",
     *     @OA\Parameter(

@@ -205,7 +205,7 @@ class TicketCategoryController extends Controller
             $value=TicketCategory::where('parent',$parent)->get()->pluck('id')->toArray();
             $parent2s= implode(',', $value);
             $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parent2s]);
-            $category->parent2=$order->id; 
+            $category->parent2=$parent.','.$order->id; 
          }else{
             $category->parent2=$order->id;
          }
@@ -286,6 +286,7 @@ class TicketCategoryController extends Controller
                      return MyHelper::response(false,'TicketCategory"s parent Not Found', [],404);
                   }
                   $value=TicketCategory::where('parent',$parent)->get()->pluck('id')->toArray();
+                  unset($value[array_search($id,$value)]);
                   array_push($value,$id);
                   $parent2s= implode(',', $value);
                   $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parent2s]);
@@ -305,6 +306,8 @@ class TicketCategoryController extends Controller
                }
                $value=TicketCategory::where('parent',$parent)->get()->pluck('id')->toArray();
                unset($value[array_search($id,$value)]);
+               $parentnew=implode(',', $value);
+               $categoryChangeForLevel3=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parentnew]);
                array_push($value,$id);
                $parent2s= implode(',', $value);
                $categoryChange=TicketCategory::where('id',$id)->update(['parent2' => $parent2s]);

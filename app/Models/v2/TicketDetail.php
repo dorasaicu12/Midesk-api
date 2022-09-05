@@ -10,7 +10,7 @@ class TicketDetail extends Model
 	public $timestamps = false;
 	
     protected $table = 'ticket_detail';
-    protected $fillable = ['id','ticket_id','title','content','createby'];
+    protected $fillable = ['id','ticket_id','title','content','file_size','file_extension','file_name','file_original','datecreate','createby'];
     // protected $fillable = ['ticket_id','title','content','groupid','type','createby','createby_level','datecreate','status','private'];
     function __construct()
     {
