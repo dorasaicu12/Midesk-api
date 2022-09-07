@@ -146,6 +146,11 @@ class TicketCategoryController extends Controller
         $category = $category->setDeleteColumn('is_show');
         $category = $category->setDeleteValue([NULL,1]);
         $category = $category->getListDefault($req);
+        foreach($category as $list){
+         if(isset($list['dateupdate'])){
+            $list['dateupdate']=strtotime($list['dateupdate']);
+         }
+        }
         return MyHelper::response(true,'Successfully',$category,200);
     }
      /**

@@ -75,7 +75,7 @@ class PermissionMiddleware
                     'customer' => 'customer',
                     'order' => 'order',
                     'product' => 'product',
-                    'ticketCategory' => 'ticketCategory',
+                    'ticketCategory' => 'ticket_category',
                     'agent' => 'agent',
                     'chat' => 'chat',
                     'chatdetail'=>'chatdetail',
@@ -83,7 +83,7 @@ class PermissionMiddleware
                     'quickchat'=>'quickchat',
                     'label'=>'label',
                     'refresh'=>'refresh',
-                    'upload'=>'upload'
+                    'upload'=>'upload',
                 ];
 
         return $args[$route];

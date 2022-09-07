@@ -21,7 +21,7 @@ Route::group(['prefix' => 'v3'], function () {
         Route::post('refresh/{id}', 'AuthController@refresh')->name('refresh');
     });
 
-    Route::group(['middleware' => ['auth:api', 'CheckCustomer'], 'namespace' => 'v3'], function () {
+    Route::group(['middleware' => ['auth:api','CheckCustomer'], 'namespace' => 'v3'], function () {
 
         Route::get('ticket/forAbi', 'TicketController@ticketForAbi')->name('ticket.forAbi');
         Route::get('ticket/ticketForm', 'TicketController@assignForm');
@@ -53,6 +53,7 @@ Route::group(['prefix' => 'v3'], function () {
         
         Route::apiResource('event', 'EventController');
         Route::apiResource('agent', 'UserController');
+
     });
 });
 

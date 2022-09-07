@@ -18,6 +18,13 @@ class TicketCategory extends Model
                             'parent',
                             'parent2',
                             'level',
+                            'sla',
+                            'createby',
+                            'datecreate',
+                            'dateupdate',
+                            'type',
+                            'sort',
+                            'is_show'
                         ];
                         const DELETED = 1;
                         const DELETE = [NULL,0];
@@ -55,6 +62,12 @@ class TicketCategory extends Model
         /// select
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
             $res = $res->selectRaw('id,'.$req['fields']);
+        }else{
+            $list=json_encode($this->fillable);
+            if (auth::user()->groupid == '196') {
+                $res = $res->select($this->fillable);
+            }
+            $res = $res->select($this->fillable);
         }
         /// search. 
         if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
