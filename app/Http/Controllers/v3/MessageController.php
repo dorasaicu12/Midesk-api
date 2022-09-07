@@ -109,6 +109,7 @@ class MessageController extends Controller
         if(!$chats){
             
         }
+     
          foreach($chats as $value){
             //  if(isset($value['datecreate'])){
             //  $value['datecreate']= date('Y-m-d H:i:s',$value['datecreate']);
@@ -127,14 +128,17 @@ class MessageController extends Controller
                  
             }
             $channel=$value['channel'];
-            $user_id=$value['user_id'];
+              if($value['user_id']!==null){
+                  $user_id=$value['user_id'];
+               }
             }
+            
             if(!$value2){
                 return MyHelper::response(false,'Chat does not exits',[],404);
             }
-            
             if($channel=='facebook'){
-              $contact= Contact::where('facebook_id',$id_page)->first();
+              $username=Chat::where('fb_key',$id_key)->first()->toArray();
+              $contact= Contact::where('fullname', 'like', '%' .$username['name']. '%')->first();
               $user=User::where('id',$user_id)->first();
               if(!$user){
                   $chatDetail['user']=[];
@@ -153,8 +157,9 @@ class MessageController extends Controller
                 $chatDetail['chat_contact']=$contact;
               }
             }elseif($channel=='zalo'){
-                $contact= Contact::where('zalo_id',$id_page)->first();
+                
                 $user=Chat::where('id_page',$id_page)->where('zalo_key',$id_key)->first();
+                $contact= Contact::where('zalo_oaid',$user['zalo_oaid'])->first();
                 if(!$user){
                     $chatDetail['user']=[];
                 }else{
