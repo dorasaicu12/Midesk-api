@@ -5,6 +5,7 @@ namespace App\Http\Controllers\v3;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Chat;
+use App\Models\User;
 
 use App\Http\Functions\MyHelper;
 use App\Models\Contact;
@@ -26,6 +27,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\File; 
 
+use Illuminate\Routing\Route;
 class MessageController extends Controller
 {
     /**
@@ -67,10 +69,10 @@ class MessageController extends Controller
          foreach($chats as $value){
              if(isset($value['datecreate'])){
              $value['datecreate']= date('Y-m-d H:i:s',$value['datecreate']);
+             
          }
             }
        
- 
         
         return MyHelper::response(true,'Successfully',$chats,200);
 
@@ -104,6 +106,9 @@ class MessageController extends Controller
         
         $chats = (new ChatMessage)->getDefault($req,$groupid,$id_page,$id_key);
         $value2='';
+        if(!$chats){
+            
+        }
          foreach($chats as $value){
             //  if(isset($value['datecreate'])){
             //  $value['datecreate']= date('Y-m-d H:i:s',$value['datecreate']);
@@ -121,14 +126,57 @@ class MessageController extends Controller
                  }
                  
             }
-     
+            $channel=$value['channel'];
+            $user_id=$value['user_id'];
             }
-
-                
             if(!$value2){
                 return MyHelper::response(false,'Chat does not exits',[],404);
-            }             
-        return MyHelper::response(true,'Successfully',$chats,200);
+            }
+            
+            if($channel=='facebook'){
+              $contact= Contact::where('facebook_id',$id_page)->first();
+              $user=User::where('id',$user_id)->first();
+              if(!$user){
+                  $chatDetail['user']=[];
+              }else{
+                  $data=[
+                      'fullname'=>$user['fullname'],
+                      'groupid'=>$user['groupid'],
+                      'datecreate'=>$user['datecreate'],
+                      'picture'=>$user['picture']
+                    ];
+                    $chatDetail['user']=$data;
+              }
+              if(!$contact){
+                $chatDetail['chat_contact']=[];
+              }else{
+                $chatDetail['chat_contact']=$contact;
+              }
+            }elseif($channel=='zalo'){
+                $contact= Contact::where('zalo_id',$id_page)->first();
+                $user=Chat::where('id_page',$id_page)->where('zalo_key',$id_key)->first();
+                if(!$user){
+                    $chatDetail['user']=[];
+                }else{
+                    $data=[
+                        'fullname'=>$user['name'],
+                        'groupid'=>$user['groupid'],
+                        'datecreate'=>$user['datecreate'],
+                        'picture'=>$user['zalo_avatar']
+                      ];
+                      $chatDetail['user']=$data;
+                }
+                if(!$contact){
+                  $chatDetail['chat_contact']=[];
+                }else{
+                  $chatDetail['chat_contact']=$contact;
+                }
+            }
+                
+            
+            $chatDetail['chat_data']=$chats; 
+
+        return MyHelper::response(true,'Successfully',$chatDetail,200);
     }
 
     /**
@@ -200,6 +248,56 @@ class MessageController extends Controller
         $files = $request->file('file')->store('public');
         $r=str_replace(array('public/'), '', $files);
         return MyHelper::response(true,'upload file successfully',[asset('/storage/'.$r)],200);
+        exit;
+        
+        if(!$request->hasFile('file')) {
+            return response()->json(['upload_file_not_found'], 400);
+        }
+        $files = $request->file('file')->store('public'); 
+        $r=str_replace(array('public'), 'public/storage', $files);
+        try {
+            $client = new Client([
+                // Base URI is used with relative requests
+                'base_uri' => 'http://api.resmush.it',
+            ]);
+            $response = $client->request('POST', "?qlty=92", [
+                'multipart' => [
+                    [
+                        'name'     => 'files', // name value requires by endpoint
+                        'contents' => fopen(base_path().'/'.$r, 'r'),
+                        'filename' => $r,
+                        'headers'  => array('Content-Type' => mime_content_type(base_path().'/'.$r))
+                    ]
+                ]
+            ]);
+            if (200 == $response->getStatusCode()) {
+                $response = $response->getBody();
+                
+                $arr_result = json_decode($response);
+            }
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+        File::delete(base_path().'/'.$r);
+        return MyHelper::response(true,'upload file successfully',[$arr_result],200);
+exit;
+
+        if(!$request->hasFile('file')) {
+            return response()->json(['upload_file_not_found'], 400);
+        }
+        $files = $request->file('file'); 
+        $errors = [];  
+        foreach ($files as $file) {      
+     
+            $extension = $file->getClientOriginalExtension(); 
+                foreach($request->file as $mediaFiles) {
+                    $path = $mediaFiles->store('public/uploads/'.date('Y').'/'.date('m').'');
+                    $name = $mediaFiles->getClientOriginalName();
+                }
+                $r=str_replace(array('public'), 'storage', $path);
+                return MyHelper::response(true,'upload file successfully',['file path'=>$r],200);
+     
+        }
     }
     
     }

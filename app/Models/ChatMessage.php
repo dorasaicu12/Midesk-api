@@ -68,12 +68,12 @@ class ChatMessage extends Model
                 $req['fields']= implode(",",$array);
             }
 
-            $res = $res->selectRaw('table_users.id as user_id,'.'replyby,'.'social_message.id,'.$req['fields']);
+            $res = $res->selectRaw('social_message.user_id,'.'replyby,'.'social_message.id,'.'social_message.assign_agent,'.$req['fields']);
         }else{
             if (auth::user()->groupid == '196') {
-                $res = $res->selectRaw('social_message.id,'.$this->fillable_group);
+                $res = $res->selectRaw('social_message.user_id,'.$this->fillable_group);
             }
-            $res = $res->selectRaw('social_message.id,'.$this->fillable_group);
+            $res = $res->selectRaw('social_message.user_id,'.$this->fillable_group);
         }
         
         /// search
@@ -124,6 +124,7 @@ class ChatMessage extends Model
         })
         ->offset($from)
         ->limit($limit)
+        ->orderBy('social_message.user_id','desc')
         ->paginate($limit)->appends(request()->query());
         //appends(request()->query()) dùng để sinh ra các đường link để paginate trong laravel 
     }

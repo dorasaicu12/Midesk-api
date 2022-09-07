@@ -25,7 +25,7 @@ class AuthController extends Controller
     */
     public function __construct()
     {
-        $this->middleware('auth:site', ['except' => ['login','refresh','logout']]);
+        $this->middleware('auth:api',['except' => ['login','refresh','logout']]);
     }
     /**
     * @OAS\SecurityScheme(
@@ -160,12 +160,12 @@ class AuthController extends Controller
     public function refresh($id)
     {
         
-        $user=User::where('id','=',$id)->first();
-        $userToken=JWTAuth::fromUser($user);
-        $token= $this->respondWithToken($userToken);
+        // $user=User::where('id','=',$id)->first();
+        // $userToken=JWTAuth::fromUser($user);
+        // $token= $this->respondWithToken($userToken);
         
-        return MyHelper::response(true,'Successfully',$token,200);
-        exit;
+        // return MyHelper::response(true,'Successfully',$token,200);
+        // exit;
         
         if(!isset(auth::user()->id)){
             return MyHelper::response(false,'unauthenticated',[],408);
