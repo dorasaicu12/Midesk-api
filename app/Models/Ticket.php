@@ -27,13 +27,16 @@ class Ticket extends Model
     status,
     assign_agent,
     assign_team,
+    category,
     priority,tag,
     label,
     label_creby,
     tag,
+    event_id,
     channel,
     datecreate,
     dateupdate,
+    requester,
     requester_type,
     is_delete,
     is_delete_date
@@ -49,7 +52,7 @@ class Ticket extends Model
     }
     function getDefault($req)
     {
-    	$res =  self::with('getTicketsDetail');
+    	$res =  self::with(['getTicketsDetail','getTicketCategory','getTicketsComment']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
@@ -126,6 +129,15 @@ class Ticket extends Model
     public function getTicketsDetail()
     {
     	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable());
+    }
+
+    public function getTicketsComment()
+    {
+    	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable())->orderBy('id','desc')->limit(1);
+    }
+    public function getTicketsEvent()
+    {
+    	return $this->hasMany(Event::class,'id','event_id');
     }
     public function getTicketAssign()
     {
@@ -208,6 +220,8 @@ class Ticket extends Model
         },'getTicketsDetail.getTicketCreator' => function ($q)
         {
             $q->select(['id','fullname','picture',DB::raw("'https://dev2021.midesk.vn/upload/images/userthumb/' as path"),]);
+        },'getTicketsEvent'=>function($q){
+            $q->select(['id','event_location','remind_time','note']);
         }])
         ->where('id',$id)
         ->where(function($q) use ($delete) {

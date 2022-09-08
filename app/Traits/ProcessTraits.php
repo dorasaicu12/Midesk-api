@@ -57,10 +57,10 @@ trait ProcessTraits {
         $priority = $req['priority'] ?? 4;
         $category = $req['category'] ?? null; 
         $label    = $req['label'] ?? null;
+        $status=$req['status'] ?? null;
         $status   = array_key_exists('status', $req) ? $req['status'] : 'new';  
         $private  = array_key_exists('private',$req) ? 1 : 0;    
         $channel  = 'api';
-
         
         //kiem tra tag co ton tai hay ko
         if(isset($req['tags'])){
@@ -87,7 +87,7 @@ trait ProcessTraits {
         }
 
       
-        if (array_key_exists('label', $req)) {
+        if (isset($req['label'])) {
           $checklable=  TicketLabel::where('id',$req['label'])->first();
           if(!$checklable){
             return MyHelper::response(false,'label can not be found', [],404); 
@@ -126,13 +126,15 @@ trait ProcessTraits {
                 $channel = $cn;
             }
         }
+
         DB::beginTransaction();  
         try{        
         DB::commit();
             // tạo contact
             if (array_key_exists('contact_id', $req)) {
                 $contact_id = intval($req['contact_id']);
-                $check_contact = Contact::where('id',$contact_id)->count();
+                $check_contact2 = Contact::where('id',$contact_id)->get();
+                $check_contact=  count($check_contact2);
                 if ($check_contact > 0) {
                     $requester = $contact_id;
                 }else{
@@ -150,15 +152,18 @@ trait ProcessTraits {
                 $contact['time']        = $time;
                 $requester = $this->create_contact($contact);
             }
+
             if (!$requester) {
                 return MyHelper::response(false,'Contact not found!', [],404); 
             }
+            
             if ($id_t) {
                 // Cập nhật phiếu
                 $ticket2 = Ticket::where('id',$id_t)->first();
                 // echo $ticket2['id'];
                 // exit;
                 $ticket = Ticket::where('id',$id_t)->first();
+                
                 if (!$ticket) {
                     return MyHelper::response(false,'Ticket not found!', [],404); 
                 }
@@ -171,6 +176,7 @@ trait ProcessTraits {
                 if(isset($req['tags'])){
                     $req['tag']=$req['tags'];
                 }
+                
                 $request = array_filter($req);
                 // phần lọc riêng giá trị giữa create và update
                 // if (array_key_exists('cotact_id', $req)) {
@@ -182,8 +188,21 @@ trait ProcessTraits {
                 //     }else{
                 //         return MyHelper::response(false,'Contact Not found', [],400);
                 //     }
-                // }                   
-                $val=$ticket->update($request);
+                // }        
+                $ticketval=new Ticket;
+                $ticketval=$ticketval->where('id',$id_t)->first();
+                $ticket->title=$req['title'] ??$ticketval->title;
+                $ticket->channel=$req['channel'] ??$ticketval->channel;
+                $ticket->priority=$req['priority'] ??$ticketval->priority;
+                $ticket->category=$req['category'] ??$ticketval->category;
+                $ticket->status=$req['status'] ??$ticketval->status;
+                $ticket->tag=$req['tags'] ??$ticketval->tags;
+                $ticket->label=$req['label'] ??$ticketval->label;
+                $ticket->assign_team=$req['assign_team'] ??$ticketval->assign_team;
+                $ticket->assign_agent=$req['assign_agent'] ??$ticketval->assign_agent;
+                $ticket->event_id=$req['event_id'] ??$ticketval->event_id;
+                $ticket->save();
+                
                 
             }else{   
                 //Tạo phiếu
@@ -206,8 +225,8 @@ trait ProcessTraits {
                 $ticket = new Ticket;
                 $ticket->requester      = $requester;
                 $ticket->requester_type = 'contact';
-                $ticket->assign_agent   = $assign_agent;
-                $ticket->assign_team    = $assign_team;
+                $ticket->assign_agent   =$req['assign_agent'] ?? $assign_agent;
+                $ticket->assign_team    =$req['assign_team'] ?? $assign_team;
                 $ticket->createby       = $creby;
                 
                 $ticket->groupid        = $groupid;
@@ -221,7 +240,7 @@ trait ProcessTraits {
                 // phần lọc riêng giá trị giữa create và update
                 $ticket->title          = $title;
                 $ticket->datecreate     = $time;
-                $ticket->status         = $status;
+                $ticket->status         =$req['status'] ?? $status;
                 $ticket->channel        = $channel;
                 $ticket->priority       = $priority;
                 $ticket->category       = $category;
@@ -313,7 +332,7 @@ trait ProcessTraits {
             }
         } catch (\Exception $ex){
             DB::rollback();
-            return MyHelper::response(false,$ex->getMessage(), [],500);
+            return MyHelper::response(false,$ex->getMessage().'at line'.$ex ->getLine(), [],500);
 
         }
 
@@ -349,7 +368,7 @@ trait ProcessTraits {
             //CHECK CONDITONS
             if($value['operator'] == 'all'){ //AND
                 //vì điều kiện là AND, nên bắt buộc phải thỏa tất cả điều kiện => $count_tmp = count($count_con);
-                $count_con = count($conditions);
+                
                 $count_tmp = 0;
                 foreach ($conditions as $cond) {
                     switch ($cond['condition']) {

@@ -23,13 +23,13 @@ class ChatMessage extends Model
     public $fillable_group = '
     social_message.id,
     social_message.groupid,
+    social_message.sender,
     social_message.channel,
     social_message.name,
     social_message.message,
     social_message.datecreate,
     social_message.type,
     social_message.status,
-    table_users.id as user_id,
     social_message.replyby,
     social_message.reply,
     social_message.url

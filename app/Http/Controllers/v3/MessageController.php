@@ -141,7 +141,15 @@ class MessageController extends Controller
               $contact= Contact::where('fullname', 'like', '%' .$username['name']. '%')->first();
               $user=User::where('id',$user_id)->first();
               if(!$user){
-                  $chatDetail['user']=[];
+                $key=$user_id.'_'.$id_page ;
+                  $user=Chat::where('id_page',$id_page)->where('fb_key',$key)->first();
+                  $data=[
+                    'fullname'=>$user['name'],
+                    'groupid'=>$user['groupid'],
+                    'datecreate'=>$user['datecreate'],
+                    'picture'=>$user['picture']
+                  ];
+                  $chatDetail['user']=$data;
               }else{
                   $data=[
                       'fullname'=>$user['fullname'],
