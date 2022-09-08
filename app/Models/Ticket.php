@@ -52,7 +52,9 @@ class Ticket extends Model
     }
     function getDefault($req)
     {
-    	$res =  self::with(['getTicketsDetail','getTicketCategory','getTicketsComment']);
+    	$res =  self::with(['getTicketsContent'=>function($q){
+            $q->select('ticket_id', 'content');
+        },'getTicketsDetail','getTicketCategory','getTicketsComment']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
@@ -131,6 +133,11 @@ class Ticket extends Model
     	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable());
     }
 
+    public function getTicketsContent()
+    {
+    	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable());
+    }
+
     public function getTicketsComment()
     {
     	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable())->orderBy('id','desc')->limit(1);
@@ -145,7 +152,7 @@ class Ticket extends Model
     }
     public function getTicketTag()
     {
-        return $this->hasOne(Tags::class,'id','tag');
+        return $this->hasMany(Tags::class,'id','tag');
     }
     public function getTicketLabel()
     {

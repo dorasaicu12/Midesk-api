@@ -191,16 +191,16 @@ trait ProcessTraits {
                 // }        
                 $ticketval=new Ticket;
                 $ticketval=$ticketval->where('id',$id_t)->first();
-                $ticket->title=$req['title'] ??$ticketval->title;
-                $ticket->channel=$req['channel'] ??$ticketval->channel;
-                $ticket->priority=$req['priority'] ??$ticketval->priority;
-                $ticket->category=$req['category'] ??$ticketval->category;
-                $ticket->status=$req['status'] ??$ticketval->status;
-                $ticket->tag=$req['tags'] ??$ticketval->tags;
-                $ticket->label=$req['label'] ??$ticketval->label;
-                $ticket->assign_team=$req['assign_team'] ??$ticketval->assign_team;
-                $ticket->assign_agent=$req['assign_agent'] ??$ticketval->assign_agent;
-                $ticket->event_id=$req['event_id'] ??$ticketval->event_id;
+                $ticket->title=isset($req['title']) ? $req['title'] : $ticketval->title;
+                $ticket->channel=isset($req['channel']) ?$req['channel'] :$ticketval->channel;
+                $ticket->priority= isset($req['priority']) ? $req['priority'] :$ticketval->priority;
+                $ticket->category=isset($req['category']) ? $req['category']  :$ticketval->category;
+                $ticket->status=isset($req['status']) ? $req['status'] :$ticketval->status;
+                $ticket->tag=isset($req['tags']) ? $req['tags']  :$ticketval->tags;
+                $ticket->label=isset($req['label']) ? $req['label']  :$ticketval->label;
+                $ticket->assign_team=isset($req['assign_team']) ?$req['assign_team']  :$ticketval->assign_team;
+                $ticket->assign_agent=isset($req['assign_agent']) ?$req['assign_agent']  : $ticketval->assign_agent;
+                $ticket->event_id=isset($req['event_id']) ?$req['event_id'] :$ticketval->event_id;
                 $ticket->save();
                 
                 
@@ -246,7 +246,7 @@ trait ProcessTraits {
                 $ticket->category       = $category;
                 $ticket->label          = $req['label'] ?? null;
                 $ticket->label_creby          =$label_creaby ?? null;
-                $ticket->tag          = $tag;
+                $ticket->tag          = $req['tags'] ?? null;
             }
             //chức năng chung giữa update và create
             if (!empty($req['custom_field'])) {
@@ -420,6 +420,8 @@ trait ProcessTraits {
                             break;
                     }   
                 }
+                $count_con = count($conditions);
+                $count_tmp = 0;
                 if($count_con == $count_tmp){
                     $action_check = true;
                 }

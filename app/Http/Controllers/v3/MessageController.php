@@ -78,6 +78,122 @@ class MessageController extends Controller
 
     }
 
+    /**
+    * @OA\Get(
+    *     path="/api/v3/chat/chatdetail/{groupId}/{id_page}/{key_id}",
+    *     tags={"chatdetail"},
+    *     summary="Find chatdetail by groupId,id_page,key_id",
+    *     description="<h2>This API will find chat detail by {groupId},{id_page},{key_id} and return only a single record</h2>",
+    *     operationId="show",
+    *     @OA\Parameter(
+    *         name="groupId",
+    *         in="path",
+    *         description="<h4>This is the groupid of the chat detail you are looking for</h4>
+              <code>Type: <b id='require'>Number</b></code>",
+    *         example=1,
+    *         required=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="id_page",
+    *         in="path",
+    *         description="<h4>This is the id_page of the chat detail you are looking for</h4>
+              <code>Type: <b id='require'>Number</b></code>",
+    *         example=1,
+    *         required=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="key_id",
+    *         in="path",
+    *         description="<h4>This is the key_id of the chat detail you are looking for</h4>
+              <code>Type: <b id='require'>Number</b></code>",
+    *         example=1,
+    *         required=true,
+    *     ),
+     *     @OA\Parameter(
+    *         name="page",
+    *         in="query",
+    *         required=false,
+    *         explode=true,
+    *         example=1,
+    *         description="<h4>Number of page to get</h4>
+                    <code>Type: <b id='require'>Number</b></code>"
+    *     ),
+    *     @OA\Parameter(
+    *         name="limit",
+    *         in="query",
+    *         required=false,
+    *         explode=true,
+    *         example=5,
+    *         description="<h4>Total number of records to get</h4>
+                    <code>Type: <b id='require'>Number<b></code>"
+    *     ),
+    *     @OA\Parameter(
+    *         name="search",
+    *         in="query",
+    *         example="firstname<=>Nhỡ",
+    *         description="<h4>Find records with condition get result desire</h4>
+                    <code>Type: <b id='require'>String<b></code><br>
+                    <code>Seach type supported with <b id='require'><(like,=,!=,beetwen)></b> </code><br>
+                    <code>With type search beetwen value like this <b id='require'> created_at<<beetwen>beetwen>{$start_date}|{$end_date}</b> format (Y/m/d H:i:s)</code><br>
+                    <code id='require'>If multiple search with connect (,) before</code>",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="order_by",
+    *         in="query",
+    *         example="id:DESC",
+    *         description="<h4>Sort records by colunm</h4>
+                    <code>Type: <b id='require'>String</b></code><br>
+                    <code>Sort type supported with <b id='require'>(DESC,ASC)</b></code><br>
+                    <code id='require'>If multiple order with connect (,) before</code>",
+    *         required=false,
+    *         explode=true,
+    *     ),
+    *     @OA\Parameter(
+    *         name="fields",
+    *         in="query",
+    *         required=false,
+    *         explode=true,
+    *         example="fullname,phone,email",
+    *         description="<h4>Get only the desired columns</h4>
+                    <code>Type: <b id='require'>String<b></code>"
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Successfully",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="data",type="object",
+    *             @OA\Property(property="id",type="string", example="1"),
+    *             @OA\Property(property="ticket_id",type="string", example="1"),
+    *             @OA\Property(property="title",type="string", example="this is example ticket"),
+    *             @OA\Property(property="assign_agent",type="string", example="1"),
+    *             @OA\Property(property="requester",type="string", example="3"),
+    *             @OA\Property(property="get_tickets_detail",type="array", 
+    *               @OA\Items(type="object",
+    *                 @OA\Property(property="id",type="string", example="1"),
+    *                   @OA\Property(property="title",type="string", example="this is title example"),
+    *                   @OA\Property(property="content",type="string", example="this is content example"),
+    *                 ),
+    *               ),
+    *           ),
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=403,
+    *         description="Invalid Ticket ID",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="boolean", example="Ticket not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         )
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     }
+    * )
+    */
+
     public function chatlist($groupid,$id_page,$id_key,Request $request)
     {
 
