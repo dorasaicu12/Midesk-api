@@ -374,6 +374,8 @@ class MessageController extends Controller
         //
     }
     public function upload(Request $request){
+        if($request->file('file') == null){ return MyHelper::response(true,'there is no file to upload',[],404); } 
+        if(!$request->hasFile('file')) { return MyHelper::response(true,'file not found',[],404); }
         $files = $request->file('file')->store('public');
         $r=str_replace(array('public/'), '', $files);
         return MyHelper::response(true,'upload file successfully',[asset('/storage/'.$r)],200);

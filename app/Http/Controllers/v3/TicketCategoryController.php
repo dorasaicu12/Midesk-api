@@ -177,8 +177,7 @@ class TicketCategoryController extends Controller
       $name=$request->name;
       $level=$request->level;
       $parent=$request->parent;
-      $type=$request->type && 'all';
-      $is_Show=$request->is_Show;
+      $type='add';
       if($level==1){
          $parent=0;
       }
@@ -277,26 +276,34 @@ class TicketCategoryController extends Controller
             $parent=0;
             $parent2=0;
             if($TicketCategory->level==2){
-               $value=TicketCategory::where('parent',$TicketCategory->parent)->get()->pluck('id')->toArray();
-               unset($value[array_search($id,$value)]);
+               $value=TicketCategory::where('parent',$TicketCategory->parent)->where('level',2)->get()->pluck('id')->toArray();
+               if($value[array_search($id,$value)]==$id){
+                  unset($value[array_search($id,$value)]);
+               }
                $parent2s= implode(',', $value);
                $categoryChange=TicketCategory::where('parent',$TicketCategory->parent)->where('level',3)->update(['parent2' => $parent2s]);
             }
             }elseif($level== 2){
                $parent=$request->parent;
-               $parent2=$id;
+               $parent2=$parent.','.$id;
                if(isset($parent)){
                   $checkParent = (new TicketCategory)->checkExist($parent);
                   if (!$checkParent){
                      return MyHelper::response(false,'TicketCategory"s parent Not Found', [],404);
                   }
-                  $value=TicketCategory::where('parent',$parent)->get()->pluck('id')->toArray();
-                  unset($value[array_search($id,$value)]);
+                  $value=TicketCategory::where('parent',$parent)->where('level',2)->get()->pluck('id')->toArray();
+                  if($value[array_search($id,$value)]==$id){
+                     unset($value[array_search($id,$value)]);
+                  }
                   array_push($value,$id);
                   $parent2s= implode(',', $value);
                   $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parent2s]);
+                  
                }else{
-                  $value=TicketCategory::where('parent',$TicketCategory->parent)->get()->pluck('id')->toArray();                  
+                  $value=TicketCategory::where('parent',$TicketCategory->parent)->where('level',2)->get()->pluck('id')->toArray();   
+                  if($value[array_search($id,$value)]==$id){
+                     unset($value[array_search($id,$value)]);
+                  }               
                   array_push($value,$id);
                   $parent2s= implode(',', $value);
                   $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parent2s]);
@@ -309,17 +316,19 @@ class TicketCategoryController extends Controller
                if (!$checkParent){
                   return MyHelper::response(false,'TicketCategory"s parent Not Found', [],404);
                }
-               $value=TicketCategory::where('parent',$parent)->get()->pluck('id')->toArray();
-               unset($value[array_search($id,$value)]);
+               $value=TicketCategory::where('parent',$parent)->where('level',2)->get()->pluck('id')->toArray();
+               if($value[array_search($id,$value)]==$id){
+                  unset($value[array_search($id,$value)]);
+               }
                $parentnew=implode(',', $value);
-               $categoryChangeForLevel3=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parentnew]);
-               array_push($value,$id);
+               $categoryChangeForLevel3=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parentnew]);             
                $parent2s= implode(',', $value);
                $categoryChange=TicketCategory::where('id',$id)->update(['parent2' => $parent2s]);
             }else{
-               $value=TicketCategory::where('parent',$TicketCategory->parent)->get()->pluck('id')->toArray();
-               unset($value[array_search($id,$value)]);
-               array_push($value,$id);
+               $value=TicketCategory::where('parent',$TicketCategory->parent)->where('level',2)->get()->pluck('id')->toArray();
+               if($value[array_search($id,$value)]==$id){
+                  unset($value[array_search($id,$value)]);
+               }
                $parent2s= implode(',', $value);
                $categoryChange=TicketCategory::where('id',$id)->update(['parent2' => $parent2s]);
             }
@@ -352,7 +361,7 @@ class TicketCategoryController extends Controller
          $parent=$TicketCategory->parent;
          if($level==2){
             $TicketCategory->delete();
-            $value=TicketCategory::where('parent',$parent)->get()->pluck('id')->toArray();
+            $value=TicketCategory::where('parent',$parent)->where('level',2)->get()->pluck('id')->toArray();
             $parent2s= implode(',', $value);
             $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parent2s]);
          }else{

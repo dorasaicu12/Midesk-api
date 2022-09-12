@@ -527,10 +527,10 @@ class TicketController extends Controller
     *     ),
     *     @OA\Response(
     *         response=404,
-    *         description="Ticket not found",
+    *         description="ticket not found 12",
     *         @OA\JsonContent(
     *              @OA\Property(property="status", type="boolean", example="false"),
-    *              @OA\Property(property="message", type="string", example="Ticket not found"),
+    *              @OA\Property(property="message", type="string", example="ticket not found"),
     *              @OA\Property(property="data", type="string", example="[]"),
     *         ),
     *     ),
@@ -555,7 +555,67 @@ class TicketController extends Controller
         return MyHelper::response(true,'Delete Ticket Successfully', [],200);
     }
 
-
+/**
+   * @OA\POST(
+    *     path="/api/v3/ticket/comment/{$ticketId}",
+   *     tags={"Ticket"},
+    *     summary="Create a new comment inside a ticket by ticketId",
+    *     description="<h2>This API will create a comment in a ticket by ticketId and the value json form below</h2><br><code>Press try it out button to modified</code>",
+    *     operationId="comment",
+    *     @OA\Parameter(
+    *       name="ticketId",
+    *       in="path",
+    *       description="<table id='my-custom-table'>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <td><b id='require'>Required</b></td>
+                </tr>
+                <tr>
+                    <th>private</th>
+                    <td>(0: normal, 1: internal note)</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <th>content</th>
+                    <td>Content of comment</td>
+                    <td>true</td>
+               </tr>
+           </table><br><code>Click Schema to view data property</code>",
+    *       required=true,
+    *     ),
+    *     @OA\RequestBody(
+    *       required=true,
+    *       @OA\JsonContent(
+    *         required={"private","content"},
+    *         @OA\Property(property="content", type="string", example="Content ticket num 1"),
+    *         @OA\Property(property="private", type="string", example="0"),
+    *       ),
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Create a comment successfully",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="true"),
+    *              @OA\Property(property="message", type="string", example="Create a comment successfully"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="If $ticketId do not exist or invalid will be return ticket not found",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="Ticket not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
+    
     public function comment(Request $request, $id)
     {
         if (!$id) {
