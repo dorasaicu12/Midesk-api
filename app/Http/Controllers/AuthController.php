@@ -11,6 +11,8 @@ use App\Models\TeamStaff;
 use App\Http\Functions\MyHelper;
 use Auth;
 use JWTAuth;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use App\Models\AuthByUser;
 /**
  * @group  Authentication
@@ -159,7 +161,18 @@ class AuthController extends Controller
      */
     public function refresh($id)
     {
-        
+        $token1 = JWTAuth::getToken();
+        if(!$token1){
+            return MyHelper::response(false,'Token is required in Headers',[],404);
+        }
+        try{
+            $token = JWTAuth::refresh($token1);
+            $token2= $this->respondWithToken($token);
+        }catch(TokenInvalidException $e){
+            throw new AccessDeniedHttpException('The token is invalid');
+        }
+        return MyHelper::response(true,'new token',[$token2],200);
+        exit;
         // $user=User::where('id','=',$id)->first();
         // $userToken=JWTAuth::fromUser($user);
         // $token= $this->respondWithToken($userToken);

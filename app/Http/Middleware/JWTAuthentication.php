@@ -19,6 +19,7 @@ class JWTAuthentication
      */
     public function handle($request, Closure $next)
     {
+        $user=JWTAuth::parseToken()->authenticate();
         try{
             $user=JWTAuth::parseToken()->authenticate();
             if (! $token = JWTAuth::parseToken()) {
@@ -26,7 +27,7 @@ class JWTAuthentication
             }
         }catch(\Exception $e){
             if($e instanceof TokenExpiredException) {
-                return MyHelper::response(false,'token expired',[],401);
+                return MyHelper::response(false,'token expired',['new token'=>$user],401);
             }else if($e instanceof TokenInvalidException){
                 return MyHelper::response(false,'token invalid',[],401);
             }else{

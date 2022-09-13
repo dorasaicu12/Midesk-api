@@ -22,7 +22,7 @@ class Contact extends Model
     const FROM = 0;
     const KEYS = 'fullname';
     public $fillable_group = '';
-
+    protected $fillable = ['id','contact_id','groupid','firstname','lastname','fullname','phone','email'];
     function __construct()
     {
         $groupid = auth::user()->groupid;

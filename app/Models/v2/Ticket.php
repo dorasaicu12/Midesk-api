@@ -19,7 +19,10 @@ class Ticket extends Model
     const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
-    protected $fillable ='id,ticket_id,title,priority,status,assign_agent,assign_team,priority,tag,label,channel,datecreate,dateupdate';
+    protected $fillable ='id,ticket_id,title,event_id,priority,status,assign_agent,assign_team,priority,tag,label,channel,tag,
+    label,
+    label_creby,requester,
+    requester_type,datecreate,dateupdate';
                         
                         
 	protected $table = 'ticket';
@@ -31,7 +34,9 @@ class Ticket extends Model
     }
     function getDefault($req)
     {
-    	$res = new self;
+        $res =  self::with(['getTicketsContent'=>function($q){
+            $q->select('ticket_id', 'content');
+        },'getTicketsDetail','getTicketCategory','getTicketsComment','getTicketContact']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
@@ -109,13 +114,27 @@ class Ticket extends Model
     {
     	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable());
     }
+
+    public function getTicketsContent()
+    {
+    	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable());
+    }
+
+    public function getTicketsComment()
+    {
+    	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable())->orderBy('id','desc')->limit(1);
+    }
+    public function getTicketsEvent()
+    {
+    	return $this->hasMany(Event::class,'id','event_id');
+    }
     public function getTicketAssign()
     {
         return $this->hasOne(User::class,'id','assign_agent');
     }
     public function getTicketTag()
     {
-        return $this->hasOne(Tags::class,'id','tag');
+        return $this->hasMany(Tags::class,'id','tag');
     }
     public function getTicketLabel()
     {
@@ -132,6 +151,10 @@ class Ticket extends Model
     public function getTicketCategory()
     {
         return $this->hasOne(TicketCategory::class,'id','category');
+    }
+    public function getTicketContact()
+    {
+        return $this->hasOne(Contact::class,'id','requester')->select((new Contact)->getFillable());
     }
 	static function insert($table,$ins,$returnID=true){
 		if($returnID) return DB::table($table)->insertGetId($ins);
@@ -187,9 +210,11 @@ class Ticket extends Model
         $ticket = self::selectRaw($this->fillable)->with(['getTicketAssign'=> function ($q)
         {
             $q->select(['id']);
-        },'getTicketsDetail' => function ($q)
+        },'getTicketsDetail.getTicketCreator' => function ($q)
         {
-            // $q->select(['id','fullname','picture',DB::raw("'https://dev2021.midesk.vn/upload/images/userthumb/' as path"),]);
+            $q->select(['id','fullname','picture',DB::raw("'https://dev2021.midesk.vn/upload/images/userthumb/' as path"),]);
+        },'getTicketsEvent'=>function($q){
+            $q->select(['id','event_location','remind_time','note']);
         }])
         ->where('id',$id)
         ->where(function($q) use ($delete) {
