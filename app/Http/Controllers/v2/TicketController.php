@@ -136,7 +136,6 @@ class TicketController extends Controller
     {
         $req = $request->all();
 
-
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
             $checkFileds= CheckField::check_fields($req,'ticket');
              if($checkFileds){
