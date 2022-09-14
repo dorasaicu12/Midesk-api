@@ -3,19 +3,23 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use auth;
 class QuickChat extends Model
 {	
 	protected $guarded = [];
-	protected $table = 'facebook_message_tmp';
+	protected $table = 'premade';
     public $timestamps = false;
     protected $fillable = [
                             'id',
                             'groupid',
-                            'id_setting',
+                            'title',
                             'content',
+                            'public',
+                            'createby',
                             'datecreate',
-                            'id_page',
+                            'type',
+                            'type2_id',
+                            'images'
                         ];
    const DELETED = 1;
    const DELETE = [NULL,0];

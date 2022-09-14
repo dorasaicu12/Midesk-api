@@ -253,8 +253,12 @@ class MessageController extends Controller
                 return MyHelper::response(false,'Chat does not exits',[],404);
             }
             if($channel=='facebook'){
-              $username=Chat::where('fb_key',$id_key)->first()->toArray();
-              $contact= Contact::where('fullname', 'like', '%' .$username['name']. '%')->first();
+              $id=explode('_',$id_key);
+              $contact=Contact::where('facebook_id', 'like', '%' .$id[0]. '%')->first();
+              if(!$contact){
+                $username=Chat::where('fb_key',$id_key)->first()->toArray();
+                $contact= Contact::where('fullname', 'like', '%' .$username['name']. '%')->first();
+              }
               $user=User::where('id',$user_id)->first();
               if(!$user){
                 $key=$user_id.'_'.$id_page ;
