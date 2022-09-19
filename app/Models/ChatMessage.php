@@ -28,6 +28,7 @@ class ChatMessage extends Model
     social_message.name,
     social_message.message,
     social_message.datecreate,
+    social_message.assign_agent,
     social_message.type,
     social_message.status,
     social_message.replyby,

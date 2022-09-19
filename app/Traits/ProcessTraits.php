@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Contact;
 use App\Models\Tags;
 use App\Models\TicketLabel;
-
+use App\Models\User;
 use App\Models\TeamStaff;
 use App\Models\Team;
 
@@ -97,6 +97,13 @@ trait ProcessTraits {
         }
 
         //check handle agent va handle team 
+        if(array_key_exists('assign_agent', $req)){
+            $user_id = $req['assign_agent'];
+            $check_team = (new User)->where('id',$user_id)->first();
+            if (!$check_team) {
+                return MyHelper::response(false,'assign_agent field do not match', [],403);
+            }
+        }
         if (array_key_exists('assign_team', $req)) {
             $team_id = $req['assign_team'];
             $check_team = (new Team)->where('team_id',$team_id)->first();
