@@ -14,14 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'v2'], function () {
+Route::group(['prefix' => 'v3'], function () {
 
     Route::group(['prefix' => 'auth'], function () {
         Route::post('login', 'AuthController@login')->name('login');
         Route::post('refresh/{id}', 'AuthController@refresh')->name('refresh');
     });
 
-    Route::group(['middleware' => ['auth:api','CheckCustomer'], 'namespace' => 'v2'], function () {
+    Route::group(['middleware' => ['auth:api','CheckCustomer'], 'namespace' => 'v3'], function () {
 
         Route::get('ticket/forAbi', 'TicketController@ticketForAbi')->name('ticket.forAbi');
         Route::get('ticket/ticketForm', 'TicketController@assignForm');
@@ -57,6 +57,6 @@ Route::group(['prefix' => 'v2'], function () {
     });
 });
 
-       Route::group(['prefix' => 'v3','middleware' => ['auth:api', 'CheckCustomer'], 'namespace' => 'v3'], function () {
+       Route::group(['prefix' => 'v2','middleware' => ['auth:api', 'CheckCustomer'], 'namespace' => 'v2'], function () {
        Route::apiResource('ticket', 'TicketController');
      });
