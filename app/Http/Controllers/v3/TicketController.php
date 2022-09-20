@@ -234,7 +234,8 @@ class TicketController extends Controller
         if($ticket){
             $ticket['ticket_id']='#'.$ticket['ticket_id'];
             $ticket['datecreate']=date('Y-m-d H:i:s',$ticket['datecreate']);
-            $ticket['dateupdate']=date('Y-m-d H:i:s',$ticket['dateupdate']);            
+            $ticket['dateupdate']=date('Y-m-d H:i:s',$ticket['dateupdate']);     
+            $ticket['first_reply_time']=date('Y-m-d H:i:s',$ticket['first_reply_time']);       
            if($ticket['tag']!=null){
             $tags= explode(',', $ticket['tag']);
              foreach($tags as $val){

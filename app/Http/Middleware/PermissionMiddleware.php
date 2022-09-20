@@ -84,6 +84,7 @@ class PermissionMiddleware
                     'label'=>'label',
                     'refresh'=>'refresh',
                     'upload'=>'upload',
+                    'tag'=>'tag'
                 ];
 
         return $args[$route];

@@ -407,7 +407,7 @@ class ProductController extends Controller
 
     /**
     * @OA\Put(
-    *     path="/api/v3/product/{$productCode}",
+    *     path="/api/v3/product/{productCode}",
     *     tags={"Product"},
     *     summary="Update product by productCode",
     *     description="<h2>This API will update a product by productCode and the value json form below</h2><br><code>Press try it out button to modified</code>",

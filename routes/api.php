@@ -54,6 +54,8 @@ Route::group(['prefix' => 'v3'], function () {
         Route::apiResource('event', 'EventController');
         Route::apiResource('agent', 'UserController');
 
+        Route::apiResource('tag', 'TagController');
+
     });
 });
 

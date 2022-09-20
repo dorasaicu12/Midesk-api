@@ -32,6 +32,7 @@ class Ticket extends Model
     label,
     label_creby,
     tag,
+    first_reply_time,
     event_id,
     channel,
     datecreate,

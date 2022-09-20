@@ -208,6 +208,10 @@ trait ProcessTraits {
                 $ticket->assign_team=isset($req['assign_team']) ?$req['assign_team']  :$ticketval->assign_team;
                 $ticket->assign_agent=isset($req['assign_agent']) ?$req['assign_agent']  : $ticketval->assign_agent;
                 $ticket->event_id=isset($req['event_id']) ?$req['event_id'] :$ticketval->event_id;
+                if(!isset($ticketval->first_reply_time)){
+                    $ticket->first_reply_time=time();
+                }
+                
                 $ticket->save();
                 
                 

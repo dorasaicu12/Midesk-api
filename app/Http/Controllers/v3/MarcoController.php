@@ -92,8 +92,6 @@ class MarcoController extends Controller
         $time     = time();
         $public=$request->public && 1;
         $action=$request->action;
-     
-
 
     DB::beginTransaction();
     try {
