@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\v3;
+namespace App\Http\Controllers\v2;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -856,8 +856,7 @@ class OrderController extends Controller
             if ($product_list) {
                 if (!array_key_exists(0, $product_list)) {
                     $product_list = [$product_list];
-                }
-
+                }   
                 OrderDetail::where('order_id',$order->id)->first()->Products()->delete();
                 OrderDetail::where('order_id',$order->id)->delete();
                 foreach ($product_list as $key => $prd) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\v2;
+namespace App\Models\v3;
 
 use Illuminate\Database\Eloquent\Model;
 use DB;
@@ -19,7 +19,7 @@ class Ticket extends Model
     const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
-    protected $fillable ='id,ticket_id,title,event_id,priority,status,assign_agent,assign_team,priority,tag,label,channel,tag,
+    protected $fillable ='id,ticket_id,title,event_id,priority,status,assign_agent,assign_team,category,priority,tag,label,channel,tag,
     label,
     label_creby,requester,
     requester_type,datecreate,dateupdate';
@@ -209,8 +209,12 @@ class Ticket extends Model
         $delete = $this->DELETE;
         $ticket = self::selectRaw($this->fillable)->with(['getTicketAssign'=> function ($q)
         {
-            $q->select(['id']);
-        },'getTicketsDetail.getTicketCreator' => function ($q)
+            $q->select(['id','fullname']);
+        },'getTicketCategory'=> function ($q)
+        {
+            $q->select(['id','name']);
+        }
+        ,'getTicketsDetail.getTicketCreator' => function ($q)
         {
             $q->select(['id','fullname','picture',DB::raw("'https://dev2021.midesk.vn/upload/images/userthumb/' as path"),]);
         },'getTicketsEvent'=>function($q){

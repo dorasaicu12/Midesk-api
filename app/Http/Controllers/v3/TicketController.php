@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\v3;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\TicketRequest;
 use Illuminate\Support\Str;
 use App\Http\Functions\CheckTrigger;
@@ -11,7 +11,7 @@ use App\Http\Functions\MyHelper;
 use App\Http\Functions\CheckField;
 
 use App\Models\CustomField;
-use App\Models\Ticket;
+use App\Models\v3\Ticket;
 use App\Models\TicketDetail;
 use App\Models\Event;
 use App\Models\Contact;
@@ -29,11 +29,7 @@ use DB;
 use App\Models\Tags;
 
 use Illuminate\Support\Facades\Schema;
-/**
- * @group  Tickets Management
- *
- * APIs for managing tickets
- */
+
 class TicketController extends Controller
 {
     use ProcessTraits;
@@ -42,9 +38,9 @@ class TicketController extends Controller
 
     /**
     * @OA\Get(
-    *     path="/api/v3/ticket",
+    *     path="/api/v2/ticket",
     *     tags={"Ticket"},
-    *     summary="Get list ticket",
+    *     summary="Get list ticket for app",
     *     description="<h2>This API will Get list ticket with condition below</h2>",
     *     operationId="index",
     *     @OA\Parameter(
@@ -140,7 +136,6 @@ class TicketController extends Controller
     {
         $req = $request->all();
 
-
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
             $checkFileds= CheckField::check_fields($req,'ticket');
              if($checkFileds){
@@ -180,9 +175,9 @@ class TicketController extends Controller
     
     /**
     * @OA\Get(
-    *     path="/api/v3/ticket/{ticketId}",
+    *     path="/api/v2/ticket/{ticketId}",
     *     tags={"Ticket"},
-    *     summary="Find ticket by ticketId",
+    *     summary="Find ticket by ticketId for app",
     *     description="<h2>This API will find ticket by {ticketId} and return only a single record</h2>",
     *     operationId="show",
     *     @OA\Parameter(
@@ -262,9 +257,9 @@ class TicketController extends Controller
     }
     /**
     * @OA\POST(
-    *     path="/api/v3/ticket",
+    *     path="/api/v2/ticket",
     *     tags={"Ticket"},
-    *     summary="Create a ticket",
+    *     summary="Create a ticket for app",
     *     description="<h2>This API will Create a ticket with json form below</h2><br><code>Press try it out button to modified</code>",
     *     operationId="store",
     *     @OA\RequestBody(
@@ -385,9 +380,9 @@ class TicketController extends Controller
     
     /**
     * @OA\Put(
-    *     path="/api/v3/ticket/{$ticketId}",
+    *     path="/api/v2/ticket/{$ticketId}",
     *     tags={"Ticket"},
-    *     summary="Update ticket by ticketId",
+    *     summary="Update ticket by ticketId for app",
     *     description="<h2>This API will update a ticket by ticketId and the value json form below</h2><br><code>Press try it out button to modified</code>",
     *     operationId="update",
     *     @OA\Parameter(
@@ -527,10 +522,10 @@ class TicketController extends Controller
     *     ),
     *     @OA\Response(
     *         response=404,
-    *         description="ticket not found 12",
+    *         description="Ticket not found",
     *         @OA\JsonContent(
     *              @OA\Property(property="status", type="boolean", example="false"),
-    *              @OA\Property(property="message", type="string", example="ticket not found"),
+    *              @OA\Property(property="message", type="string", example="Ticket not found"),
     *              @OA\Property(property="data", type="string", example="[]"),
     *         ),
     *     ),
@@ -555,10 +550,10 @@ class TicketController extends Controller
         return MyHelper::response(true,'Delete Ticket Successfully', [],200);
     }
 
-/**
-   * @OA\POST(
+    /**
+    * @OA\POST(
     *     path="/api/v3/ticket/comment/{$ticketId}",
-   *     tags={"Ticket"},
+    *     tags={"Ticket"},
     *     summary="Create a new comment inside a ticket by ticketId",
     *     description="<h2>This API will create a comment in a ticket by ticketId and the value json form below</h2><br><code>Press try it out button to modified</code>",
     *     operationId="comment",
@@ -580,8 +575,8 @@ class TicketController extends Controller
                     <th>content</th>
                     <td>Content of comment</td>
                     <td>true</td>
-               </tr>
-           </table><br><code>Click Schema to view data property</code>",
+                </tr>
+            </table><br><code>Click Schema to view data property</code>",
     *       required=true,
     *     ),
     *     @OA\RequestBody(
@@ -615,7 +610,6 @@ class TicketController extends Controller
     *     },
     * )
     */
-    
     public function comment(Request $request, $id)
     {
         if (!$id) {

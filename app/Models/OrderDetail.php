@@ -26,7 +26,8 @@ class OrderDetail extends Model
                         ];
 	protected $table = 'order_detail';
 
-    function Products(){
+  public  function Products(){
         return $this->hasMany(Product::class,'id','product_id');
     }
+
 }
