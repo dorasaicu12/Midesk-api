@@ -201,9 +201,9 @@ class TagController extends Controller
     public function store(Request $request){
         $user_id=auth::user()->id;
         $group_id=auth::user()->groupid;
-        $name=$request->name && 'default name';
-        $color=$request->color && 'default color';
-        $type=$request->type &&'chat';
+        $name=$request->name ;
+        $color=$request->color;
+        $type=$request->type;
         $datecreate=time();
         DB::beginTransaction();
         try {

@@ -244,7 +244,7 @@ class TicketController extends Controller
                 }
              }        
             }else{
-                $team_infor[]=[null];
+                $team_infor=null;
             }
         
         $ticket['tags']= $team_infor;
