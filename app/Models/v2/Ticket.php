@@ -213,6 +213,10 @@ class Ticket extends Model
         },'getTicketCategory'=> function ($q)
         {
             $q->select(['id','name']);
+        },
+        'getTicketLabel'=> function ($q)
+        {
+            $q->select(['id','name']);
         }
         ,'getTicketsDetail.getTicketCreator' => function ($q)
         {

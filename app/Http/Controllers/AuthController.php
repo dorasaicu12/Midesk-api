@@ -168,27 +168,14 @@ class AuthController extends Controller
         try{
             $token = JWTAuth::refresh($token1);
             $token2= $this->respondWithToken($token);
-        }catch(TokenInvalidException $e){
-            throw new AccessDeniedHttpException('The token is invalid');
+        }catch(\Exception $e){
+            if($e instanceof TokenExpiredException) {
+                return MyHelper::response(false,'token has been expired,please login again',[],401);
+            }else if($e instanceof TokenInvalidException){
+                return MyHelper::response(false,'token invalid',[],401);
+            }
         }
         return MyHelper::response(true,'new token',$token2,200);
-        exit;
-        // $user=User::where('id','=',$id)->first();
-        // $userToken=JWTAuth::fromUser($user);
-        // $token= $this->respondWithToken($userToken);
-        
-        // return MyHelper::response(true,'Successfully',$token,200);
-        // exit;
-        
-        if(!isset(auth::user()->id)){
-            return MyHelper::response(false,'unauthenticated',[],408);
-        }
-        $user = auth::user()->id;
-        if($user != $id){
-            return MyHelper::response(false,'unauthenticated',[],401);
-        }
-        $token= $this->respondWithToken(auth('api')->refresh());
-        return MyHelper::response(true,'Successfully',$token,200);
     }
 
     /**
