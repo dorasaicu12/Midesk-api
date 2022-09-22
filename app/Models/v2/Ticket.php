@@ -260,19 +260,24 @@ class Ticket extends Model
         $ticket_detail=TicketDetail::where('ticket_id',$id)->get();
         foreach($ticket_detail as $value){
             $get_creator=User::where('id',$value['createby'])->get();
-            foreach($get_creator as $user){
-                if($user->picture ==""){
-                    $path='https://dev2021.midesk.vn/upload/images/userthumb/'.'no_user_photo-v1.jpg';
-                }else{
-                    $path=$user->picture;
-                }
-                $creator=[
-                    'id'=>$user['id'],
-                    'fullname'=>$user['fullname'],
-                    'path'=>$path,
-                    'level'=>$user['level'],
-                ];
-            } 
+            if(isset($get_creator)){
+                foreach($get_creator as $user){
+                    if($user->picture ==""){
+                        $path='https://dev2021.midesk.vn/upload/images/userthumb/'.'no_user_photo-v1.jpg';
+                    }else{
+                        $path='https://dev2021.midesk.vn/upload/images/userthumb/'.$user->picture;
+                    }
+                    $creator=[
+                        'id'=>$user['id'],
+                        'fullname'=>$user['fullname'],
+                        'path'=>$path,
+                        'level'=>$user['level'],
+                    ];
+                } 
+            }else{
+                $creator=[];
+            }
+
             if($value['type']=='text'){
 
                 if($value['is_delete']== 1){
