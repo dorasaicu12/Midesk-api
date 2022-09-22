@@ -217,10 +217,6 @@ class Ticket extends Model
         'getTicketLabel'=> function ($q)
         {
             $q->select(['id','name']);
-        }
-        ,'getTicketsDetail.getTicketCreator' => function ($q)
-        {
-            $q->select(['id','fullname','picture',DB::raw("'https://dev2021.midesk.vn/upload/images/userthumb/' as path"),]);
         },'getTicketsEvent'=>function($q){
             $q->select(['id','event_location','remind_time','note']);
         }])
@@ -258,5 +254,83 @@ class Ticket extends Model
         ->where(function($q) use ($delete) {
             $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
         })->first([self::getTable().'.*']);
+    }
+
+    public function showTicketDetail($id){
+        $ticket_detail=TicketDetail::where('ticket_id',$id)->get();
+        foreach($ticket_detail as $value){
+            $get_creator=User::where('id',$value['createby'])->get();
+            foreach($get_creator as $user){
+                if($user->picture ==""){
+                    $path='https://dev2021.midesk.vn/upload/images/userthumb/'.'no_user_photo-v1.jpg';
+                }else{
+                    $path=$user->picture;
+                }
+                $creator=[
+                    'id'=>$user['id'],
+                    'fullname'=>$user['fullname'],
+                    'path'=>$path,
+                    'level'=>$user['level'],
+                ];
+            } 
+            if($value['type']=='text'){
+
+                if($value['is_delete']== 1){
+                    $value['content_true']='<i style="color: #e23d3d;">This message has been removed.</i>';
+                }else{
+                    if($value['content']!== null && $value['content_system']!== null){
+                        $value['content_true']=$value['content_system'].' '.$value['content'];
+                    }elseif($value['content_system']== null){
+                        $value['content_true']=$value['content'];
+                    }elseif($value['content']== null){
+                        $value['content_true']=$value['content_system'];
+                    }
+                }
+                $detail_infor[]=[
+                    'id'=>$value['id'],
+                    'content'=>$value['content_true'],
+                    'type'=>$value['type'],
+                    "attaments"=>[],
+                    'get_tickets_creator'=>$creator
+                ];
+                
+            }elseif($value['type']=='file'){
+                
+                if($value['is_delete']== 1){
+                    $value['content_true']='<i style="color: #e23d3d;">This message has been removed.</i>';
+                }else{
+                    if($value['content']!== null && $value['content_system']!== null){
+                        $value['content_true']=$value['content_system'].' '.$value['content'];
+                    }elseif($value['content_system']== null){
+                        $value['content_true']=$value['content'];
+                    }elseif($value['content']== null){
+                        $value['content_true']=$value['content_system'];
+                    }
+                }  
+                if(isset($value['file_multiple'])){
+                    $detail_infor[]=[
+                         'id'=>$value['id'],
+                        'content'=>$value['content_true'],
+                        'type'=>$value['type'],
+                        "attaments"=>json_decode($value['file_multiple']),
+                        'get_tickets_creator'=>$creator
+                    ];
+                }else{
+                    $file[]=[
+                        'file_size'=>$value['file_size'],
+                        'file_extension'=>$value['file_extension'],
+                        'file_name'=>$value['file_name'],
+                    ];
+                    $detail_infor[]=[
+                        'id'=>$value['id'],
+                        'content'=>$value['content_true'],
+                        'type'=>$value['type'],
+                        "attaments"=>$file,
+                        'get_tickets_creator'=>$creator
+                    ];
+                }
+            }
+        }
+        return $detail_infor;
     }
 }

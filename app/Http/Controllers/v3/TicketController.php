@@ -252,7 +252,9 @@ class TicketController extends Controller
             }else{
                 $team_infor[]=[null];
             }
-        
+            
+
+        $ticket['get_tickets_detail']=(new Ticket)->showTicketDetail($ticket['id']);      
         $ticket['tags']= $team_infor;
             return MyHelper::response(true,'Successfully',$ticket,200);
         }else{

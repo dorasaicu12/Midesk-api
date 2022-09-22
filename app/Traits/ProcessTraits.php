@@ -635,8 +635,7 @@ trait ProcessTraits {
             if (count($data['file']) > 1) {
                 $ar = [];
                 foreach ($data['file'] as $file) {
-                    $fname = md5($file->getClientOriginalName(). time()).'.'.$file->getClientOriginalExtension();
-                    $file->move(public_path().'/files/', $fname);  
+                    $fname = md5($file->getClientOriginalName(). time()).'.'.$file->getClientOriginalExtension();  
                     array_push($ar, 
                         [
                         'file_original' => $file->getClientOriginalName(),
@@ -645,6 +644,7 @@ trait ProcessTraits {
                         'file_name' => $fname
                         ]
                     );
+                    $file->move(public_path().'/files/', $fname);
                 }
                 $ticket_detail->file_multiple = json_encode($ar);
             }else{
@@ -655,6 +655,9 @@ trait ProcessTraits {
                 $ticket_detail->file_name = $fname;
                 $data['file'][0]->move(public_path().'/files/', $fname); 
             }
+            $type='file';
+        }else{
+            $type='text';
         }
         ///// end upload file //////
         $ticket_detail->title          = $data['title'] ?? $ticket->title;
@@ -662,7 +665,7 @@ trait ProcessTraits {
         $ticket_detail->groupid        = $ticket->groupid;
         $ticket_detail->channel        = $ticket->channel;
         $ticket_detail->private        = $data['private'];
-        $ticket_detail->type           = 'text';
+        $ticket_detail->type           = $type;
         $ticket_detail->createby       = auth::user()->id;
         $ticket_detail->status         = $ticket->status;
         $ticket_detail->createby_level = auth::user()->level;
