@@ -272,9 +272,9 @@ class Ticket extends Model
             if(isset($get_creator)){
                 foreach($get_creator as $user){
                     if($user->picture ==""){
-                        $path='https://dev2021.midesk.vn/upload/images/userthumb/'.'no_user_photo-v1.jpg';
+                        $path='https://dev2022.midesk.vn/upload/images/userthumb/'.'no_user_photo-v1.jpg';
                     }else{
-                        $path='https://dev2021.midesk.vn/upload/images/userthumb/'.$user->picture;
+                        $path='https://dev2022.midesk.vn/upload/images/userthumb/'.$user->picture;
                     }
                     $creator=[
                         'id'=>$user['id'],
