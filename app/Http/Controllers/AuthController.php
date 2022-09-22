@@ -170,9 +170,9 @@ class AuthController extends Controller
             $token2= $this->respondWithToken($token);
         }catch(\Exception $e){
             if($e instanceof TokenExpiredException) {
-                return MyHelper::response(false,'token has been expired,please login again',[],401);
+                return MyHelper::response(false,'Token has been expired, please login again',[],401);
             }else if($e instanceof TokenInvalidException){
-                return MyHelper::response(false,'token invalid',[],401);
+                return MyHelper::response(false,'Token invalid',[],401);
             }
         }
         return MyHelper::response(true,'new token',$token2,200);

@@ -232,14 +232,11 @@ class ChatController extends Controller
             return MyHelper::response(false,$message2,[],404);
         }
     }
+    
        $chats = (new Chat)->getDefault($req);
        $check[]=$chats;
        
         foreach($chats as $value){
-        if(isset($value['datecreate'])){
-            $value['datecreate']= date('Y-m-d H:i:s',$value['datecreate']);
-            
-        }
         if(isset($value['channel'])){
             $check_field = Chat::where('id',$value['id'])->first();
             if($value['channel']=='facebook'){
