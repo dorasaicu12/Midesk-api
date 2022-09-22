@@ -267,6 +267,7 @@ class Ticket extends Model
     public function showTicketDetail($id){
         $ticket_detail=TicketDetail::where('ticket_id',$id)->get();
         foreach($ticket_detail as $value){
+            $creator='';
             $get_creator=User::where('id',$value['createby'])->get();
             if(isset($get_creator)){
                 foreach($get_creator as $user){
@@ -282,8 +283,6 @@ class Ticket extends Model
                         'level'=>$user['level'],
                     ];
                 } 
-            }else{
-                $creator=[];
             }
 
             if($value['type']=='text'){
