@@ -247,7 +247,7 @@ class TicketController extends Controller
         
         $ticket['tags']= $team_infor;
         $category=TicketCategory::where('id',$ticket['category'])->first();
-        $categoryGET=[];
+        $categoryGET=null;
         if(isset($category)){
             $categoryGET=[
                 'id'=>$category['id'],

@@ -34,9 +34,7 @@ class Ticket extends Model
     }
     function getDefault($req)
     {
-        $res =  self::with(['getTicketsContent'=>function($q){
-            $q->select('ticket_id', 'content');
-        },'getTicketsDetail','getTicketCategory','getTicketsComment','getTicketContact']);
+        $res =  self::with(['getTicketsComment','getTicketContact']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
@@ -114,6 +112,10 @@ class Ticket extends Model
     {
     	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable());
     }
+    public function getLastedTicketsDetail()
+    {
+    	return $this->hasMany(TicketDetail::class,'ticket_id','id')->limit(1)->od;
+    }
 
     public function getTicketsContent()
     {
@@ -122,7 +124,7 @@ class Ticket extends Model
 
     public function getTicketsComment()
     {
-    	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable())->orderBy('id','desc')->limit(1);
+    	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable())->orderBy('datecreate','desc')->limit(1);
     }
     public function getTicketsEvent()
     {
