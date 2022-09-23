@@ -18,7 +18,8 @@ use Auth;
 use DB;
 use App\Models\actionLog;
 use App\Models\customerContactRelation;
-
+use App\Models\FacebookPageModel;
+use App\Models\ZaloPageModel;
 use App\Models\Chat;
 
 use Illuminate\Support\Facades\Schema;
@@ -314,5 +315,26 @@ class ChatController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function PageCheck($id){
+      $chatfacebook= Chat::where('fb_key',$id)->first();
+      $chatzalo=Chat::where('zalo_key',$id)->first();
+      $id_page=explode('_',$id);
+      if($chatzalo){
+        $check=ZaloPageModel::where('oaid',$id_page[1])->first();
+        if(!$check){
+            return MyHelper::response(false,'Page is not found',[],404);
+        }
+        return MyHelper::response(false,'Successfully',[$check],200);
+      }elseif ($chatfacebook) {
+        $check=FacebookPageModel::where('id_page',$id_page[1])->first();
+        if(!$check){
+            return MyHelper::response(false,'Page is not found',[],404);
+        }
+        return MyHelper::response(false,'Successfully',[$check],200);
+      }else{
+        return MyHelper::response(false,'Chat id is not found',[],404);
+      }
+      
     }
 }
