@@ -249,7 +249,7 @@ class TicketController extends Controller
         $category=TicketCategory::where('id',$ticket['category'])->first();
         $categoryGET=[];
         if(isset($category)){
-            $categoryGET[]=[
+            $categoryGET=[
                 'id'=>$category['id'],
                 'name'=>$category['name'],
             ];
