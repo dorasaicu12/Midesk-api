@@ -210,9 +210,6 @@ class Ticket extends Model
         $ticket = self::selectRaw($this->fillable)->with(['getTicketAssign'=> function ($q)
         {
             $q->select(['id','fullname']);
-        },'getTicketCategory'=> function ($q)
-        {
-            $q->select(['id','name']);
         },
         'getTicketLabel'=> function ($q)
         {
@@ -258,6 +255,7 @@ class Ticket extends Model
 
     public function showTicketDetail($id){
         $ticket_detail=TicketDetail::where('ticket_id',$id)->get();
+        $detail_infor=[];
         foreach($ticket_detail as $value){
             $creator='';
             $get_creator=User::where('id',$value['createby'])->get();
@@ -335,5 +333,8 @@ class Ticket extends Model
             }
         }
         return $detail_infor;
+    }
+    public function GetCategory($id){
+        $category=TicketCategory::where()->first($id);
     }
 }

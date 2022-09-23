@@ -266,6 +266,7 @@ class Ticket extends Model
 
     public function showTicketDetail($id){
         $ticket_detail=TicketDetail::where('ticket_id',$id)->get();
+        $detail_infor=[];
         foreach($ticket_detail as $value){
             $creator='';
             $get_creator=User::where('id',$value['createby'])->get();

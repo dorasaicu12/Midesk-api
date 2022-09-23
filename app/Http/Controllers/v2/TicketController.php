@@ -246,7 +246,15 @@ class TicketController extends Controller
             }
         
         $ticket['tags']= $team_infor;
-
+        $category=TicketCategory::where('id',$ticket['category'])->first();
+        $categoryGET=[];
+        if(isset($category)){
+            $categoryGET[]=[
+                'id'=>$category['id'],
+                'name'=>$category['name'],
+            ];
+        }
+        $ticket['get_ticket_category']=$categoryGET;
         $ticket['get_tickets_detail']=(new Ticket)->showTicketDetail($ticket['id']); ;
             return MyHelper::response(true,'Successfully',$ticket,200);
         }else{
