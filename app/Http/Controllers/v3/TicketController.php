@@ -852,4 +852,7 @@ class TicketController extends Controller
     *     }
     * )
     */
+    public function ticketMerge(Request $request, $id){
+        return $this->SubmitMerge($request->all(),$id);
+    }
 }

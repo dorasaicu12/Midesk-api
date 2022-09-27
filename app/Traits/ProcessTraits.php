@@ -16,6 +16,7 @@ use App\Models\TicketLabel;
 use App\Models\User;
 use App\Models\TeamStaff;
 use App\Models\Team;
+use App\Models\Event;
 
 trait ProcessTraits {
 
@@ -95,6 +96,12 @@ trait ProcessTraits {
          $label_creaby= $checklable['createby'];
          $req['label_creby']=$checklable['createby'];
         }
+        if (isset($req['event_id']) && rtrim($req['event_id'])!=='') {
+            $checkEvent=  Event::where('id',$req['event_id'])->first();
+            if(!$checkEvent){
+              return MyHelper::response(false,'event can not be found', [],404); 
+            }
+          }
 
         //check handle agent va handle team 
         if(array_key_exists('assign_agent', $req)){
@@ -254,6 +261,7 @@ trait ProcessTraits {
                 $ticket->status         =$req['status'] ?? $status;
                 $ticket->channel        = $channel;
                 $ticket->priority       = $priority;
+                $ticket->event_id=$req['event_id'] ?? null;
                 $ticket->category       = $category;
                 $ticket->label          = $req['label'] ?? null;
                 $ticket->label_creby          =$label_creaby ?? null;
@@ -1088,5 +1096,146 @@ trait ProcessTraits {
             return MyHelper::response(false,$ex->getMessage(), [],500);
         }
     }
+    
+    public function SubmitMerge($req,$id){
+        $groupid    = auth::user()->groupid;
+        $id_user    = auth::user()->id;
+        $fullname   = auth::user()->fullname;
+        $level      = auth::user()->level;
+
+        $main_id     = $id;
+        $array_sub   = $req['subId'];
+        $get_content = $req['content']?:0;
+        $get_event   = $req['eventId']?:0;
+        //check ticket exist of main and sub
+        $check_main=Ticket::where('id',$main_id)->first();
+        if(!$check_main){
+            return MyHelper::response(false,'The main ticket does not exits', [],404);
+        }
+        if(count($array_sub)==0){
+            return MyHelper::response(false,'There is no ticket to merge', [],404);
+        }
+        foreach($array_sub as $id_sub){
+            $check_sub=Ticket::where('id',$id_sub)->first();
+            if(!$check_sub){
+                return MyHelper::response(false,'The sub ticket with id #'.$id_sub.' does not exits', [],404);
+            }
+            if($check_sub['type']=='child'){
+                return MyHelper::response(false,'You can not merge the child type ticket in ticket with id #'.$id_sub.'', [],500);
+             }
+         }
+         $listSub=Ticket::whereIn('id',$array_sub)->get();
+         if($check_main['type']=='child'){
+            return MyHelper::response(false,'The main ticket can not be child type', [],404);
+         }
+
+         try{ 
+            $array_id=$array_sub;
+            // array_push($array_id,$main_id);
+            $sql = "SELECT GROUP_CONCAT(user_id) AS id_follow FROM ticket_follow WHERE ticket_id IN(".$main_id.",".implode(',', $array_sub).") AND groupid = ".$groupid;
+            $follow = Ticket::customQuery($sql);
+            $follow = $follow['id_follow'];       
+            $content_noti = 'Đã gộp các phiếu #'.implode(',#',$array_sub);
+            $ins_notifi = array(
+                'groupid'   => $groupid,
+                'id_user'   => $check_main['assign_agent'],
+                'id_team'   => $check_main['assign_team'],
+                'id_follow' => $follow,
+                'type'      => 'ticket',
+                'ticket_id' => $check_main['id'],
+                'title'     => '<b>'.$fullname.'</b> vừa cập nhật phiếu <b>#'.$check_main['ticket_id'].' - '.$check_main['title'].'</b>',
+                'content'   => $content_noti,
+                'channel'   => $check_main['channel'],
+                'custom'    => json_encode(array('id' => $check_main['id'],'name' => $check_main['title'] , 'status' => $check_main['status'])),
+                'view'      => $id_user,
+                'del_agent' => $id_user,
+            );
+            Ticket::insert('notifications',$ins_notifi);
+        } catch (Exception $e){
+            return MyHelper::response(false,$e, [],500);
+        }
+
+        foreach ($listSub as $value) {
+            if($value['type'] == 'parent'){
+                DB::table('ticket_parent_child')
+                ->where('groupid', $groupid)
+                ->where('parent', $value['id'])
+                ->update(['parent' => $main_id]);
+
+                DB::table('ticket_'.$groupid)
+                ->where('groupid', $groupid)
+                ->where('id', $main_id)
+                ->update(['type' => 'parent']);
+            }elseif($value['type'] == 'child'){  
+                $get_parent = (new Ticket)->show_by_id('ticket_parent_child',array('groupid' => $groupid, 'child' => $value['id']),'parent');
+                $count_parent = Ticket::count_where('ticket_parent_child',array('parent' => $get_parent['parent']));
+                if($count_parent < 2){
+                    DB::table('ticket_'.$groupid)
+                    ->where('groupid', $groupid)
+                    ->where('id', $get_parent['parent'])
+                    ->update(['type' => null]);
+                }
+                DB::table('ticket_parent_child')
+                ->where('groupid', $groupid)
+                ->where('child', $value['id'])
+                ->delete();
+            }
+            //update social
+            DB::table('social_activity_log')
+            ->where('groupid', $groupid)
+            ->where('ticket_id', $value['id'])
+            ->update(['ticket_id' => $main_id]);
+
+            DB::table('social_history')
+            ->where('groupid', $groupid)
+            ->where('ticket_id', $value['id'])
+            ->update(['ticket_id' => $main_id]);
+
+            DB::table('social_queues')
+            ->where('groupid', $groupid)
+            ->where('ticket_id', $value['id'])
+            ->update(['ticket_id' => $main_id]);
+        }
+        if($get_content == 1){
+            DB::table('ticket_detail_'.$groupid)
+            ->where('groupid', $groupid)
+            ->whereIn('ticket_id',$array_sub)
+            ->update(['ticket_id' => $main_id]);
+        }
+        if($get_event == 1){
+            $upd = array(
+                'event_source'    => $check_main['requester_type'],
+                'event_source_id' => $check_main['requester'],
+                'ticket_id'     => $check_main['id'],
+            );
+            DB::table('event')
+            ->where('groupid', $groupid)
+            ->whereIn('ticket_id',$array_sub)
+            ->update($upd);
+        }
+        
+
+        if($check_main['status'] == 'new'){
+            Ticket::where('id',$check_main['id'])->update(array('status' => 'open'));          
+        }
+
+        $ins = array(
+            'groupid'        => $groupid,
+            'ticket_id'      => $main_id,
+            'content_system' => 'đã gộp các phiếu <b>#'.implode(',#', $array_sub).'</b>',
+            'type'           => 'text',
+            'createby'       => $id,
+            'createby_level' => $level,
+            'datecreate'     => time(),
+            'private'        => 1,
+        );
+        Ticket::insert('ticket_detail_'.$groupid,$ins);
+        Ticket::where('groupid',$groupid)->whereIn('id',$array_sub)->delete();
+        return MyHelper::response(true,'Ticket merging successfully', [
+            'main'=>['id' => $check_main['id']],
+            'sub'=>['id_sub'=>$array_sub]
+        ],200);
+    }
+    
 
 }
