@@ -19,7 +19,7 @@ class Ticket extends Model
     const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
-    protected $fillable ='id,ticket_id,title,event_id,priority,status,assign_agent,assign_team,category,priority,tag,label,channel,tag,
+    protected $fillable ='id,ticket_id,title,event_id,priority,status,assign_agent,assign_team,category,type,priority,tag,label,channel,tag,
     label,
     label_creby,requester,
     requester_type,datecreate,dateupdate';
@@ -36,7 +36,7 @@ class Ticket extends Model
     {
         $res =  self::with(['getTicketsContent'=>function($q){
             $q->select('ticket_id', 'content');
-        },'getTicketsDetail','getTicketCategory','getTicketsComment','getTicketContact']);
+        },'getTicketsDetail','getTicketContact']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {

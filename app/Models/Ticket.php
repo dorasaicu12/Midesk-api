@@ -35,6 +35,7 @@ class Ticket extends Model
     first_reply_time,
     event_id,
     channel,
+    type,
     datecreate,
     dateupdate,
     requester,

@@ -17,7 +17,7 @@ use App\Models\User;
 use App\Models\TeamStaff;
 use App\Models\Team;
 use App\Models\Event;
-
+use Illuminate\Support\Facades\Crypt;
 trait ProcessTraits {
 
     public $groupid = '';
@@ -54,7 +54,7 @@ trait ProcessTraits {
         $field = [];
         $time     = time();
         $title    = $req['title'];
-        $content  = $req['content'] ?? 'k có dữ liệu';
+        $content  = $req['content'] ?:'ko có dữ liệu';
         $priority = $req['priority'] ?? 4;
         $category = $req['category'] ?? null; 
         $label    = $req['label'] ?? null;
@@ -329,7 +329,7 @@ trait ProcessTraits {
             sleep(1);
             $tdetail['content'] = $content;
             $tdetail['private'] = $private;
-            if($req['content']!=''){
+            if($content!=''){
                 $ticket_detail = $this->create_comment($ticket->id,$tdetail,$action);
                 
             $ndata = array(

@@ -27,8 +27,10 @@ use App\Traits\ProcessTraits;
 use Auth;
 use DB;
 use App\Models\Tags;
-
+use Config;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Crypt;
+use App\Libraries\Encryption;
 
 class TicketController extends Controller
 {
@@ -165,7 +167,34 @@ class TicketController extends Controller
            $tickets = (new Ticket)->getDefault($req,'getTicketsDetail:id,title,content,content_system,ticket_id,status,type,private,file_name');
            // $tickets['ticket_id']='#'.$tickets['ticket_id'];
            foreach($tickets as $val){
+              $id_ticket=$val['id'];
               $val['ticket_id']='#'.$val['ticket_id'];
+              $comment=TicketDetail::where('id','714')->orderBy('datecreate','desc')->limit(1)->select(['id','ticket_id','title','content','content_system','type','file_size','file_extension','file_name','file_original','file_multiple','datecreate','createby'])->get();
+
+            foreach($comment as $cm){
+                if($cm['type']=='file'){
+                    if(isset($cm['file_multiple'])){
+                    //    $encryption=new Encryption;
+                    //    $encryption->initialize(array('cipher' => 'aes-256','mode' => 'ctr','key' => "base64:3J/tiqulcV/AlN7bUiJJqT6rFJeODUDhrt9IwJYwJYw="));
+                    //    $b = $encryption->encrypt('Tiến cọ');
+                    //    echo $b;
+                    //    exit;
+                        $array= json_decode($cm['file_multiple'], true);
+                        foreach($array as $files){
+                            $result[]= $files['file_name'];
+                        }
+                        $text=implode(',',$result);
+                        $cm['content']=substr('File đính kèm là:'.$text, 0, 50) . '...';
+                    }else{
+                        $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 50) . '...';
+                    }
+                }elseif($cm['type']=='text'){
+                    if($cm['content'] !== null && strlen($cm['content']) > 50){
+                        $cm['content']=substr(strip_tags($cm['content']), 0, 50) . '...';
+                      }
+                }
+            }
+              $val['get_tickets_comment']=$comment;
            }
 
            
