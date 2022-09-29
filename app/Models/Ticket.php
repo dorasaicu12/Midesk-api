@@ -56,7 +56,7 @@ class Ticket extends Model
     {
     	$res =  self::with(['getTicketsContent'=>function($q){
             $q->select('ticket_id', 'content');
-        },'getTicketsDetail','getTicketCategory','getTicketsComment']);
+        },'getTicketsDetail','getTicketCategory','getTicketsComment','getTicketPriority']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {

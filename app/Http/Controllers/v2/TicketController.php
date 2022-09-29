@@ -169,16 +169,23 @@ class TicketController extends Controller
            foreach($tickets as $val){
               $id_ticket=$val['id'];
               $val['ticket_id']='#'.$val['ticket_id'];
-              $comment=TicketDetail::where('id','714')->orderBy('datecreate','desc')->limit(1)->select(['id','ticket_id','title','content','content_system','type','file_size','file_extension','file_name','file_original','file_multiple','datecreate','createby'])->get();
+              $comment=TicketDetail::where('ticket_id',$id_ticket)->orderBy('datecreate','desc')->limit(1)->select(['id','ticket_id','title','content','content_system','type','file_size','file_extension','file_name','file_original','file_multiple','datecreate','createby'])->get();
 
             foreach($comment as $cm){
                 if($cm['type']=='file'){
                     if(isset($cm['file_multiple'])){
-                    //    $encryption=new Encryption;
-                    //    $encryption->initialize(array('cipher' => 'aes-256','mode' => 'ctr','key' => "base64:3J/tiqulcV/AlN7bUiJJqT6rFJeODUDhrt9IwJYwJYw="));
-                    //    $b = $encryption->encrypt('Tiến cọ');
-                    //    echo $b;
-                    //    exit;
+                   //    $token = array(
+                  //     "id" => 1, //id user,
+                  //     "groupid" => 2, "groupid", 
+                     //     "filename" => "tienco.jpg", 
+                   //     "datecreate" => "1234562345" ,
+                    //     "time" => time(), 
+                   // );
+                    // $encryption=new Encryption;
+                   // $encryption->initialize(array('cipher' => 'aes-256','mode' => 'ctr','key' => "MITEK@2016"));
+                   // $data =  base64_encode($encryption->encrypt(json_encode($token)));;
+                   // echo 'https://portal.midesk.vn/file-data/'.$data;
+                   // exit;
                         $array= json_decode($cm['file_multiple'], true);
                         foreach($array as $files){
                             $result[]= $files['file_name'];
@@ -196,8 +203,6 @@ class TicketController extends Controller
             }
               $val['get_tickets_comment']=$comment;
            }
-
-           
             
         return MyHelper::response(true,'Successfully',$tickets,200);
     }
@@ -278,9 +283,23 @@ class TicketController extends Controller
         $category=TicketCategory::where('id',$ticket['category'])->first();
         $categoryGET=null;
         if(isset($category)){
+            $children=TicketCategory::where('parent',$category['id'])->where('level',2)->select(['id','name'])->get();
+            $children2=TicketCategory::where('parent',$category['id'])->where('level',3)->select(['id','name'])->get();
+            if($children){
+                $childrenLevel2=$children;
+            }else{
+                $childrenLevel2=null;
+            }
+            if($children){
+                $childrenLevel3=$children2;
+            }else{
+                $childrenLevel3=null;
+            }
             $categoryGET=[
                 'id'=>$category['id'],
                 'name'=>$category['name'],
+                'children_level_2'=>$childrenLevel2,
+                'children_level_3'=>$childrenLevel3
             ];
         }
         $ticket['get_ticket_category']=$categoryGET;
