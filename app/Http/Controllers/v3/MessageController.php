@@ -23,6 +23,7 @@ use App\Models\customerContactRelation;
 use App\Http\Functions\CheckField;
 
 use App\Models\ChatMessage;
+
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\File; 
@@ -194,10 +195,14 @@ class MessageController extends Controller
     * )
     */
 
-    public function chatlist($groupid,$id_page,$id_key,Request $request)
+    public function chatlist($id,Request $request)
     {
 
        $req = $request->all();
+       $Chat=Chat::where('id',$id)->first();
+       if(!$Chat){
+        return MyHelper::response(false,'Chat id is invalid',[],404);
+       }
         //check column exits
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
          $checkFileds= CheckField::check_chat_field($req);
@@ -219,8 +224,22 @@ class MessageController extends Controller
              return MyHelper::response(false,$checkFileds,[],404);
           }
         }
-        
-        $chats = (new ChatMessage)->getDefault($req,$groupid,$id_page,$id_key);
+
+        if($Chat->channel =='zalo'){
+            $groupid=$Chat->groupid;
+            $id_page=$Chat->id_page;
+            $id_key=$Chat->zalo_key;
+            $chats = (new ChatMessage)->getDefault($req,$groupid,$id_page,$id_key);
+        }elseif($Chat->channel =='facebook'){
+            $groupid=$Chat->groupid;
+            $id_page=$Chat->id_page;
+            $id_key=$Chat->fb_key;
+            $chats = (new ChatMessage)->getDefault($req,$groupid,$id_page,$id_key);
+        }elseif($Chat->channel =='chat'){
+            $id_channel=$Chat->id_channel;
+            $chats = (new ChatMessage)->getDefaultChannelChat($req,$id_channel);
+        }
+         
         $value2='';
         if(!$chats){
             
@@ -304,6 +323,9 @@ class MessageController extends Controller
                 }else{
                   $chatDetail['chat_contact']=$contact;
                 }
+            }elseif($channel=='chat'){
+                $chatDetail['user']=[];
+                $chatDetail['chat_contact']=[];
             }
                 
             

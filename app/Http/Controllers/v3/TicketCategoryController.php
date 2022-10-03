@@ -187,6 +187,33 @@ class TicketCategoryController extends Controller
             return MyHelper::response(false,'parent of ticket category not found',[],404);
          }
       }
+      if(isset($level)){
+         if($level== 2){
+            $parent=$request->parent;
+            $TicketCheck = TicketCategory::where('id',$parent)->first();
+            if(!$TicketCheck){
+               return MyHelper::response(false,'Category '.$parent.' not found', [],404);
+              }
+              if($TicketCheck->level==3){
+                return MyHelper::response(false,'Category '.$parent.' level 3 cannot be parent of level 2', [],404);
+              }elseif($TicketCheck->level==2){
+               return MyHelper::response(false,'Category '.$parent.' level 2 can not be parent of each others', [],401);
+              }
+            $parent2=$parent;
+         }elseif($level== 3){
+            $parent=$request->parent;
+            $TicketCheck = TicketCategory::where('id',$parent)->first();
+            if(!$TicketCheck){
+               return MyHelper::response(false,'Category '.$parent.' not found', [],404);
+              }
+              if($TicketCheck->level==1){
+                return MyHelper::response(false,'Category '.$parent.' level 1 cannot be parent of level 3', [],404);
+              }elseif($TicketCheck->level==3){
+               return MyHelper::response(false,'Category '.$parent.' level 3 can not be parent of each others', [],401);
+              }
+              $parent2=$TicketCheck->parent.','.$parent;
+         }  
+      }
       DB::beginTransaction();
       try {
       DB::commit();
@@ -201,18 +228,12 @@ class TicketCategoryController extends Controller
       $order->save();
       if($level !==1){
          $category = $order->showOne($order->id);
-         if($level==3){
-            $value=TicketCategory::where('parent',$parent)->get()->pluck('id')->toArray();
-            $parent2s= implode(',', $value);
-            $category->parent2=$parent2s;
-         }elseif($level==2 ){
-            $value=TicketCategory::where('parent',$parent)->get()->pluck('id')->toArray();
-            $parent2s= implode(',', $value);
-            $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parent2s]);
-            $category->parent2=$parent.','.$order->id; 
-         }else{
-            $category->parent2=$order->id;
-         }
+         $category->parent2=$parent2.','.$category->id;
+         $category->save();
+      }
+      if($level ==1){
+         $category = $order->showOne($order->id);
+         $category->parent2=$order->id;
          $category->save();
       }
       return MyHelper::response(true,'Created ticket category successfully',['id'=>$order->id],200);
@@ -267,71 +288,43 @@ class TicketCategoryController extends Controller
      }else{
         $time     = time();
         $name=$request->name;
-        $level=$request->level;
+        if(isset($request->level)){
+         $level=$request->level;
+        }else{
+         $level=$TicketCategory->level;
+        }
         $sort=$request->sort;
         $type=$request->type && 'all';
         $is_Show=$request->is_Show;
         if(isset($level)){
             if($level== 1 ){
             $parent=0;
-            $parent2=0;
-            if($TicketCategory->level==2){
-               $value=TicketCategory::where('parent',$TicketCategory->parent)->where('level',2)->get()->pluck('id')->toArray();
-               if($value[array_search($id,$value)]==$id){
-                  unset($value[array_search($id,$value)]);
-               }
-               $parent2s= implode(',', $value);
-               $categoryChange=TicketCategory::where('parent',$TicketCategory->parent)->where('level',3)->update(['parent2' => $parent2s]);
-            }
+            $parent=$id;
             }elseif($level== 2){
                $parent=$request->parent;
+               $TicketCheck = TicketCategory::where('id',$parent)->first();
+               if(!$TicketCheck){
+                  return MyHelper::response(false,'Category '.$parent.' not found', [],404);
+                 }
+                 if($TicketCheck->level==3){
+                   return MyHelper::response(false,'Category '.$parent.' level 3 cannot be parent of level 2', [],404);
+                 }elseif($TicketCheck->level==2){
+                  return MyHelper::response(false,'Category '.$parent.' level 2 can not be parent of each others', [],401);
+                 }
                $parent2=$parent.','.$id;
-               if(isset($parent)){
-                  $checkParent = (new TicketCategory)->checkExist($parent);
-                  if (!$checkParent){
-                     return MyHelper::response(false,'TicketCategory"s parent Not Found', [],404);
-                  }
-                  $value=TicketCategory::where('parent',$parent)->where('level',2)->get()->pluck('id')->toArray();
-                  if($value[array_search($id,$value)]==$id){
-                     unset($value[array_search($id,$value)]);
-                  }
-                  array_push($value,$id);
-                  $parent2s= implode(',', $value);
-                  $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parent2s]);
-                  
-               }else{
-                  $value=TicketCategory::where('parent',$TicketCategory->parent)->where('level',2)->get()->pluck('id')->toArray();   
-                  if($value[array_search($id,$value)]==$id){
-                     unset($value[array_search($id,$value)]);
-                  }               
-                  array_push($value,$id);
-                  $parent2s= implode(',', $value);
-                  $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parent2s]);
-               }
-
             }elseif($level== 3){
                $parent=$request->parent;
-               if(isset($parent)){               
-               $checkParent = (new TicketCategory)->checkExist($parent);
-               if (!$checkParent){
-                  return MyHelper::response(false,'TicketCategory"s parent Not Found', [],404);
-               }
-               $value=TicketCategory::where('parent',$parent)->where('level',2)->get()->pluck('id')->toArray();
-               if($value[array_search($id,$value)]==$id){
-                  unset($value[array_search($id,$value)]);
-               }
-               $parentnew=implode(',', $value);
-               $categoryChangeForLevel3=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parentnew]);             
-               $parent2s= implode(',', $value);
-               $categoryChange=TicketCategory::where('id',$id)->update(['parent2' => $parent2s]);
-            }else{
-               $value=TicketCategory::where('parent',$TicketCategory->parent)->where('level',2)->get()->pluck('id')->toArray();
-               if($value[array_search($id,$value)]==$id){
-                  unset($value[array_search($id,$value)]);
-               }
-               $parent2s= implode(',', $value);
-               $categoryChange=TicketCategory::where('id',$id)->update(['parent2' => $parent2s]);
-            }
+               $parentCheck= explode(',',$parent);
+               $TicketCheck = TicketCategory::where('id',$parent)->first();
+               if(!$TicketCheck){
+                  return MyHelper::response(false,'Category '.$parent.' not found', [],404);
+                 }
+                 if($TicketCheck->level==1){
+                   return MyHelper::response(false,'Category '.$parent.' level 1 cannot be parent of level 3', [],401);
+                 }elseif($TicketCheck->level==3){
+                  return MyHelper::response(false,'Category '.$parent.' level 3 can not be parent of each others', [],401);
+                 }
+               $parent2=$TicketCheck->parent.','.$parent.','.$id;
             }  
         }
         $update->name=$name ?? $TicketCategory->name;
@@ -341,7 +334,7 @@ class TicketCategoryController extends Controller
         $update->parent2=$parent2 ?? $TicketCategory->parent2;
         $update->is_Show=$is_Show ?? $TicketCategory->is_Show;
         $update->save();
-        return MyHelper::response(false,'update ticket TicketCategory successfully', [],200);
+        return MyHelper::response(true,'update ticket TicketCategory successfully', [],200);
      }
     }
 
@@ -362,8 +355,8 @@ class TicketCategoryController extends Controller
          if($level==2){
             $TicketCategory->delete();
             $value=TicketCategory::where('parent',$parent)->where('level',2)->get()->pluck('id')->toArray();
-            $parent2s= implode(',', $value);
-            $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parent2s]);
+            $parents= implode(',', $value);
+            $categoryChange=TicketCategory::where('parent',$parent)->where('level',3)->update(['parent2' => $parents]);
          }else{
             $TicketCategory->delete();
          }

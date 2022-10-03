@@ -41,7 +41,7 @@ class TicketController extends Controller
     /**
     * @OA\Get(
     *     path="/api/v2/ticket",
-    *     tags={"Ticket"},
+    *     tags={"Ticket for app"},
     *     summary="Get list ticket for app",
     *     description="<h2>This API will Get list ticket with condition below</h2>",
     *     operationId="index",
@@ -210,7 +210,7 @@ class TicketController extends Controller
     /**
     * @OA\Get(
     *     path="/api/v2/ticket/{ticketId}",
-    *     tags={"Ticket"},
+    *     tags={"Ticket for app"},
     *     summary="Find ticket by ticketId for app",
     *     description="<h2>This API will find ticket by {ticketId} and return only a single record</h2>",
     *     operationId="show",
@@ -283,24 +283,74 @@ class TicketController extends Controller
         $category=TicketCategory::where('id',$ticket['category'])->first();
         $categoryGET=null;
         if(isset($category)){
-            $children=TicketCategory::where('parent',$category['id'])->where('level',2)->select(['id','name'])->get();
-            $children2=TicketCategory::where('parent',$category['id'])->where('level',3)->select(['id','name'])->get();
-            if($children){
-                $childrenLevel2=$children;
-            }else{
-                $childrenLevel2=null;
+            if($category->level== 1){
+                $children=TicketCategory::where('parent',$category['id'])->where('level',2)->select(['id','name','parent'])->first();
+                $children2=TicketCategory::where('parent',$children['id'])->where('level',3)->select(['id','name','parent'])->first();
+                if($children){
+                    $childrenLevel2=$children;
+                }else{
+                    $childrenLevel2=null;
+                }
+                if($children){
+                    $childrenLevel3=$children2;
+                }else{
+                    $childrenLevel3=null;
+                }
+                $categoryGET=[
+                    'children_level_1'=>[
+                        'id'=>$category['id'],
+                        'name'=>$category['name'],
+                        'parent'=>$category['parent'],
+                    ],
+                    'children_level_2'=>$childrenLevel2,
+                    'children_level_3'=>$childrenLevel3
+                ];
+            }elseif($category->level== 2){
+                $children=TicketCategory::where('id',$category['parent'])->where('level',1)->select(['id','name'])->first();
+                $children2=TicketCategory::where('parent',$category['id'])->where('level',3)->select(['id','name'])->first();
+                if($children){
+                    $childrenLevel2=$children;
+                }else{
+                    $childrenLevel2=null;
+                }
+                if($children){
+                    $childrenLevel3=$children2;
+                }else{
+                    $childrenLevel3=null;
+                }
+                $categoryGET=[
+                    'children_level_1'=>$childrenLevel2,
+                    'children_level_2'=>[
+                        'id'=>$category['id'],
+                        'name'=>$category['name'],
+                        'parent'=>$category['parent'],
+                    ],
+                    'children_level_3'=>$childrenLevel3
+                ];
+            }elseif($category->level== 3){
+                $children=TicketCategory::where('id',$category['parent'])->where('level',2)->select(['id','name','parent'])->first();
+                $children2=TicketCategory::where('parent',$category['id'])->where('level',3)->select(['id','name','parent'])->first();
+                $children1=TicketCategory::where('id',$children['parent'])->select(['id','name','parent'])->first();
+                if($children){
+                    $childrenLevel2=$children;
+                }else{
+                    $childrenLevel2=null;
+                }
+                if($children){
+                    $childrenLevel3=$children2;
+                }else{
+                    $childrenLevel3=null;
+                }
+                $categoryGET=[
+                    'children_level_1'=>$children1,
+                    'children_level_2'=>$childrenLevel2,
+                    'children_level_3'=>[
+                        'id'=>$category['id'],
+                        'name'=>$category['name'],
+                        'parent'=>$category['parent'],
+                    ],
+                ];
             }
-            if($children){
-                $childrenLevel3=$children2;
-            }else{
-                $childrenLevel3=null;
-            }
-            $categoryGET=[
-                'id'=>$category['id'],
-                'name'=>$category['name'],
-                'children_level_2'=>$childrenLevel2,
-                'children_level_3'=>$childrenLevel3
-            ];
         }
         $ticket['get_ticket_category']=$categoryGET;
         $ticket['get_tickets_detail']=(new Ticket)->showTicketDetail($ticket['id']); ;
@@ -314,7 +364,7 @@ class TicketController extends Controller
     /**
     * @OA\POST(
     *     path="/api/v2/ticket",
-    *     tags={"Ticket"},
+    *     tags={"Ticket for app"},
     *     summary="Create a ticket for app",
     *     description="<h2>This API will Create a ticket with json form below</h2><br><code>Press try it out button to modified</code>",
     *     operationId="store",
@@ -437,7 +487,7 @@ class TicketController extends Controller
     /**
     * @OA\Put(
     *     path="/api/v2/ticket/{$ticketId}",
-    *     tags={"Ticket"},
+    *     tags={"Ticket for app"},
     *     summary="Update ticket by ticketId for app",
     *     description="<h2>This API will update a ticket by ticketId and the value json form below</h2><br><code>Press try it out button to modified</code>",
     *     operationId="update",
@@ -554,8 +604,8 @@ class TicketController extends Controller
     }
     /**
     * @OA\Delete(
-    *     path="/api/v3/ticket/{ticketId}",
-    *     tags={"Ticket"},
+    *     path="/api/v2/ticket/{ticketId}",
+    *     tags={"Ticket for app"},
     *     summary="Delete a ticket by ticketId",
     *     description="<h2>This API will delete a ticket by ticketId</h2>",
     *     operationId="destroy",
@@ -608,8 +658,8 @@ class TicketController extends Controller
 
     /**
     * @OA\POST(
-    *     path="/api/v3/ticket/comment/{$ticketId}",
-    *     tags={"Ticket"},
+    *     path="/api/v2/ticket/comment/{$ticketId}",
+    *     tags={"Ticket for app"},
     *     summary="Create a new comment inside a ticket by ticketId",
     *     description="<h2>This API will create a comment in a ticket by ticketId and the value json form below</h2><br><code>Press try it out button to modified</code>",
     *     operationId="comment",
@@ -810,8 +860,8 @@ class TicketController extends Controller
     }
     /**
     * @OA\Get(
-    *     path="/api/v3/ticket/ticketForm",
-    *     tags={"Ticket"},
+    *     path="/api/v2/ticket/ticketForm",
+    *     tags={"Ticket for app"},
     *     summary="Get sample data to create ticket",
     *     description="<h2>This API will get sample data to create tickets</h2><br><code>Press try it out button to modified</code>",
     *     operationId="ticketForm",
@@ -868,8 +918,8 @@ class TicketController extends Controller
 
     /**
     * @OA\Get(
-    *     path="/api/v3/ticket/macro",
-    *     tags={"Ticket"},
+    *     path="/api/v2/ticket/macro",
+    *     tags={"Ticket for app"},
     *     summary="Get sample data to create ticket",
     *     description="<h2>This API will get sample data to create quick tickets</h2><br><code>Press try it out button to modified</code>",
     *     operationId="macroList",

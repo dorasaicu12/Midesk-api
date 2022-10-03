@@ -43,7 +43,7 @@ Route::group(['prefix' => 'v3'], function () {
         Route::post('event/ticket/{id}', 'EventController@EventTicket')->name('event.ticket');
 
         Route::apiResource('chat', 'ChatController');
-        Route::get('chat/chatdetail/{groupid}/{id}/{key}', 'MessageController@chatlist')->name('chat.detail');
+        Route::get('chat/chatdetail/{id}', 'MessageController@chatlist')->name('chat.detail');
         Route::post('upload', 'MessageController@upload')->name('upload.file');
         Route::apiResource('chatdetail', 'MessageController');
         Route::get('chat/pagecheck/{id}', 'ChatController@PageCheck')->name('chat.check');
