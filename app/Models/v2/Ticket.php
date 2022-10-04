@@ -319,15 +319,15 @@ class Ticket extends Model
                         $token = array(
                             "id"         => auth::user()->id, //id user,
                             "groupid"    => auth::user()->groupid, //groupid
-                            "filename"   => $fileArray['file_original'], //file_original,
+                            "filename"   => $fileArray['file_name'], //file_original,
                             "datecreate" => $value['datecreate'], //ngày tạo ticket_detial | ngày tạo file
                             "time"       => time(), //thời gian gọi Api
                         );
                            $data =  base64_encode($encryption->encrypt(json_encode($token)));
-                           // echo  $data;
-                        //      echo $encryption->decrypt(base64_decode(($data)));
+                        // echo  $data;
+                        //      echo $encryption->decrypt(base64_decode(('NTgxNDc3ZTMwNGQ3NGZlYTRjZWFmMjI4OGQzNzZjZjY1YWNlMjFkMGI0NTAyMjZjNDU4MGFiMzUwNjdiYTc3N2QyODgxN2JjZDQ1NjcwOTAzOTcwM2RkMmM2NzgyODQ3YWFmY2U5YmZkNmQ2N2Q0ZDUxMmEzMDM2ZjJkNmJhMjZQUG5SM2hHVWY5d3hPdHBQMWFwNnduSkJMUWl1R1lQY0wvSkpta2NFbHV5S3p4dHZKUHlrb1pHcGxac2llR05vcXBVenJTMDdvNFhmNW5jSUxvcDVXdE02aThqNHNzYjZDZDI1RnBIMGMxVmpOc01oQ1pYaC9WRHI1VnlJL0JEdzJNMlFkZW1qYXJiSjZuY0Z5enJLMm9xVDQxdWd4VEhIK2Jpem00emp0WDgxREYwPQ==')));
                         //    exit;   
-                        $fileArray['link']  ="https://portal.midesk.vn/file-data/".$data;
+                        $fileArray['link']  ="https://dev2022.midesk.vn/file-data/".$data;
                         $items[] = $fileArray;
                     }
                     $detail_infor[]=[
@@ -341,7 +341,7 @@ class Ticket extends Model
                     $token = array(
                         "id"         => auth::user()->id, //id user,
                         "groupid"    => auth::user()->groupid, //groupid
-                        "filename"   => $value['file_original'], //file_original,
+                        "filename"   => $value['file_name'], //file_original,
                         "datecreate" => $value['datecreate'], //ngày tạo ticket_detial | ngày tạo file
                         "time"       => time(), //thời gian gọi Api
                     );
@@ -351,7 +351,7 @@ class Ticket extends Model
                         'file_extension'=>$value['file_extension'],
                         'file_original'=>$value['file_original'],
                         'file_name'=>$value['file_name'],
-                        'link'=>"https://portal.midesk.vn/file-data/".$data
+                        'link'=>"https://dev2022.midesk.vn/file-data/".$data
                     ];
                     $detail_infor[]=[
                         'id'=>$value['id'],

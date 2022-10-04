@@ -324,7 +324,7 @@ class Ticket extends Model
                         $token = array(
                             "id"         => auth::user()->id, //id user,
                             "groupid"    => auth::user()->groupid, //groupid
-                            "filename"   => $fileArray['file_original'], //file_original,
+                            "filename"   => $fileArray['file_name'], //file_original,
                             "datecreate" => $value['datecreate'], //ngày tạo ticket_detial | ngày tạo file
                             "time"       => time(), //thời gian gọi Api
                         );
@@ -332,7 +332,7 @@ class Ticket extends Model
                            // echo  $data;
                         //      echo $encryption->decrypt(base64_decode(($data)));
                         //    exit;   
-                        $fileArray['link']  ="https://portal.midesk.vn/file-data/".$data;
+                        $fileArray['link']  ="https://dev2022.midesk.vn/file-data/".$data;
                         $items[] = $fileArray;
                     }
                     $detail_infor[]=[
@@ -346,7 +346,7 @@ class Ticket extends Model
                     $token = array(
                         "id"         => auth::user()->id, //id user,
                         "groupid"    => auth::user()->groupid, //groupid
-                        "filename"   => $value['file_original'], //file_original,
+                        "filename"   => $value['file_name'], //file_original,
                         "datecreate" => $value['datecreate'], //ngày tạo ticket_detial | ngày tạo file
                         "time"       => time(), //thời gian gọi Api
                     );
@@ -356,7 +356,7 @@ class Ticket extends Model
                         'file_extension'=>$value['file_extension'],
                         'file_original'=>$value['file_original'],
                         'file_name'=>$value['file_name'],
-                        'link'=>"https://portal.midesk.vn/file-data/".$data
+                        'link'=>"https://dev2022.midesk.vn/file-data/".$data
                     ];
                     $detail_infor[]=[
                         'id'=>$value['id'],
