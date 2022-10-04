@@ -45,6 +45,8 @@ class PermissionMiddleware
             foreach ($Permissions as $key => $permission) {
                 $newPermissions[$permission['page']][] = $permission['action'];
             }
+            // echo json_encode($newPermissions[$route]) ;
+            // exit;
             if (array_key_exists($route, $newPermissions)) {
                 $method = $methods[$method];
                 if (in_array($method, $newPermissions[$route])) {
@@ -77,11 +79,10 @@ class PermissionMiddleware
                     'product' => 'product',
                     'ticketCategory' => 'ticket_category',
                     'agent' => 'agent',
-                    'chat' => 'chat',
-                    'chatdetail'=>'chatdetail',
+                    'chat' => 'social',
                     'marco'=>'marco',
-                    'quickchat'=>'quickchat',
-                    'label'=>'label',
+                    'quickchat'=>'premade',
+                    'label'=>'ticket_label',
                     'refresh'=>'refresh',
                     'upload'=>'upload',
                     'tag'=>'tag'

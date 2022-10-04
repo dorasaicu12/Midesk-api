@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use DB;
 use Auth;
 use App\Traits\ModelsTraits;
+use App\Libraries\Encryption;
 
 class Ticket extends Model
 {
@@ -223,12 +224,7 @@ class Ticket extends Model
     public  function showOne($id='')
     {
         $delete = $this->DELETE;
-        $ticket = self::selectRaw($this->fillable)->with(['getTicketAssign'=> function ($q)
-        {
-            $q->select(['id']);
-        },'getTicketsEvent'=>function($q){
-            $q->select(['id','event_location','remind_time','note']);
-        }])
+        $ticket = self::selectRaw($this->fillable)
         ->where('id',$id)
         ->where(function($q) use ($delete) {
             $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
@@ -286,7 +282,6 @@ class Ticket extends Model
                     ];
                 } 
             }
-
             if($value['type']=='text'){
 
                 if($value['is_delete']== 1){
@@ -309,7 +304,8 @@ class Ticket extends Model
                 ];
                 
             }elseif($value['type']=='file'){
-                
+                    $encryption=new Encryption;
+                   $encryption->initialize(array('cipher' => 'aes-256','mode' => 'ctr','key' => "MITEK@2016"));
                 if($value['is_delete']== 1){
                     $value['content_true']='<i style="color: #e23d3d;">This message has been removed.</i>';
                 }else{
@@ -322,18 +318,45 @@ class Ticket extends Model
                     }
                 }  
                 if(isset($value['file_multiple'])){
+                    $array=json_decode($value['file_multiple'],true);
+                    $items = array();
+                    foreach($array as $fileArray){
+                        $token = array(
+                            "id"         => auth::user()->id, //id user,
+                            "groupid"    => auth::user()->groupid, //groupid
+                            "filename"   => $fileArray['file_original'], //file_original,
+                            "datecreate" => $value['datecreate'], //ngày tạo ticket_detial | ngày tạo file
+                            "time"       => time(), //thời gian gọi Api
+                        );
+                           $data =  base64_encode($encryption->encrypt(json_encode($token)));
+                           // echo  $data;
+                        //      echo $encryption->decrypt(base64_decode(($data)));
+                        //    exit;   
+                        $fileArray['link']  ="https://portal.midesk.vn/file-data/".$data;
+                        $items[] = $fileArray;
+                    }
                     $detail_infor[]=[
-                         'id'=>$value['id'],
+                        'id'=>$value['id'],
                         'content'=>$value['content_true'],
                         'type'=>$value['type'],
-                        "attaments"=>json_decode($value['file_multiple']),
-                        'get_tickets_creator'=>$creator
+                        "attaments"=>$items,
+                        'get_tickets_creator'=>$creator,
                     ];
                 }else{
+                    $token = array(
+                        "id"         => auth::user()->id, //id user,
+                        "groupid"    => auth::user()->groupid, //groupid
+                        "filename"   => $value['file_original'], //file_original,
+                        "datecreate" => $value['datecreate'], //ngày tạo ticket_detial | ngày tạo file
+                        "time"       => time(), //thời gian gọi Api
+                    );
+                    $data =  base64_encode($encryption->encrypt(json_encode($token)));
                     $file[]=[
                         'file_size'=>$value['file_size'],
                         'file_extension'=>$value['file_extension'],
+                        'file_original'=>$value['file_original'],
                         'file_name'=>$value['file_name'],
+                        'link'=>"https://portal.midesk.vn/file-data/".$data
                     ];
                     $detail_infor[]=[
                         'id'=>$value['id'],
