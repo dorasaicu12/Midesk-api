@@ -351,7 +351,7 @@ class Ticket extends Model
                         "time"       => time(), //thời gian gọi Api
                     );
                     $data =  base64_encode($encryption->encrypt(json_encode($token)));
-                    $file[]=[
+                    $file=[
                         'file_size'=>$value['file_size'],
                         'file_extension'=>$value['file_extension'],
                         'file_original'=>$value['file_original'],
@@ -362,7 +362,7 @@ class Ticket extends Model
                         'id'=>$value['id'],
                         'content'=>$value['content_true'],
                         'type'=>$value['type'],
-                        "attaments"=>$file,
+                        "attaments"=>[$file],
                         'get_tickets_creator'=>$creator
                     ];
                 }

@@ -81,35 +81,20 @@ class MessageController extends Controller
 
     /**
     * @OA\Get(
-    *     path="/api/v3/chat/chatdetail/{groupId}/{id_page}/{key_id}",
+    *     path="/api/v3/chat/chatdetail/{ChatId}",
     *     tags={"chatdetail"},
     *     summary="Find chatdetail by groupId,id_page,key_id",
     *     description="<h2>This API will find chat detail by {groupId},{id_page},{key_id} and return only a single record</h2>",
     *     operationId="show",
     *     @OA\Parameter(
-    *         name="groupId",
+    *         name="ChatId",
     *         in="path",
-    *         description="<h4>This is the groupid of the chat detail you are looking for</h4>
+    *         description="<h4>This is the ChatId of the chat detail you are looking for</h4>
               <code>Type: <b id='require'>Number</b></code>",
     *         example=1,
     *         required=true,
     *     ),
-    *     @OA\Parameter(
-    *         name="id_page",
-    *         in="path",
-    *         description="<h4>This is the id_page of the chat detail you are looking for</h4>
-              <code>Type: <b id='require'>Number</b></code>",
-    *         example=1,
-    *         required=true,
-    *     ),
-    *     @OA\Parameter(
-    *         name="key_id",
-    *         in="path",
-    *         description="<h4>This is the key_id of the chat detail you are looking for</h4>
-              <code>Type: <b id='require'>Number</b></code>",
-    *         example=1,
-    *         required=true,
-    *     ),
+
      *     @OA\Parameter(
     *         name="page",
     *         in="query",

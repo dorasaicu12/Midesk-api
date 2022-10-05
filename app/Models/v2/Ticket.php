@@ -325,7 +325,7 @@ class Ticket extends Model
                         );
                            $data =  base64_encode($encryption->encrypt(json_encode($token)));
                         // echo  $data;
-                        //      echo $encryption->decrypt(base64_decode(('NTgxNDc3ZTMwNGQ3NGZlYTRjZWFmMjI4OGQzNzZjZjY1YWNlMjFkMGI0NTAyMjZjNDU4MGFiMzUwNjdiYTc3N2QyODgxN2JjZDQ1NjcwOTAzOTcwM2RkMmM2NzgyODQ3YWFmY2U5YmZkNmQ2N2Q0ZDUxMmEzMDM2ZjJkNmJhMjZQUG5SM2hHVWY5d3hPdHBQMWFwNnduSkJMUWl1R1lQY0wvSkpta2NFbHV5S3p4dHZKUHlrb1pHcGxac2llR05vcXBVenJTMDdvNFhmNW5jSUxvcDVXdE02aThqNHNzYjZDZDI1RnBIMGMxVmpOc01oQ1pYaC9WRHI1VnlJL0JEdzJNMlFkZW1qYXJiSjZuY0Z5enJLMm9xVDQxdWd4VEhIK2Jpem00emp0WDgxREYwPQ==')));
+                     //      echo $encryption->decrypt(base64_decode(('NDA4OTIwMDFhNTQ5MjNiNTkxYTkyNThhODdmZjZkNzgxZThjNTk5NGE4ZTBkYWEyNzMyM2E0NWYxZTJkNGY2ZjQ2M2M5MzBlNmY2YzE0ZjUxMzQwY2JjZjM2ZDBmYjJmYzExYmU2YzY2YWQ3MzdlOTcxNjg1MjVhYTNkZmJhZWVHME5obDJZcUkrVnhaWWJwUXh0WnRQRVZSU1JTc2dSM0RmUHhYVldmSmpmNUhseEFVNFhyZk44L0tKZkszTEU0V0trYnhKeVpWMkhxYzBHTjlQRWhHb09UWEE0ZzRUdzVJRVpMbW5OWVRCTzE4Wis3OTR2TnhuWnpxd092Y2dIK3QvU2pOc3d0MG5nNmhBYWh1SlNw')));
                         //    exit;   
                         $fileArray['link']  ="https://dev2022.midesk.vn/file-data/".$data;
                         $items[] = $fileArray;
@@ -346,7 +346,7 @@ class Ticket extends Model
                         "time"       => time(), //thời gian gọi Api
                     );
                     $data =  base64_encode($encryption->encrypt(json_encode($token)));
-                    $file[]=[
+                    $file=[
                         'file_size'=>$value['file_size'],
                         'file_extension'=>$value['file_extension'],
                         'file_original'=>$value['file_original'],
@@ -357,7 +357,7 @@ class Ticket extends Model
                         'id'=>$value['id'],
                         'content'=>$value['content_true'],
                         'type'=>$value['type'],
-                        "attaments"=>$file,
+                        "attaments"=>[$file],
                         'get_tickets_creator'=>$creator
                     ];
                 }

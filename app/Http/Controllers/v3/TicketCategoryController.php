@@ -169,6 +169,76 @@ class TicketCategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+         /**
+    * @OA\POST(
+    *     path="/api/v3/ticketCategory",
+    *     tags={"Ticket Category"},
+    *     summary="Create a Ticket Category",
+    *     description="<h2>This API will Create a Ticket Category with json form below</h2><br><code>Press try it out button to modified</code>",
+    *     operationId="store",
+    *     @OA\RequestBody(
+    *       required=true,
+    *       description="<table id='my-custom-table'>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <td><b id='require'>Required</b></td>
+                </tr>
+                <tr>
+                    <th>type</th>
+                    <td>type of ticket category</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <th>parent</th>
+                    <td>parent of ticket category</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <th>level</th>
+                    <td>Channel sent request</td>
+                    <td>false (default = api)</td>
+                </tr>
+            </table><br><code>Click Schema to view data property</code>",
+    *       @OA\JsonContent(
+    *         required={"title","content"},
+    *         @OA\Property(property="name", type="string", example="Phiếu khiếu nại 2"),
+    *         @OA\Property(property="type", type="string", example="add"),
+    *         @OA\Property(property="parent", type="string", example="123456"),
+    *         @OA\Property(property="level", type="string", example="3"),
+    *         @OA\Property(property="sort", type="string", example="1"),
+    *       ),
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Create Ticket Successfully",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="status", type="boolean", example="true"),
+    *           @OA\Property(property="message", type="string", example="Create Ticket Successfully"),
+    *           @OA\Property(property="data",type="object",
+    *             @OA\Property(property="id",type="string", example="1"),
+    *           ),
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=422,
+    *         description="Create failed",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="status", type="boolean", example="true"),
+    *           @OA\Property(property="message", type="string", example="The given data was invalid"),
+    *           @OA\Property(property="errors",type="object",
+    *             @OA\Property(property="title",type="array", 
+    *               @OA\Items(type="string", example="the title field is required")
+    *             ),
+    *           )
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function store(Request $request)
     {
       $groupid = auth::user()->groupid;
@@ -250,6 +320,49 @@ class TicketCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+              /**
+    * @OA\Get(
+    *     path="/api/v3/ticketCategory/{CategoryId}",
+    *     tags={"Ticket Category"},
+    *     summary="Find Ticket Category by CategoryId",
+    *     description="<h2>This API will find Ticket Category by {CategoryId} and return only a single record</h2>",
+    *     operationId="show",
+    *     @OA\Parameter(
+    *         name="CategoryId",
+    *         in="path",
+    *         description="<h4>This is the id of the Ticket Category you are looking for</h4>
+              <code>Type: <b id='require'>Number</b></code>",
+    *         example=1,
+    *         required=true,
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Successfully",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="data",type="object",
+    *             @OA\Property(property="id",type="string", example="1"),
+    *             @OA\Property(property="groupid",type="string", example="2"),
+    *             @OA\Property(property="title",type="string", example="this is example category"),
+    *             @OA\Property(property="content",type="string", example="example contetnt"),
+    *             @OA\Property(property="public",type="string", example="public string"),
+    *           ),
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=403,
+    *         description="Invalid Ticket Category ID",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="boolean", example="Ticket Category not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         )
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     }
+    * )
+    */
     public function show($id)
     {
       $TicketCategory = (new TicketCategory)->checkExist($id);
@@ -279,6 +392,72 @@ class TicketCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+
+   /**
+    * @OA\Put(
+    *     path="/api/v3/ticketCategory/{CategoryId}",
+    *     tags={"Ticket Category"},
+    *     summary="Update Ticket Category by CategoryId",
+    *     description="<h2>This API will update a Ticket Category by CategoryId and the value json form below</h2><br><code>Press try it out button to modified</code>",
+    *     operationId="update",
+    *     @OA\Parameter(
+    *       name="CategoryId",
+    *       in="path",
+    *       description="<table id='my-custom-table'>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <th>color</th>
+                    <td>color of tagt</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <th>type</th>
+                    <td>type of tag</td>
+                    <td>false</td>
+                </tr> 
+            </table><br><code>Click Schema to view data property</code>",
+    *       required=true,
+    *     ),
+    *     @OA\RequestBody(
+    *       required=true,
+    *       @OA\JsonContent(
+    *         @OA\Property(property="name", type="string", example="example name"),
+    *         @OA\Property(property="type", type="string", example="add"),
+    *         @OA\Property(property="parent", type="string", example="46077"),
+    *         @OA\Property(property="level", type="string", example="3"),
+    *         @OA\Property(property="sort", type="string", example="0"),
+    *         @OA\Property(property="is_show", type="string", example="1"),
+    *       
+    *       ),
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Update Ticket Category Successfully",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="status", type="boolean", example="true"),
+    *           @OA\Property(property="message", type="string", example="Update Ticket Category Successfully"),
+    *           @OA\Property(property="data",type="string", example="[]"),
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="Update failed",
+    *         @OA\JsonContent(
+    *           @OA\Property(property="status", type="boolean", example="false"),
+    *           @OA\Property(property="message", type="string", example="Ticket Category do not exists"),
+    *           @OA\Property(property="data",type="string", example="[]"),
+    *         )
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function update($id,Request $request)
     {
       $TicketCategory = (new TicketCategory)->checkExist($id);
@@ -344,6 +523,45 @@ class TicketCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+      /**
+    * @OA\Delete(
+    *     path="/api/v3/ticketCategory/{CategoryId}",
+    *     tags={"Ticket Category"},
+    *     summary="Delete a Ticket Category by CategoryId",
+    *     description="<h2>This API will delete a Ticket Category by CategoryId</h2>",
+    *     operationId="destroy",
+    *     @OA\Parameter(
+    *         name="CategoryId",
+    *         in="path",
+    *         example=1,
+    *         description="<h4>This is the CategoryId of the ticketCategory you need delete</h4>
+              <code>Type: <b id='require'>Number</b></code>",
+    *         required=true,
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Delete ticketCategory successfully",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="true"),
+    *              @OA\Property(property="message", type="string", example="Delete ticketCategory successfully"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="ticketCategory not found",
+    *         @OA\JsonContent(
+    *              @OA\Property(property="status", type="boolean", example="false"),
+    *              @OA\Property(property="message", type="string", example="ticket not found"),
+    *              @OA\Property(property="data", type="string", example="[]"),
+    *         ),
+    *     ),
+    *     security={
+    *         {"bearer_token": {}}
+    *     },
+    * )
+    */
     public function destroy($id)
     {
       $TicketCategory = (new TicketCategory)->checkExist($id);
