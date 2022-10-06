@@ -341,7 +341,7 @@ class TicketController extends Controller
                 }else{
                     $childrenLevel3=null;
                 }
-                $categoryGET[]=[
+                $categoryGET=[
                     'children_level_1'=>$children1,
                     'children_level_2'=>$childrenLevel2,
                     'children_level_3'=>[

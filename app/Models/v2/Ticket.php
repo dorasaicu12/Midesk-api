@@ -294,6 +294,7 @@ class Ticket extends Model
                     'id'=>$value['id'],
                     'content'=>$value['content_true'],
                     'type'=>$value['type'],
+                    'private'=>$value['private'],
                     "attaments"=>[],
                     'get_tickets_creator'=>$creator
                 ];
@@ -334,6 +335,7 @@ class Ticket extends Model
                         'id'=>$value['id'],
                         'content'=>$value['content_true'],
                         'type'=>$value['type'],
+                        'private'=>$value['private'],
                         "attaments"=>$items,
                         'get_tickets_creator'=>$creator,
                     ];
@@ -357,6 +359,7 @@ class Ticket extends Model
                         'id'=>$value['id'],
                         'content'=>$value['content_true'],
                         'type'=>$value['type'],
+                        'private'=>$value['private'],
                         "attaments"=>[$file],
                         'get_tickets_creator'=>$creator
                     ];
