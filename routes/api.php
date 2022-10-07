@@ -58,6 +58,8 @@ Route::group(['prefix' => 'v3'], function () {
 
         Route::apiResource('tag', 'TagController');
 
+        Route::get('notification/{id}', 'NotificationController@GetNoti')->name('notification');
+
     });
 });
 

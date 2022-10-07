@@ -85,7 +85,8 @@ class PermissionMiddleware
                     'label'=>'ticket_label',
                     'refresh'=>'refresh',
                     'upload'=>'upload',
-                    'tag'=>'tag'
+                    'tag'=>'tag',
+                    'notification'=>'notification'
                 ];
 
         return $args[$route];

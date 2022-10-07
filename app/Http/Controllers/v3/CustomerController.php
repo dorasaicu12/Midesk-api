@@ -16,7 +16,9 @@ use DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\customerContactRelation;
 use App\Models\Contact;
-
+use App\Models\Tags;
+use App\Models\GroupTable;
+use App\Models\CustomerRelationModel;
 use Illuminate\Support\Facades\Schema;
 /**
  * @group  Customer Management
@@ -197,6 +199,13 @@ class CustomerController extends Controller
     public function show($id)
     {
         $customer = (new Customer)->showOne($id);
+        $id_tags=explode(',',$customer['tag']);
+        $tags=Tags::whereIn('id', $id_tags)->get();
+        $group=GroupTable::where('id',$customer['group_id'])->select(['id','group_name','group_type','description'])->first();
+        $relation=CustomerRelationModel::where('id',$customer['relation_id'])->select(['id','title','description'])->first();
+        $customer['get_all_tags']=$tags;
+        $customer['get_group']=$group;
+        $customer['get_relation']=$relation;
         if (!$customer) {
             return MyHelper::response(false,'Customer not found',[],404);
         }

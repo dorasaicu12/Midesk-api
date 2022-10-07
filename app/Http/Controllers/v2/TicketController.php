@@ -261,9 +261,7 @@ class TicketController extends Controller
         $ticket_var=new Ticket;
         $ticket = $ticket_var->showOne($id);
         if($ticket){
-            $ticket['ticket_id']='#'.$ticket['ticket_id'];
-            $ticket['datecreate']=date('Y-m-d H:i:s',$ticket['datecreate']);
-            $ticket['dateupdate']=date('Y-m-d H:i:s',$ticket['dateupdate']);            
+            $ticket['ticket_id']='#'.$ticket['ticket_id'];          
            if($ticket['tag']!=null){
             $tags= explode(',', $ticket['tag']);
              foreach($tags as $val){
@@ -352,8 +350,10 @@ class TicketController extends Controller
                 ];
             }
         }
+        $event=Event::where('ticket_id',$id)->select(['id','event_location','remind_time','note'])->get();
         $ticket['get_ticket_category']=$categoryGET;
-        $ticket['get_tickets_detail']=(new Ticket)->showTicketDetail($ticket['id']); ;
+        $ticket['get_tickets_detail']=(new Ticket)->showTicketDetail($ticket['id']); 
+        $ticket['get_tickets_event']=$event;
             return MyHelper::response(true,'Successfully',$ticket,200);
         }else{
             return MyHelper::response(false,'Ticket not found',$ticket,404);

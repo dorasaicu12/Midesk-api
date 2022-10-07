@@ -129,7 +129,7 @@ class Ticket extends Model
     }
     public function getTicketsEvent()
     {
-    	return $this->hasMany(Event::class,'id','event_id');
+    	return $this->hasMany(Event::class,'ticket_id','id');
     }
     public function getTicketAssign()
     {
@@ -217,8 +217,6 @@ class Ticket extends Model
         'getTicketLabel'=> function ($q)
         {
             $q->select(['id','name']);
-        },'getTicketsEvent'=>function($q){
-            $q->select(['id','event_location','remind_time','note']);
         }])
         ->where('id',$id)
         ->where(function($q) use ($delete) {
