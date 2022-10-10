@@ -19,6 +19,7 @@ use App\Models\Contact;
 use App\Models\Tags;
 use App\Models\GroupTable;
 use App\Models\CustomerRelationModel;
+use App\Models\agentCustomerRelation;
 use Illuminate\Support\Facades\Schema;
 /**
  * @group  Customer Management
@@ -203,9 +204,11 @@ class CustomerController extends Controller
         $tags=Tags::whereIn('id', $id_tags)->get();
         $group=GroupTable::where('id',$customer['group_id'])->select(['id','group_name','group_type','description'])->first();
         $relation=CustomerRelationModel::where('id',$customer['relation_id'])->select(['id','title','description'])->first();
+        $owner=agentCustomerRelation::where('customer_id',$customer['id'])->first();
         $customer['get_all_tags']=$tags;
         $customer['get_group']=$group;
         $customer['get_relation']=$relation;
+        $customer['get_owner']=$owner;
         if (!$customer) {
             return MyHelper::response(false,'Customer not found',[],404);
         }

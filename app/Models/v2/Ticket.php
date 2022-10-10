@@ -70,19 +70,22 @@ class Ticket extends Model
         }
     	/// search
     	if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $search = explode(',', $req['search']);
+            foreach($search as $value){
+                if(strpos($value, '<=>') !== false){
+                    $key_search = explode('<=>', $value);
+                    $type = '=';
+                }else if(strpos($value, '<like>') !== false){
+                    $key_search = explode('<like>', $value);
+                    $type = 'like';
+                    $key_search[1] = '%'.$key_search[1].'%';
+                }else if(strpos($value, '<>') !== false){
+                    $key_search = explode('<>', $value);
+                    $type = '<>';
+                }
+                $res->where($key_search[0],$type,$key_search[1]);
+              }
 
-            if(strpos($req['search'], '<=>') !== false){
-                $key_search = explode('<=>', $req['search']);
-                $type = '=';
-            }else if(strpos($req['search'], '<like>') !== false){
-                $key_search = explode('<like>', $req['search']);
-                $type = 'like';
-                $key_search[1] = '%'.$key_search[1].'%';
-            }else if(strpos($req['search'], '<>') !== false){
-                $key_search = explode('<>', $req['search']);
-                $type = '<>';
-            }
-    		$res->where($key_search[0],$type,$key_search[1]);
     	}
 
 		
