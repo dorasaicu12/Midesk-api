@@ -190,6 +190,7 @@ class Ticket extends Model
             $delete = self::DELETE;
     	return $res->where(function($q) use ($delete,$array) {
                     $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+                    $q->whereIn('status',['new','open','pending']);
                 })->whereIn('assign_team',$array)
     	->offset($from)
     	->limit($limit)

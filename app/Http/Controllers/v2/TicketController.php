@@ -1003,7 +1003,7 @@ class TicketController extends Controller
         if(!$user){
          return MyHelper::response(false,'User not found',[],404);
         }
-        $team_id=Team::whereRaw('FIND_IN_SET('.$id.',agent_id)')->pluck('team_id')->toArray();
+        $team_id=TeamStaff::where('agent_id',$id)->pluck('team_id')->toArray();
         if($team_id==[]){
             return MyHelper::response(false,'This user has no team',[],404);
           }
