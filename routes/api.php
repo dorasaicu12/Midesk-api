@@ -31,6 +31,7 @@ Route::group(['prefix' => 'v3'], function () {
         Route::post('ticket/comment/{id}', 'TicketController@comment')->name('ticket.comment');
         Route::post('ticket/attachfile/{id}', 'TicketController@attachfile')->name('ticket.file');
         Route::post('ticket/ticketMerge/{id}', 'TicketController@ticketMerge')->name('ticket.merge');
+        
         Route::apiResource('ticket', 'TicketController');
         Route::apiResource('ticketCategory', 'TicketCategoryController');
 
@@ -65,4 +66,6 @@ Route::group(['prefix' => 'v3'], function () {
 
        Route::group(['prefix' => 'v2','middleware' => ['auth:api', 'CheckCustomer'], 'namespace' => 'v2'], function () {
        Route::apiResource('ticket', 'TicketController');
+       Route::get('ticket/ticketFollow/{id}', 'TicketController@getTicketFollow')->name('ticket.follow');
+       Route::get('ticket/ticketTeam/{id}', 'TicketController@TicketOfTeam')->name('ticket.team');
      });

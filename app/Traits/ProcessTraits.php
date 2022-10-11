@@ -210,6 +210,15 @@ trait ProcessTraits {
                 $ticket->priority= isset($req['priority']) ? $req['priority'] :$ticketval->priority;
                 $ticket->category=isset($req['category']) ? $req['category']  :$ticketval->category;
                 $ticket->status=isset($req['status']) ? $req['status'] :$ticketval->status;
+                if(isset($req['status']) && $req['status'] =='open'){
+                    $ticket->open_date=time();
+                }elseif(isset($req['status']) && $req['status'] =='pending'){
+                    $ticket->pending_date=time();
+                }elseif(isset($req['status']) && $req['status'] =='solved'){
+                    $ticket->solved_date=time();
+                }elseif(isset($req['status']) && $req['status'] =='closed'){
+                    $ticket->closed_date=time();
+                }
                 $ticket->tag=isset($req['tags']) ? $req['tags']  :$ticketval->tags;
                 $ticket->label=isset($req['label']) ? $req['label']  :$ticketval->label;
                 $ticket->assign_team=isset($req['assign_team']) ?$req['assign_team']  :$ticketval->assign_team;

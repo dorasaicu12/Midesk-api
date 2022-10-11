@@ -35,7 +35,7 @@ class Ticket extends Model
     }
     function getDefault($req)
     {
-        $res =  self::with(['getTicketsDetail','getTicketContact','getTicketPriority']);
+    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketPriority']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
@@ -87,7 +87,27 @@ class Ticket extends Model
               }
 
     	}
+        //serach or
+        if (array_key_exists('search_or', $req) && rtrim($req['search_or']) != '') {
+            $search = explode(',', $req['search_or']);
+            $res->where(function($q) use ($search) {
+                foreach($search as $value){
+                    if(strpos($value, '<=>') !== false){
+                        $key_search = explode('<=>', $value);
+                        $type = '=';
+                    }else if(strpos($value, '<like>') !== false){
+                        $key_search = explode('<like>', $value);
+                        $type = 'like';
+                        $key_search[1] = '%'.$key_search[1].'%';
+                    }else if(strpos($value, '<>') !== false){
+                        $key_search = explode('<>', $value);
+                        $type = '<>';
+                    }
+                    $q->orWhere($key_search[0],$type,$key_search[1]);
+                  }
+            });
 
+    	}
 		
     	if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
     		$order_by = explode(',', $req['order_by']);
@@ -111,6 +131,70 @@ class Ticket extends Model
     	->limit($limit)
     	->paginate($limit)->appends(request()->query());
     }
+
+
+    function getDefaultFollow($req,$array)
+    {
+    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketPriority']);
+    	/// paginate
+    	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
+    		$from = intval($req['page']) * self::TAKE;
+    	}else{
+    		$from = self::FROM;
+    	}
+    	/// litmit ofset
+    	if (array_key_exists('limit', $req) && rtrim($req['limit']) != '') {
+    		$limit = $req['limit'];
+    		if (intval($limit) > 100) {
+    			$limit = 100;
+    		}
+    	}else{
+    		$limit = self::TAKE;
+    	}    
+            $res = $res->selectRaw('id,'.$this->fillable);
+    		$c = explode(':', self::ORDERBY);
+			$by = $c[0];
+			$order = $c[1];
+			$res->orderBy($by, $order);
+            $delete = self::DELETE;
+    	return $res->where(function($q) use ($delete,$array) {
+                    $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+                })->whereIn('id',$array)
+    	->offset($from)
+    	->limit($limit)
+    	->paginate($limit)->appends(request()->query());
+    }
+    function getDefaultTeam($req,$array)
+    {
+    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketPriority']);
+    	/// paginate
+    	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
+    		$from = intval($req['page']) * self::TAKE;
+    	}else{
+    		$from = self::FROM;
+    	}
+    	/// litmit ofset
+    	if (array_key_exists('limit', $req) && rtrim($req['limit']) != '') {
+    		$limit = $req['limit'];
+    		if (intval($limit) > 100) {
+    			$limit = 100;
+    		}
+    	}else{
+    		$limit = self::TAKE;
+    	}    
+            $res = $res->selectRaw('id,'.$this->fillable);
+    		$c = explode(':', self::ORDERBY);
+			$by = $c[0];
+			$order = $c[1];
+			$res->orderBy($by, $order);
+            $delete = self::DELETE;
+    	return $res->where(function($q) use ($delete,$array) {
+                    $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+                })->whereIn('assign_team',$array)
+    	->offset($from)
+    	->limit($limit)
+    	->paginate($limit)->appends(request()->query());
+    }
     
     public function getTicketsDetail()
     {
@@ -123,7 +207,7 @@ class Ticket extends Model
 
     public function getTicketsContent()
     {
-    	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable());
+    	return $this->hasMany(TicketDetail::class,'ticket_id','id123')->select((new TicketDetail)->getFillable());
     }
 
     public function getTicketsComment()
@@ -156,7 +240,7 @@ class Ticket extends Model
     }
     public function getTicketCategory()
     {
-        return $this->hasOne(TicketCategory::class,'id','category');
+        return $this->hasOne(TicketCategory::class,'id','category123');
     }
     public function getTicketContact()
     {

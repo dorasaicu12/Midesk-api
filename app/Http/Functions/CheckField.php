@@ -39,7 +39,6 @@ class CheckField{
         $message='';
         $temp = [];
         foreach ($order_by as $key => $value) {
-            
                 $c = explode(':', $value);
                 $by = $c[0];
                 $order = $c[1];
@@ -77,15 +76,22 @@ class CheckField{
                 }else{
                     $message='';
                 }
+                if($message !=''){
+                    $message2=$message;
+               }
             }else if(strpos($value, '<like>') !== false){
                 $key_search = explode('<like>', $value);
+
                 $check_array=in_array($key_search[0], $columns['fields']);
+
                 if(!$check_array){
                     $message .='Search column '.$key_search[0].' can not be found.';
                 }else{
                     $message='';
                 }
-                $key_search[1] = '%'.$key_search[1].'%';
+                if($message !=''){
+                    $message2=$message;
+               }
             }else if(strpos($value, '<>') !== false){
                 $key_search = explode('<>', $value);
                 $check_array=in_array($key_search[0], $columns['fields']);
@@ -94,12 +100,63 @@ class CheckField{
                 }else{
                     $message='';
                 }
+                if($message !=''){
+                    $message2=$message;
+               }
             }
         }
+        if( isset($message2)){
+            return $message2;
+        }else{
+            $key_search[1] = '%'.$key_search[1].'%';
+        }
+     }
 
 
-        if($message !== ''){
-            return $message;
+     static function CheckSearchOr($req,$name){
+        $columns['fields']=Schema::getColumnListing($name);  
+        $search = explode(',', $req['search_or']);
+        $message='';
+        foreach($search as $value){
+            if(strpos($value, '<=>') !== false){
+                $key_search = explode('<=>', $value);
+                $check_array=in_array($key_search[0], $columns['fields']);
+                if(!$check_array){
+                    $message .='Search_or column '.$key_search[0].' can not be found.';
+                }else{
+                    $message='';
+                }
+                if($message !=''){
+                    $message2=$message;
+               }
+            }else if(strpos($value, '<like>') !== false){
+                $key_search = explode('<like>', $value);
+                $check_array=in_array($key_search[0], $columns['fields']);
+                if(!$check_array){
+                    $message .='Search_or column '.$key_search[0].' can not be found.';
+                }else{
+                    $message='';
+                }
+                if($message !=''){
+                    $message2=$message;
+               }
+            }else if(strpos($value, '<>') !== false){
+                $key_search = explode('<>', $value);
+                $check_array=in_array($key_search[0], $columns['fields']);
+                if(!$check_array){
+                    $message .='Search_or column '.$key_search[0].' can not be found.';
+                }else{
+                    $message='';
+                }
+                if($message !=''){
+                    $message2=$message;
+               }
+            }
+        }
+        if( isset($message2)){
+            return $message2;
+        }else{
+            $key_search[1] = '%'.$key_search[1].'%';
         }
      }
 
@@ -151,34 +208,36 @@ class CheckField{
      }
      static function check_exist_of_value($req,$name){
         $message='';
-
-        if(strpos($req['search'], '<=>') !== false){
-            $key_search = explode('<=>', $req['search']);
-            $check_exits=DB::table($name)->where($key_search[0], '=', $key_search[1])->first();
-            if($check_exits == null){
-                $message .=$key_search[1].' not found.';
-            }else{
-                $message='';
-            }
-            
-        }else if(strpos($req['search'], '<like>') !== false){
-            $key_search = explode('<like>', $req['search']);
-            $check_exits=DB::table($name)->where($key_search[0], 'like', '%'.$key_search[1].'%')->first();
-            if($check_exits == null){
-                $message .=$key_search[1].' not found.';
-            }else{
-                $message='';
-            }
-        }else if(strpos($req['search'], '<>') !== false){
-            $key_search = explode('<like>', $req['search']);
-            $check_exits=DB::table($name)->where($key_search[0], 'like', '%'.$key_search[1].'%')->first();
-            if($check_exits == null){
-                $message .=$key_search[1].' not found.';
-            }else{
-                $message='';
-            }
-            
-        }       
+        $search = explode(',', $req['search']);
+        foreach($search as $value){
+            if(strpos($value, '<=>') !== false){
+                $key_search = explode('<=>', $value);
+                $check_exits=DB::table($name)->where($key_search[0], '=', $key_search[1])->first();
+                if($check_exits == null){
+                    $message .=$key_search[1].' not found.';
+                }else{
+                    $message='';
+                }
+                
+            }else if(strpos($value, '<like>') !== false){
+                $key_search = explode('<like>', $value);
+                $check_exits=DB::table($name)->where($key_search[0], 'like', '%'.$key_search[1].'%')->first();
+                if($check_exits == null){
+                    $message .=$key_search[1].' not found.';
+                }else{
+                    $message='';
+                }
+            }else if(strpos($value, '<>') !== false){
+                $key_search = explode('<like>', $value);
+                $check_exits=DB::table($name)->where($key_search[0], 'like', '%'.$key_search[1].'%')->first();
+                if($check_exits == null){
+                    $message .=$key_search[1].' not found.';
+                }else{
+                    $message='';
+                }
+                
+            } 
+        }
         if(isset($message)){
             return $message;
          }
