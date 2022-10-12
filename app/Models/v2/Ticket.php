@@ -56,7 +56,7 @@ class Ticket extends Model
     {
     	$res =  self::with(['getTicketsContent'=>function($q){
             $q->select('ticket_id', 'content');
-        },'getTicketsDetail','getTicketCategory','getTicketsComment','getTicketPriority']);
+        },'getTicketsDetail','getTicketCategory','getTicketContact','getTicketsComment','getTicketPriority']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
@@ -156,7 +156,7 @@ class Ticket extends Model
 
     function getDefaultFollow($req,$array)
     {
-    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketPriority']);
+    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketContact','getTicketPriority']);
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
     		$from = intval($req['page']) * self::TAKE;
@@ -187,7 +187,7 @@ class Ticket extends Model
     }
     function getDefaultTeam($req,$array)
     {
-    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketPriority']);
+    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketContact','getTicketPriority']);
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
     		$from = intval($req['page']) * self::TAKE;
