@@ -54,9 +54,14 @@ class Ticket extends Model
     }
     function getDefault($req)
     {
-    	$res =  self::with(['getTicketsContent'=>function($q){
-            $q->select('ticket_id', 'content');
-        },'getTicketsDetail','getTicketCategory','getTicketContact','getTicketsComment','getTicketPriority']);
+        $timeTmp1         = strtotime("first day of last month -2 month");
+        $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
+        $partition_start = $tmp_start;
+    
+        $timeTmp2       = strtotime("last day of this month");
+        $tmp_end       = strtotime(date('Y-m-d',$timeTmp2). " 00:00:00");
+        $partition_end = $tmp_end;
+    	$res =  self::with(['getTicketsDetail','getTicketContact','getTicketsComment']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
@@ -148,6 +153,7 @@ class Ticket extends Model
     	return $res->where(function($q) use ($delete) {
                     $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
                 })
+        ->whereBetween('datecreate', [$tmp_start, $tmp_end])       
     	->offset($from)
     	->limit($limit)
     	->paginate($limit)->appends(request()->query());
