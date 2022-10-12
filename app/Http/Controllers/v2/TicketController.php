@@ -286,8 +286,6 @@ class TicketController extends Controller
             }else{
                 $team_infor[]=[null];
             }
-        
-        $ticket['tags']= $team_infor;
         $category=TicketCategory::where('id',$ticket['category'])->first();
         $categoryGET=null;
         if(isset($category)){
@@ -364,6 +362,7 @@ class TicketController extends Controller
         $ticket['get_ticket_category']=$categoryGET;
         $ticket['get_tickets_detail']=(new Ticket)->showTicketDetail($ticket['id']); 
         $ticket['get_tickets_event']=$event;
+        $ticket['tags']= $team_infor;
             return MyHelper::response(true,'Successfully',$ticket,200);
         }else{
             return MyHelper::response(false,'Ticket not found',$ticket,404);

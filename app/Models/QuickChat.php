@@ -85,8 +85,9 @@ class QuickChat extends Model
             $res = $res->orderBy($by, $order);
         }
         $delete = self::DELETE;
-        return $res->where(function($q) use ($delete) {
-                
+        $groupid = auth::user()->groupid;
+        return $res->where(function($q) use ($delete,$groupid) {
+            $q->where('groupid',$groupid);
         })
         ->offset($from)
         ->limit($limit)
@@ -97,7 +98,6 @@ class QuickChat extends Model
     public static function ShowOne($id)
     {
         $delete = self::DELETE;
-        $groupid = auth::user()->groupid;
         return self::where(function($q) use ($delete) {
             })->find($id);
     }                   

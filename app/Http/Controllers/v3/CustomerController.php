@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\customerContactRelation;
 use App\Models\Contact;
 use App\Models\Tags;
+use App\Models\Ticket;
 use App\Models\GroupTable;
 use App\Models\CustomerRelationModel;
 use App\Models\agentCustomerRelation;
@@ -544,6 +545,35 @@ class CustomerController extends Controller
             $customer->delete();
         }
         return MyHelper::response(true,'Delete Customer Successfully', [],200);
+    }
+
+    public function customerTicket(Request $request,$id){
+        $req = $request->all();
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $checkFileds= CheckField::check_fields($req,'ticket');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           } 
+           if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+            $checkFileds= CheckField::check_order($req,'ticket');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $checkFileds= CheckField::CheckSearch($req,'ticket_2');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+             $checksearch= CheckField::check_exist_of_value($req,'ticket_'.auth::user()->groupid.'');
+
+             if($checksearch){
+                return MyHelper::response(false,$checksearch,[],404);
+             }
+           }
+           $tickets = (new Ticket)->getDefaultByCustomerId($req,$id);
+        return MyHelper::response(true,'Successfully',$tickets,200);
     }
 
 }

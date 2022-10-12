@@ -20,10 +20,29 @@ class Ticket extends Model
     const ORDERBY = 'id:asc';
     const TAKE = 10;
     const FROM = 0;
-    protected $fillable ='id,ticket_id,title,event_id,priority,status,assign_agent,assign_team,category,type,priority,tag,label,channel,tag,
+    protected $fillable ='id,
+    ticket_id,
+    title,
+    priority,
+    status,
+    assign_agent,
+    assign_team,
+    category,
+    priority,tag,
     label,
-    label_creby,requester,
-    requester_type,datecreate,dateupdate';
+    label_creby,
+    tag,
+    first_reply_time,
+    event_id,
+    channel,
+    type,
+    datecreate,
+    dateupdate,
+    requester,
+    requester_type,
+    is_delete,
+    is_delete_date
+    ';
                         
                         
 	protected $table = 'ticket';
@@ -35,7 +54,9 @@ class Ticket extends Model
     }
     function getDefault($req)
     {
-    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketPriority']);
+    	$res =  self::with(['getTicketsContent'=>function($q){
+            $q->select('ticket_id', 'content');
+        },'getTicketsDetail','getTicketCategory','getTicketsComment','getTicketPriority']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
@@ -213,7 +234,7 @@ class Ticket extends Model
 
     public function getTicketsComment()
     {
-    	return $this->hasMany(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable())->orderBy('datecreate','desc')->limit(1);
+    	return $this->hasOne(TicketDetail::class,'ticket_id','id')->select((new TicketDetail)->getFillable())->orderBy('datecreate','desc');
     }
     public function getTicketsEvent()
     {
