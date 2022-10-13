@@ -69,4 +69,6 @@ Route::group(['prefix' => 'v3'], function () {
        Route::apiResource('ticket', 'TicketController');
        Route::get('ticket/ticketFollow/{id}', 'TicketController@getTicketFollow')->name('ticket.follow');
        Route::get('ticket/ticketTeam/{id}', 'TicketController@TicketOfTeam')->name('ticket.team');
+       Route::get('pending/ticket', 'TicketController@TicketPending')->name('ticket.pending');
+       Route::get('deleteList/ticket', 'TicketController@getDefaultDelete')->name('ticket.deleteList');
      });

@@ -171,6 +171,12 @@ class TicketController extends Controller
              if($checkFileds){
                 return MyHelper::response(false,$checkFileds,[],404);
              }
+           }
+           if (array_key_exists('date', $req) && rtrim($req['date']) != '') {
+            $checkFileds= CheckField::CheckDate($req,'ticket_2');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
              
            }
 
@@ -1007,6 +1013,70 @@ class TicketController extends Controller
             return MyHelper::response(false,'This user has no team',[],404);
           }
           $tickets = (new Ticket)->getDefaultTeam($req,$team_id,'getTicketsDetail:id,title,content,content_system,ticket_id,status,type,private,file_name');
+          foreach($tickets as $val){
+             $id_ticket=$val['id'];
+             $val['ticket_id']='#'.$val['ticket_id'];
+             $comment=TicketDetail::where('ticket_id',$id_ticket)->orderBy('datecreate','desc')->limit(1)->select(['id','ticket_id','title','content','content_system','type','file_size','file_extension','file_name','file_original','file_multiple','datecreate','createby'])->get();
+           foreach($comment as $cm){
+               if($cm['type']=='file'){
+                   if(isset($cm['file_multiple'])){
+                       $array= json_decode($cm['file_multiple'], true);
+                       foreach($array as $files){
+                           $result[]= $files['file_name'];
+                       }
+                       $text=implode(',',$result);
+                       $cm['content']=substr('File đính kèm là:'.$text, 0, 50) . '...';
+                   }else{
+                       $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 50) . '...';
+                   }
+               }elseif($cm['type']=='text'){
+                   if($cm['content'] !== null && strlen($cm['content']) > 50){
+                       $cm['content']=substr(strip_tags($cm['content']), 0, 50) . '...';
+                     }
+               }
+           }
+             $val['get_tickets_comment']=$comment;
+          }
+         
+       return MyHelper::response(true,'Successfully',$tickets,200);
+        
+    }
+
+    public function TicketPending(Request $request){
+        $req = $request->all();
+        $tickets = (new Ticket)->getDefaultPending($req,'getTicketsDetail:id,title,content,content_system,ticket_id,status,type,private,file_name');
+          foreach($tickets as $val){
+             $id_ticket=$val['id'];
+             $val['ticket_id']='#'.$val['ticket_id'];
+             $comment=TicketDetail::where('ticket_id',$id_ticket)->orderBy('datecreate','desc')->limit(1)->select(['id','ticket_id','title','content','content_system','type','file_size','file_extension','file_name','file_original','file_multiple','datecreate','createby'])->get();
+           foreach($comment as $cm){
+               if($cm['type']=='file'){
+                   if(isset($cm['file_multiple'])){
+                       $array= json_decode($cm['file_multiple'], true);
+                       foreach($array as $files){
+                           $result[]= $files['file_name'];
+                       }
+                       $text=implode(',',$result);
+                       $cm['content']=substr('File đính kèm là:'.$text, 0, 50) . '...';
+                   }else{
+                       $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 50) . '...';
+                   }
+               }elseif($cm['type']=='text'){
+                   if($cm['content'] !== null && strlen($cm['content']) > 50){
+                       $cm['content']=substr(strip_tags($cm['content']), 0, 50) . '...';
+                     }
+               }
+           }
+             $val['get_tickets_comment']=$comment;
+          }
+         
+       return MyHelper::response(true,'Successfully',$tickets,200);
+        
+    }
+
+    public function getDefaultDelete(Request $request){
+        $req = $request->all();
+        $tickets = (new Ticket)->getDefaultDelete($req,'getTicketsDetail:id,title,content,content_system,ticket_id,status,type,private,file_name');
           foreach($tickets as $val){
              $id_ticket=$val['id'];
              $val['ticket_id']='#'.$val['ticket_id'];

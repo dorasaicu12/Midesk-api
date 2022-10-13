@@ -3,7 +3,8 @@ namespace App\Http\Functions;
 use Illuminate\Support\Facades\Schema;
 use App\Http\Functions\MyHelper;
 use DB;
-
+use DateTime;
+use Carbon\Carbon;
 class CheckField{
      static function check_fields($req,$name){
         $columns['fields']=Schema::getColumnListing($name);  
@@ -157,6 +158,31 @@ class CheckField{
             return $message2;
         }else{
             $key_search[1] = '%'.$key_search[1].'%';
+        }
+     }
+
+
+     static function CheckDate($req,$name){
+        $columns['fields']=Schema::getColumnListing($name);  
+        $date = explode('-', $req['date']);        
+        $dateStart = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
+        $dateEnd =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
+        $message='';
+          if($dateStart > $dateEnd){
+            $message .='the day start should not bigger than day end.';
+          }
+          if($dateStart < 0){
+            $message .='the day start is invalid.';
+          }
+          if($dateEnd < 0){
+            $message .='the day end is invalid.';
+          }
+            if($message !=''){
+                $message2=$message;
+           }
+            
+        if( isset($message2)){
+            return $message2;
         }
      }
 

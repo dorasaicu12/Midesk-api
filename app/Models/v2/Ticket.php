@@ -7,6 +7,8 @@ use DB;
 use Auth;
 use App\Traits\ModelsTraits;
 use App\Libraries\Encryption;
+use Carbon\Carbon;
+use App\Models\TeamStaff;
 class Ticket extends Model
 {
     use ModelsTraits;
@@ -50,19 +52,14 @@ class Ticket extends Model
     function __construct()
     {
 		$groupid = auth::user()->groupid;
+        $this->level=auth::user()->level;
+        $this->id=auth::user()->id;
+        $this->team_id=$team_id=TeamStaff::where('agent_id',auth::user()->id)->pluck('team_id')->toArray();
         self::setTable('ticket_'.$groupid);
     }
     function getDefault($req)
     {
-        $timeTmp1         = strtotime("first day of last month -2 month");
-        $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
-        $partition_start = $tmp_start;
-    
-        $timeTmp2       = strtotime("last day of this month");
-        $tmp_end       = strtotime(date('Y-m-d',$timeTmp2). " 00:00:00");
-        $partition_end = $tmp_end;
     	$res =  self::with(['getTicketsDetail','getTicketContact','getTicketsComment']);
-    	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
     		$from = intval($req['page']) * self::TAKE;
@@ -80,7 +77,6 @@ class Ticket extends Model
     	}
     	/// select
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
-
             $array = explode(',',$req['fields']);
             if(in_array('key_id',$array)){
                 unset($array[array_search('key_id',$array)]);
@@ -149,14 +145,39 @@ class Ticket extends Model
 			$order = $c[1];
 			$res->orderBy($by, $order);
     	}
+        if (array_key_exists('date', $req) && rtrim($req['date']) != '') {
+            $date = explode('-', $req['date']);        
+            $tmp_start = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
+            $tmp_end =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
+    	}else{
+            $timeTmp1         = strtotime("first day of last month -2 month");
+            $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
+            $partition_start = $tmp_start;
+        
+            $timeTmp2       = strtotime("last day of this month");
+            $tmp_end       = strtotime(date('Y-m-d',$timeTmp2). " 00:00:00");
+            $partition_end = $tmp_end;
+    	}
         $delete = self::DELETE;
-    	return $res->where(function($q) use ($delete) {
-                    $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
-                })
-        ->whereBetween('datecreate', [$tmp_start, $tmp_end])       
-    	->offset($from)
-    	->limit($limit)
-    	->paginate($limit)->appends(request()->query());
+        //check level nếu là admin thì lấy hết ko thì chỉ lấy phiếu trong bộ phận
+        if($this->level=='groupadmin' || $this->level=='admin'){
+            return $res->where(function($q) use ($delete) {
+                $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+            })
+             ->whereBetween('datecreate', [$tmp_start, $tmp_end]) 
+             ->offset($from)
+             ->limit($limit)
+             ->paginate($limit)->appends(request()->query());
+        }else{
+            return $res->where(function($q) use ($delete) {
+                $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+            })
+             ->whereIn('assign_team',$this->team_id)
+             ->whereBetween('datecreate', [$tmp_start, $tmp_end]) 
+             ->offset($from)
+             ->limit($limit)
+             ->paginate($limit)->appends(request()->query());
+        }
     }
 
 
@@ -177,7 +198,21 @@ class Ticket extends Model
     		}
     	}else{
     		$limit = self::TAKE;
-    	}    
+    	} 
+        //date   
+        if (array_key_exists('date', $req) && rtrim($req['date']) != '') {
+            $date = explode('-', $req['date']);        
+            $tmp_start = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
+            $tmp_end =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
+        }else{
+            $timeTmp1         = strtotime("first day of last month -2 month");
+            $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
+            $partition_start = $tmp_start;
+        
+            $timeTmp2       = strtotime("last day of this month");
+            $tmp_end       = strtotime(date('Y-m-d',$timeTmp2). " 00:00:00");
+            $partition_end = $tmp_end;
+        }
             $res = $res->selectRaw('id,'.$this->fillable);
     		$c = explode(':', self::ORDERBY);
 			$by = $c[0];
@@ -188,6 +223,7 @@ class Ticket extends Model
                     $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
                 })->whereIn('id',$array)
     	->offset($from)
+        ->whereBetween('datecreate', [$tmp_start, $tmp_end])
     	->limit($limit)
     	->paginate($limit)->appends(request()->query());
     }
@@ -215,13 +251,160 @@ class Ticket extends Model
 			$order = $c[1];
 			$res->orderBy($by, $order);
             $delete = self::DELETE;
-    	return $res->where(function($q) use ($delete,$array) {
-                    $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
-                    $q->whereIn('status',['new','open','pending']);
-                })->whereIn('assign_team',$array)
-    	->offset($from)
-    	->limit($limit)
-    	->paginate($limit)->appends(request()->query());
+       //date
+            if (array_key_exists('date', $req) && rtrim($req['date']) != '') {
+                $date = explode('-', $req['date']);        
+                $tmp_start = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
+                $tmp_end =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
+            }else{
+                $timeTmp1         = strtotime("first day of last month -2 month");
+                $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
+                $partition_start = $tmp_start;
+            
+                $timeTmp2       = strtotime("last day of this month");
+                $tmp_end       = strtotime(date('Y-m-d',$timeTmp2). " 00:00:00");
+                $partition_end = $tmp_end;
+            }
+      //check admin nếu có thì trả hết ko thì trả trong bộ phận
+        if($this->level=='groupadmin' || $this->level=='admin'){
+            return $res->where(function($q) use ($delete,$array) {
+                $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+                $q->whereIn('status',['new','open','pending']);
+            })
+              ->whereBetween('datecreate', [$tmp_start, $tmp_end]) 
+              ->offset($from)
+              ->limit($limit)
+              ->paginate($limit)->appends(request()->query());
+        }else{
+            return $res->where(function($q) use ($delete,$array) {
+                $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+                $q->whereIn('status',['new','open','pending']);
+            })->whereIn('assign_team',$array)
+              ->whereBetween('datecreate', [$tmp_start, $tmp_end]) 
+              ->offset($from)
+              ->limit($limit)
+              ->paginate($limit)->appends(request()->query());
+        }
+    }
+
+    function getDefaultPending($req,$array)
+    {
+    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketContact','getTicketPriority']);
+    	/// paginate
+    	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
+    		$from = intval($req['page']) * self::TAKE;
+    	}else{
+    		$from = self::FROM;
+    	}
+    	/// litmit ofset
+    	if (array_key_exists('limit', $req) && rtrim($req['limit']) != '') {
+    		$limit = $req['limit'];
+    		if (intval($limit) > 100) {
+    			$limit = 100;
+    		}
+    	}else{
+    		$limit = self::TAKE;
+    	}    
+            $res = $res->selectRaw('id,'.$this->fillable);
+    		$c = explode(':', self::ORDERBY);
+			$by = $c[0];
+			$order = $c[1];
+			$res->orderBy($by, $order);
+            $delete = self::DELETE;
+       //date
+            if (array_key_exists('date', $req) && rtrim($req['date']) != '') {
+                $date = explode('-', $req['date']);        
+                $tmp_start = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
+                $tmp_end =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
+            }else{
+                $timeTmp1         = strtotime("first day of last month -2 month");
+                $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
+                $partition_start = $tmp_start;
+            
+                $timeTmp2       = strtotime("last day of this month");
+                $tmp_end       = strtotime(date('Y-m-d',$timeTmp2). " 00:00:00");
+                $partition_end = $tmp_end;
+            }
+      //check admin nếu có thì trả hết ko thì trả trong bộ phận
+        if($this->level=='groupadmin' || $this->level=='admin'){
+            return $res->where(function($q) use ($delete,$array) {
+                $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+                $q->whereIn('status',['pending']);
+            })
+              ->whereBetween('datecreate', [$tmp_start, $tmp_end]) 
+              ->offset($from)
+              ->limit($limit)
+              ->paginate($limit)->appends(request()->query());
+        }else{
+            return $res->where(function($q) use ($delete,$array) {
+                $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+                $q->whereIn('status',['pending']);
+                $q->where('assign_agent', $this->id);
+            })->whereIn('assign_team',$this->team_id)
+              ->whereBetween('datecreate', [$tmp_start, $tmp_end]) 
+              ->offset($from)
+              ->limit($limit)
+              ->paginate($limit)->appends(request()->query());
+        }
+    }
+
+
+    function getDefaultDelete($req,$array)
+    {
+    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketContact','getTicketPriority']);
+    	/// paginate
+    	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
+    		$from = intval($req['page']) * self::TAKE;
+    	}else{
+    		$from = self::FROM;
+    	}
+    	/// litmit ofset
+    	if (array_key_exists('limit', $req) && rtrim($req['limit']) != '') {
+    		$limit = $req['limit'];
+    		if (intval($limit) > 100) {
+    			$limit = 100;
+    		}
+    	}else{
+    		$limit = self::TAKE;
+    	}    
+            $res = $res->selectRaw('id,'.$this->fillable);
+    		$c = explode(':', self::ORDERBY);
+			$by = $c[0];
+			$order = $c[1];
+			$res->orderBy($by, $order);
+            $delete = self::DELETE;
+       //date
+            if (array_key_exists('date', $req) && rtrim($req['date']) != '') {
+                $date = explode('-', $req['date']);        
+                $tmp_start = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
+                $tmp_end =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
+            }else{
+                $timeTmp1         = strtotime("first day of last month -2 month");
+                $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
+                $partition_start = $tmp_start;
+            
+                $timeTmp2       = strtotime("last day of this month");
+                $tmp_end       = strtotime(date('Y-m-d',$timeTmp2). " 00:00:00");
+                $partition_end = $tmp_end;
+            }
+      //check admin nếu có thì trả hết ko thì trả trong bộ phận
+        if($this->level=='groupadmin' || $this->level=='admin'){
+            return $res->where(function($q) use ($delete) {
+                $q->where('is_delete',1);
+            })
+              ->whereBetween('datecreate', [$tmp_start, $tmp_end]) 
+              ->offset($from)
+              ->limit($limit)
+              ->paginate($limit)->appends(request()->query());
+        }else{
+            return $res->where(function($q) use ($delete) {
+                $q->where('is_delete',1);
+            })->whereIn('assign_team',$this->team_id)
+              ->whereBetween('datecreate', [$tmp_start, $tmp_end]) 
+              ->offset($from)
+              ->limit($limit)
+              ->paginate($limit)->appends(request()->query());
+        }
     }
     
     public function getTicketsDetail()
