@@ -111,6 +111,7 @@ class Contact extends Model
         ->limit($limit)
         ->paginate($limit)->appends(request()->query());
     }
+
     public function ShowOne($id)
     {
         $delete = self::DELETE;

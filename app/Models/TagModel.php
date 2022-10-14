@@ -11,14 +11,9 @@ class TagModel extends Model
     protected $fillable = [
         'id',
         'groupid',
-        'title',
-        'content',
-        'public',
-        'createby',
-        'datecreate',
-        'type',
-        'type2_id',
-        'images'
+        'name',
+        'color',
+        'type'
     ];
     const ORDERBY = 'id:asc';
     const TAKE = 10;

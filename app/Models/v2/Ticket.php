@@ -150,7 +150,7 @@ class Ticket extends Model
             $tmp_start = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
             $tmp_end =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
     	}else{
-            $timeTmp1         = strtotime("first day of last month -2 month");
+            $timeTmp1         = strtotime("first day of last month -1 month");
             $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
             $partition_start = $tmp_start;
         
@@ -205,7 +205,7 @@ class Ticket extends Model
             $tmp_start = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
             $tmp_end =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
         }else{
-            $timeTmp1         = strtotime("first day of last month -2 month");
+            $timeTmp1         = strtotime("first day of last month -1 month");
             $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
             $partition_start = $tmp_start;
         
@@ -245,19 +245,32 @@ class Ticket extends Model
     	}else{
     		$limit = self::TAKE;
     	}    
+
+        if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+    		$order_by = explode(',', $req['order_by']);
+    		foreach ($order_by as $key => $value) {
+    			$c = explode(':', $value);
+    			$by = $c[0];
+    			$order = $c[1];
+    			$res->orderBy($by, $order);
+    		}
+            $delete = self::DELETE;
+    	}else{
             $res = $res->selectRaw('id,'.$this->fillable);
     		$c = explode(':', self::ORDERBY);
 			$by = $c[0];
 			$order = $c[1];
 			$res->orderBy($by, $order);
             $delete = self::DELETE;
+    	}
+
        //date
             if (array_key_exists('date', $req) && rtrim($req['date']) != '') {
                 $date = explode('-', $req['date']);        
                 $tmp_start = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
                 $tmp_end =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
             }else{
-                $timeTmp1         = strtotime("first day of last month -2 month");
+                $timeTmp1         = strtotime("first day of last month -1 month");
                 $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
                 $partition_start = $tmp_start;
             
@@ -317,7 +330,7 @@ class Ticket extends Model
                 $tmp_start = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
                 $tmp_end =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
             }else{
-                $timeTmp1         = strtotime("first day of last month -2 month");
+                $timeTmp1         = strtotime("first day of last month -1 month");
                 $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
                 $partition_start = $tmp_start;
             
@@ -367,6 +380,8 @@ class Ticket extends Model
     	}else{
     		$limit = self::TAKE;
     	}    
+
+        
             $res = $res->selectRaw('id,'.$this->fillable);
     		$c = explode(':', self::ORDERBY);
 			$by = $c[0];
@@ -379,7 +394,7 @@ class Ticket extends Model
                 $tmp_start = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
                 $tmp_end =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
             }else{
-                $timeTmp1         = strtotime("first day of last month -2 month");
+                $timeTmp1         = strtotime("first day of last month -1 month");
                 $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
                 $partition_start = $tmp_start;
             

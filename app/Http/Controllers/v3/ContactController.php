@@ -21,7 +21,12 @@ use Auth;
 use DB;
 use App\Models\actionLog;
 use App\Models\customerContactRelation;
+use App\Models\AgentContactRelation;
+use App\Models\TagModel;
+use App\Models\Customer;
 use Illuminate\Support\Facades\Schema;
+use App\Models\agentCustomerRelation;
+
 /**
  * @group  Contact Management
  *
@@ -220,7 +225,23 @@ class ContactController extends Controller
             Log::channel('contact_history')->info('Contact notfound',['id'=>$id]);
             return MyHelper::response(false,'Contact not found',[],404);
         }else{
-            $contact['relation']=['id'=>$contact['relation_id'],'title'=>$contact['relation_title'],'color'=>$contact['relation_color']];
+            // $contact['relation']=['id'=>$contact['relation_id'],'title'=>$contact['relation_title'],'color'=>$contact['relation_color']];
+            $agent=AgentContactRelation::where('contact_id',$id)->get();
+            $customer=customerContactRelation::where('contact_id',$id)->pluck('customer_id')->toArray();
+            $customerValue= Customer::whereIn('id',$customer)->get(['id','fullname','phone','email',]);
+            foreach($customerValue as $val){
+                $agentCustomer=agentCustomerRelation::where('customer_id',$val['id'])->first();
+                $val['agent']=$agentCustomer['agent_name'];
+            }
+            if(isset($contact['tag'])){
+                $arayTag=explode(',',$contact['tag']);
+                $tags= TagModel::whereIn('id',$arayTag)->get();  
+            }else{
+                $tags=[];
+            }
+            $contact['get_assgin_agent']=$agent;
+            $contact['get_customer']=$customerValue;
+            $contact['get_all_tag']=$tags;
             return MyHelper::response(true,'Successfully',$contact,200);
         }
         return MyHelper::response(true,'Successfully',$contact,200);    

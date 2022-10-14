@@ -24,7 +24,6 @@ class TicketCategory extends Model
                             'dateupdate',
                             'type',
                             'sort',
-                            'is_show'
                         ];
                         const DELETED = 1;
                         const DELETE = [NULL,0];

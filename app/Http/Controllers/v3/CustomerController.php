@@ -22,6 +22,7 @@ use App\Models\GroupTable;
 use App\Models\CustomerRelationModel;
 use App\Models\agentCustomerRelation;
 use Illuminate\Support\Facades\Schema;
+use App\Libraries\Encryption;
 /**
  * @group  Customer Management
  *
@@ -206,10 +207,24 @@ class CustomerController extends Controller
         $group=GroupTable::where('id',$customer['group_id'])->select(['id','group_name','group_type','description'])->first();
         $relation=CustomerRelationModel::where('id',$customer['relation_id'])->select(['id','title','description'])->first();
         $owner=agentCustomerRelation::where('customer_id',$customer['id'])->first();
+        $contactId=customerContactRelation::where('customer_id',$id)->first();
+        if($contactId){
+          $encryption=new Encryption;
+          $data= Contact::where('id',$contactId->contact_id)->first();
+          if($data->avatar == null){
+            $path='https://dev2022.midesk.vn/upload/images/userthumb/'.'no_user_photo-v1.jpg';
+          }else{
+            $path='https://dev2022.midesk.vn/upload/images/userthumb/'.$data->avatar;
+          }
+            $user=['avatar' => $path];
+        }else{
+            $user=null;
+        }
         $customer['get_all_tags']=$tags;
         $customer['get_group']=$group;
         $customer['get_relation']=$relation;
         $customer['get_owner']=$owner;
+        $customer['get_user']=$user;
         if (!$customer) {
             return MyHelper::response(false,'Customer not found',[],404);
         }
