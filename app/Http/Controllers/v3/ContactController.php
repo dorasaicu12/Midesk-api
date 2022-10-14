@@ -24,6 +24,7 @@ use App\Models\customerContactRelation;
 use App\Models\AgentContactRelation;
 use App\Models\TagModel;
 use App\Models\Customer;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Schema;
 use App\Models\agentCustomerRelation;
 
@@ -644,4 +645,36 @@ class ContactController extends Controller
 
            return MyHelper::response(true,'Successfully',[$activities],200);
     }
+    public function ContactTicket(Request $request,$id){
+        $req = $request->all();
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $checkFileds= CheckField::check_fields($req,'ticket_2');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           
+           if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+            $checkFileds= CheckField::check_order($req,'ticket_2');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }         
+           
+           if (array_key_exists('search',$req) && rtrim($req['search']) != '') {
+            $checkFileds= CheckField::CheckSearch($req,'ticket_2');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+             $checksearch= CheckField::check_exist_of_value($req,'ticket_2');
+             if($checksearch){
+                return MyHelper::response(false,$checksearch,[],404);
+             }
+           }
+           
+           $ticket = (new Ticket)->getDefaultByContactId($req,$id);
+
+           return MyHelper::response(true,'Successfully',[$ticket],200);
+    }
+        
 }

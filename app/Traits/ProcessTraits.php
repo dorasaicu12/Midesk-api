@@ -1113,7 +1113,7 @@ trait ProcessTraits {
         $level      = auth::user()->level;
 
         $main_id     = $id;
-        $array_sub   = $req['subId'];
+        $array_sub   = $req['ticket_id'];
         $get_content = $req['content']?:0;
         $get_event   = $req['eventId']?:0;
         //check ticket exist of main and sub

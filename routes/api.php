@@ -37,6 +37,7 @@ Route::group(['prefix' => 'v3'], function () {
 
         Route::apiResource('contact', 'ContactController');
         Route::get('contact/activities/{id}', 'ContactController@ContactAct')->name('contact.activity');
+        Route::get('contact/ticket/{id}', 'ContactController@ContactTicket')->name('contact.ticket');
         Route::apiResource('customer', 'CustomerController');
         Route::get('customer/ticket/{id}', 'CustomerController@customerTicket')->name('customer.ticket');
         Route::apiResource('product', 'ProductController');
