@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Functions;
-
-
+use JWTAuth;
+use Log;
 class MyHelper{
 
     static function Response($status = false,$message = "Fobidden",$data = [] ,$code = 500){

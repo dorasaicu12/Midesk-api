@@ -27,7 +27,7 @@ use App\Traits\ProcessTraits;
 use Auth;
 use DB;
 use App\Models\Tags;
-
+use Log;
 use Illuminate\Support\Facades\Schema;
 /**
  * @group  Tickets Management
@@ -139,11 +139,11 @@ class TicketController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
-
-
+        $header = $request->header('Authorization');
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
             $checkFileds= CheckField::check_fields($req,'ticket');
              if($checkFileds){
+                Log::channel('tickets_history')->info($checkFileds,['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
            }
@@ -151,6 +151,7 @@ class TicketController extends Controller
            if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
             $checkFileds= CheckField::check_order($req,'ticket');
              if($checkFileds){
+                Log::channel('tickets_history')->info($checkFileds,['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
            }
@@ -158,23 +159,58 @@ class TicketController extends Controller
            if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
             $checkFileds= CheckField::CheckSearch($req,'ticket_2');
              if($checkFileds){
+                Log::channel('tickets_history')->info($checkFileds,['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
              $checksearch= CheckField::check_exist_of_value($req,'ticket_'.auth::user()->groupid.'');
 
              if($checksearch){
+                Log::channel('tickets_history')->info('successfully',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$req]);
                 return MyHelper::response(false,$checksearch,[],404);
              }
+           }
+
+           if (array_key_exists('search_or', $req) && rtrim($req['search_or']) != '') {
+            $checkFileds= CheckField::CheckSearchOr($req,'ticket_2');
+             if($checkFileds){
+                Log::channel('tickets_history')->info($checkFileds,['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$req]);
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('date', $req) && rtrim($req['date']) != '') {
+            $checkFileds= CheckField::CheckDate($req,'ticket_2');
+             if($checkFileds){
+                Log::channel('tickets_history')->info($checkFileds,['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$req]);
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+             
            }
 
            $tickets = (new Ticket)->getDefault($req,'getTicketsDetail:id,title,content,content_system,ticket_id,status,type,private,file_name');
            // $tickets['ticket_id']='#'.$tickets['ticket_id'];
            foreach($tickets as $val){
               $val['ticket_id']='#'.$val['ticket_id'];
-           }
+              $cm=TicketDetail::where('ticket_id',$val['id'])->select((new TicketDetail)->getFillable())->orderBy('datecreate','desc')->limit(1)->first();
 
-           
-            
+              if($cm['type']=='file'){
+                if(isset($cm['file_multiple'])){
+                    $array= json_decode($cm['file_multiple'], true);
+                    foreach($array as $files){
+                        $result[]= $files['file_name'];
+                    }
+                    $text=implode(',',$result);
+                    $cm['content']=substr('File đính kèm là:'.$text, 0, 110) . '...';
+                }else{
+                    $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 110) . '...';
+                }
+            }elseif($cm['type']=='text'){
+                if($cm['content'] !== null && strlen($cm['content']) > 50){
+                    $cm['content']=substr(strip_tags($cm['content']),0,60) . "...";
+                  }
+            }
+              $val['get_tickets_comment']=$cm;
+           }
+           Log::channel('tickets_history')->info('Ticket list retrieve successfully',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$req]);
         return MyHelper::response(true,'Successfully',$tickets,200);
     }
     
@@ -227,9 +263,10 @@ class TicketController extends Controller
     *     }
     * )
     */
-    public function show($id)
+    public function show($id,Request $request)
     { 
         $ticket_var=new Ticket;
+        $header = $request->header('Authorization');
         $ticket = $ticket_var->showOne($id);
         if($ticket){
             $ticket['ticket_id']='#'.$ticket['ticket_id'];
@@ -256,8 +293,10 @@ class TicketController extends Controller
 
         $ticket['get_tickets_detail']=(new Ticket)->showTicketDetail($ticket['id']);      
         $ticket['tags']= $team_infor;
+        Log::channel('tickets_history')->info('Successfully',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'data'=>$ticket]);
             return MyHelper::response(true,'Successfully',$ticket,200);
         }else{
+            Log::channel('tickets_history')->info('Successfully',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'data'=>[]]);
             return MyHelper::response(false,'Ticket not found',$ticket,404);
         }
 
@@ -377,12 +416,14 @@ class TicketController extends Controller
     {   
         if (array_key_exists(0, $request->all())) {
             // multiple insert
+            $header = $request->header('Authorization');
             foreach ($request->all() as $key => $value) {
                 $this->create_or_update_ticket($value);
             }
+            Log::channel('tickets_history')->info('Created Ticket Successfully',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
             return MyHelper::response(true,'Created Ticket Successfully', [],200);
         }else{
-            return $this->create_or_update_ticket($request->all());   
+            return $this->create_or_update_ticket($request,$request->all());   
         }
     }
     
@@ -500,9 +541,9 @@ class TicketController extends Controller
     *     },
     * )
     */
-    public function update(Request $request, $id)
+    public function update(Request $request,$id)
     {
-        return $this->create_or_update_ticket($request->all(),$id);
+        return $this->create_or_update_ticket($request,$request->all(),$id);
     }
     /**
     * @OA\Delete(
@@ -542,10 +583,12 @@ class TicketController extends Controller
     *     },
     * )
     */
-    public function destroy($id)
+    public function destroy($id,Request $request)
     {   
         $ticket = (new Ticket)->showOne($id);
+        $header = $request->header('Authorization');
         if (!$ticket) {
+            Log::channel('tickets_history')->info('Ticket Not Found',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
             return MyHelper::response(false,'Ticket Not Found', [],404);
         }else{
             unset($ticket->requester_info);
@@ -555,6 +598,7 @@ class TicketController extends Controller
             $ticket->is_delete_creby = auth::user()->id;
             $ticket->save();
         }
+        Log::channel('tickets_history')->info('Delete Ticket Successfully',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
         return MyHelper::response(true,'Delete Ticket Successfully', [],200);
     }
 
@@ -622,12 +666,15 @@ class TicketController extends Controller
     public function comment(Request $request, $id)
     {
         if (!$id) {
+            Log::channel('tickets_history')->info('Create Failed',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
             return MyHelper::response(false,'Create Failed', [],500);
         }
         $comment = $this->create_comment($id,$request->all(),'');
         if (!$comment) {
+            Log::channel('tickets_history')->info('Ticket not found',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
             return MyHelper::response(false,'Ticket not found', [],404);
         }
+        Log::channel('tickets_history')->info('Created Comment Successfully',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
         return MyHelper::response(true,'Created Comment Successfully', [],200);
     }
 
@@ -741,7 +788,7 @@ class TicketController extends Controller
         return $requester;
     }
 
-    public function ticketForm()
+    public function ticketForm(Request $request)
     {
         $groupid = auth::user()->groupid;
         $team = TeamStaff::with('Agent')->select('team_id','agent_id')->where('groupid',$groupid)->get();
@@ -759,6 +806,7 @@ class TicketController extends Controller
         $data['priority'] = TicketPriority::all()->toArray();
         $data['category'] = TicketCategory::with('Child.Child')->where([['groupid',$groupid],['parent','0']])->get()->toArray();
         $data['listEmail'] = User::select('email')->where('groupid',$groupid)->get()->pluck('email')->toArray();
+        Log::channel('tickets_history')->info('TicketForm retrive Successfully',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
         return MyHelper::response(true,'Successfully', $data,200);
     }
     /**
@@ -812,10 +860,11 @@ class TicketController extends Controller
     *     }
     * )
     */
-    public function macroList()
+    public function macroList(Request $request)
     {
         $groupid = auth()->user()->groupid;
-        $list['priority'] =TicketPriority::all()->toArray();;
+        $list['priority'] =TicketPriority::all()->toArray();
+        Log::channel('tickets_history')->info('macroList retrive Successfully',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
         return MyHelper::response(true,'Successfully', $list,200);
     }
 
@@ -854,5 +903,23 @@ class TicketController extends Controller
     */
     public function ticketMerge(Request $request, $id){
         return $this->SubmitMerge($request->all(),$id);
+    }
+
+    public static function convert_from_latin1_to_utf8_recursively($dat)
+    {
+       if (is_string($dat)) {
+          return utf8_encode($dat);
+       } elseif (is_array($dat)) {
+          $ret = [];
+          foreach ($dat as $i => $d) $ret[ $i ] = self::convert_from_latin1_to_utf8_recursively($d);
+ 
+          return $ret;
+       } elseif (is_object($dat)) {
+          foreach ($dat as $i => $d) $dat->$i = self::convert_from_latin1_to_utf8_recursively($d);
+ 
+          return $dat;
+       } else {
+          return $dat;
+       }
     }
 }

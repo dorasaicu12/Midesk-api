@@ -29,11 +29,12 @@ trait ProcessTraits {
         }
     }
     
-    public function create_or_update_ticket($req,$id_t = '')
+    public function create_or_update_ticket($request,$req,$id_t = '')
     {     
         $groupid = $this->groupid;
         $creby   = auth::user()->id;
         $contact = [];
+        $header = $request->header('Authorization');
         $action  = 'create';
         $message = 'vừa tạo phiếu';
         $channel_list = [
@@ -81,6 +82,7 @@ trait ProcessTraits {
             if(is_array($message)){
                foreach($message as $v ){
                    foreach($v as $v2){
+                    Log::channel('tickets_history')->info($v2,['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                        return MyHelper::response(false,$v2, [],404); 
                    }
                 }
@@ -91,6 +93,7 @@ trait ProcessTraits {
         if (isset($req['label'])) {
           $checklable=  TicketLabel::where('id',$req['label'])->first();
           if(!$checklable){
+            Log::channel('tickets_history')->info('label can not be found',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
             return MyHelper::response(false,'label can not be found', [],404); 
           }
          $label_creaby= $checklable['createby'];
@@ -99,6 +102,7 @@ trait ProcessTraits {
         if (isset($req['event_id']) && rtrim($req['event_id'])!=='') {
             $checkEvent=  Event::where('id',$req['event_id'])->first();
             if(!$checkEvent){
+                Log::channel('tickets_history')->info('event can not be found',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
               return MyHelper::response(false,'event can not be found', [],404); 
             }
           }
@@ -108,6 +112,7 @@ trait ProcessTraits {
             $user_id = $req['assign_agent'];
             $check_team = (new User)->where('id',$user_id)->first();
             if (!$check_team) {
+                Log::channel('tickets_history')->info('assign_agent field do not match',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,'assign_agent field do not match', [],403);
             }
         }
@@ -115,6 +120,7 @@ trait ProcessTraits {
             $team_id = $req['assign_team'];
             $check_team = (new Team)->where('team_id',$team_id)->first();
             if (!$check_team) {
+                Log::channel('tickets_history')->info('assign_team field do not match',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,'assign_team field do not match', [],403);
             }
         }
@@ -123,11 +129,13 @@ trait ProcessTraits {
             $team_id = $req['assign_team'];
             $check_team = (new Team)->where('team_id',$team_id)->first();
             if (!$check_team) {
+                Log::channel('tickets_history')->info('assign_team field do not match',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,'assign_team field do not match', [],403);
             }
             $agent_id = $req['assign_agent'];
             $check_agent = (new TeamStaff)->where('team_id',$check_team->team_id)->get()->pluck('agent_id')->toArray();
             if (!in_array($agent_id,$check_agent)) {
+                Log::channel('tickets_history')->info('assign_agent field do not match',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,'assign_agent field do not match', [],403);
             }
         }
@@ -354,12 +362,15 @@ trait ProcessTraits {
             }
             
             if ($action == 'create') {
+                Log::channel('tickets_history')->info('Created Ticket Successfully',['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(true,'Created Ticket Successfully', ['id' => $ticket_detail->id,'ticket_id' => "#".$ticket_detail->ticket_id],200);
             }else{
+                Log::channel('tickets_history')->info('Updated Ticket Successfully',['client'=>['authorization'=>$header,'Content-type'=>'application/json','host'=>request()->getHttpHost()],'request'=>$req]);
                 return MyHelper::response(true,'Updated Ticket Successfully', [],200);
             }
         } catch (\Exception $ex){
             DB::rollback();
+            Log::channel('tickets_history')->info($ex->getMessage().'at line'.$ex ->getLine(),['client'=>['authorization'=>$header,'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
             return MyHelper::response(false,$ex->getMessage().'at line'.$ex ->getLine(), [],500);
 
         }

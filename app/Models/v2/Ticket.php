@@ -59,7 +59,7 @@ class Ticket extends Model
     }
     function getDefault($req)
     {
-    	$res =  self::with(['getTicketsDetail','getTicketContact','getTicketsComment']);
+    	$res =  self::with(['getTicketsDetail','getTicketContact']);
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
     		$from = intval($req['page']) * self::TAKE;

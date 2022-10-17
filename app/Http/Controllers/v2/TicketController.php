@@ -185,39 +185,24 @@ class TicketController extends Controller
            foreach($tickets as $val){
               $id_ticket=$val['id'];
               $val['ticket_id']='#'.$val['ticket_id'];
-              $comment=TicketDetail::where('ticket_id',$id_ticket)->orderBy('datecreate','desc')->limit(1)->select(['id','ticket_id','title','content','content_system','type','file_size','file_extension','file_name','file_original','file_multiple','datecreate','createby'])->get();
-
-            foreach($comment as $cm){
-                if($cm['type']=='file'){
-                    if(isset($cm['file_multiple'])){
-                   //    $token = array(
-                  //     "id" => 1, //id user,
-                  //     "groupid" => 2, "groupid", 
-                     //     "filename" => "tienco.jpg", 
-                   //     "datecreate" => "1234562345" ,
-                    //     "time" => time(), 
-                   // );
-                    // $encryption=new Encryption;
-                   // $encryption->initialize(array('cipher' => 'aes-256','mode' => 'ctr','key' => "MITEK@2016"));
-                   // $data =  base64_encode($encryption->encrypt(json_encode($token)));;
-                   // echo 'https://portal.midesk.vn/file-data/'.$data;
-                   // exit;
-                        $array= json_decode($cm['file_multiple'], true);
-                        foreach($array as $files){
-                            $result[]= $files['file_name'];
-                        }
-                        $text=implode(',',$result);
-                        $cm['content']=substr('File đính kèm là:'.$text, 0, 50) . '...';
-                    }else{
-                        $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 50) . '...';
+              $cm=TicketDetail::where('ticket_id',$val['id'])->select((new TicketDetail)->getFillable())->orderBy('datecreate','desc')->limit(1)->first();
+              if($cm['type']=='file'){
+                if(isset($cm['file_multiple'])){
+                    $array= json_decode($cm['file_multiple'], true);
+                    foreach($array as $files){
+                        $result[]= $files['file_name'];
                     }
-                }elseif($cm['type']=='text'){
-                    if($cm['content'] !== null && strlen($cm['content']) > 50){
-                        $cm['content']=substr(strip_tags($cm['content']), 0, 50) . '...';
-                      }
+                    $text=implode(',',$result);
+                    $cm['content']=substr('File đính kèm là:'.$text, 0, 110) . '...';
+                }else{
+                    $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 110) . '...';
                 }
+            }elseif($cm['type']=='text'){
+                if($cm['content'] !== null && strlen($cm['content']) > 50){
+                    $cm['content']=substr(strip_tags($cm['content']),0,50) . "...";
+                  }
             }
-              $val['get_tickets_comment']=$comment;
+              $val['get_tickets_comment']=$cm;
            }
           
         return MyHelper::response(true,'Successfully',$tickets,200);

@@ -57,7 +57,7 @@ class Ticket extends Model
     {
     	$res =  self::with(['getTicketsContent'=>function($q){
             $q->select('ticket_id', 'content');
-        },'getTicketsDetail','getTicketCategory','getTicketsComment','getTicketPriority']);
+        },'getTicketsDetail','getTicketCategory','getTicketPriority']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
@@ -254,7 +254,7 @@ class Ticket extends Model
     {
     	$res =  self::with(['getTicketsContent'=>function($q){
             $q->select('ticket_id', 'content');
-        },'getTicketsDetail','getTicketCategory','getTicketsComment','getTicketPriority']);
+        },'getTicketsDetail','getTicketCategory','getTicketPriority']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {

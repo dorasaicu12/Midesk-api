@@ -397,6 +397,7 @@ class ProductController extends Controller
         try {
             $res = Product::create($product);
         DB::commit();
+        Log::channel('contact_history')->info('Create contact successfully',['id'=>$id,'request'=>$req->all()]);
             return MyHelper::response(true,'Create Product successfully', ['product_code' => $res->product_code],200);
         } catch (\Exception $ex) {
         DB::rollback();

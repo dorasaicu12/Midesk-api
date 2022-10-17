@@ -28,6 +28,8 @@ use App\Models\Ticket;
 use Illuminate\Support\Facades\Schema;
 use App\Models\agentCustomerRelation;
 
+use JWTAuth;
+
 /**
  * @group  Contact Management
  *
@@ -130,11 +132,11 @@ class ContactController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
-
-
+        $token = JWTAuth::getToken();
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
             $checkFileds= CheckField::check_fields($req,'contact');
              if($checkFileds){
+                Log::channel('contact_history')->info($checkFileds,['token'=>$token,'request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
            }
@@ -142,6 +144,7 @@ class ContactController extends Controller
            if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
             $checkFileds= CheckField::check_order($req,'contact');
              if($checkFileds){
+                Log::channel('contact_history')->info($checkFileds,['token'=>$token,'request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
            }         
@@ -149,11 +152,13 @@ class ContactController extends Controller
            if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
             $checkFileds= CheckField::CheckSearch($req,'contact');
              if($checkFileds){
+                Log::channel('contact_history')->info($checkFileds,['token'=>$token,'request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
              $checksearch= CheckField::check_exist_of_value($req,'contact_'.auth::user()->groupid.'');
 
              if($checksearch){
+                Log::channel('contact_history')->info($checksearch,['token'=>$token,'request'=>$req]);
                 return MyHelper::response(false,$checksearch,[],404);
              }
            }  
@@ -163,8 +168,7 @@ class ContactController extends Controller
             $contacts[$key]['relation']=['id'=>$value['relation_id'],'title'=>$value['relation_title'],'color'=>$value['relation_color']];
         }
 
-    
-        
+        Log::channel('contact_history')->info('successfully',['token'=>$token,'request'=>$req]);
         return MyHelper::response(true,'Successfully',$contacts,200);
     }
 
@@ -222,6 +226,7 @@ class ContactController extends Controller
     public function show($id)
     {
         $contact = (new Contact)->ShowOne($id);
+        $token = JWTAuth::getToken();
         if (!$contact) {            
             Log::channel('contact_history')->info('Contact notfound',['id'=>$id]);
             return MyHelper::response(false,'Contact not found',[],404);
@@ -240,9 +245,20 @@ class ContactController extends Controller
             }else{
                 $tags=[];
             }
+            if(isset($contact['phone_other'])){
+                $phone=$contact['phone'].','.$contact['phone_other'];
+                $arrayPhone=explode(',',$phone);
+                $contact['phone']=$arrayPhone;
+            }
+            if(isset($contact['phone_other'])){
+                $email=$contact['email'].','.$contact['email_other'];
+                $arrayEmail=explode(',',$email);
+                $contact['email']=$arrayEmail;
+            }
             $contact['get_assgin_agent']=$agent;
             $contact['get_customer']=$customerValue;
             $contact['get_all_tag']=$tags;
+            Log::channel('contact_history')->info('successfully',['token'=>$token,'id'=>$id,'data'=>$contact]);
             return MyHelper::response(true,'Successfully',$contact,200);
         }
         return MyHelper::response(true,'Successfully',$contact,200);    
@@ -489,6 +505,7 @@ class ContactController extends Controller
         $groupid = auth::user()->groupid;
         $creby   = auth::user()->id;
         $time     = time();
+        $token = JWTAuth::getToken();
         $field = [];
         $phone = $request->phone ?? null;
         $email = $request->email ?? null;
@@ -508,6 +525,7 @@ class ContactController extends Controller
 
             //Cập nhật Contact
             if(!$check_contact){
+                Log::channel('contact_history')->info('Contact Not found',['token'=>$token,'id'=>$id]);
                 return MyHelper::response(false,'Contact Not found', [],400);
             }else{
 
@@ -521,6 +539,7 @@ class ContactController extends Controller
                         $check_field = CustomField::where('id',$key)->first();
                         if (!$check_field) {
                             return MyHelper::response(true,'Custom Field '.$key.' Do not exists', null,200);
+                            Log::channel('contact_history')->info('Custom Field '.$key.' Do not exists',['token'=>$token,'id'=>$id]);
                         }else{
                             $field[$key] = $value;
                         }
@@ -530,8 +549,10 @@ class ContactController extends Controller
                 }
                 $check_contact->update($request);
                 if(!$check_contact){
+                    Log::channel('contact_history')->info('Updated Contact Failed',['token'=>$token,'id'=>$id]);
                     return MyHelper::response(false,'Updated Contact Failed', [],500);
                 }
+                Log::channel('contact_history')->info('Updated contact successfully',['token'=>$token,'id'=>$id]);
                 return MyHelper::response(true,'Updated contact successfully', [],200);
             }  
 
@@ -583,10 +604,11 @@ class ContactController extends Controller
     public function destroy($id)
     {   
         $contact = (new Contact)->ShowOne($id);
-
+        $token = JWTAuth::getToken();
         //check contact
         if (!$contact) {
-            return MyHelper::response(false,'Contact Not Found', [],404);
+            Log::channel('contact_history')->info('Contact Not Found',['token'=>$token,'id'=>$id]);
+            return MyHelper::response(false,'Contact Not Found', [],404);       
         }else{
             $groupid = auth::user()->groupid;
             $creby   = auth::user()->id;
@@ -608,9 +630,11 @@ class ContactController extends Controller
                 DB::commit();
             } catch (\Exception $ex) {
                 DB::rollback();
+                Log::channel('contact_history')->info($ex->getMessage(),['token'=>$token,'id'=>$id]);
                 return MyHelper::response(false,$ex->getMessage(), [],500);
             }
         }
+        Log::channel('contact_history')->info('Delete Contact Successfully',['token'=>$token,'id'=>$id]);
         return MyHelper::response(true,'Delete Contact Successfully', [],200);
     }
 
