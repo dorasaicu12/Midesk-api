@@ -205,7 +205,7 @@ class TicketController extends Controller
                 }
             }elseif($cm['type']=='text'){
                 if($cm['content'] !== null && strlen($cm['content']) > 50){
-                    $cm['content']=substr(strip_tags($cm['content']),0,60) . "...";
+                    $cm['content']=strip_tags($cm['content']);
                   }
             }
               $val['get_tickets_comment']=$cm;
