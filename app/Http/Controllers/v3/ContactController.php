@@ -245,16 +245,13 @@ class ContactController extends Controller
             }else{
                 $tags=[];
             }
-            if(isset($contact['phone_other'])){
+            
                 $phone=$contact['phone'].','.$contact['phone_other'];
                 $arrayPhone=explode(',',$phone);
-                $contact['phone']=$arrayPhone;
-            }
-            if(isset($contact['phone_other'])){
+                $contact['phone']=$arrayPhone;        
                 $email=$contact['email'].','.$contact['email_other'];
                 $arrayEmail=explode(',',$email);
                 $contact['email']=$arrayEmail;
-            }
             $contact['get_assgin_agent']=$agent;
             $contact['get_customer']=$customerValue;
             $contact['get_all_tag']=$tags;
