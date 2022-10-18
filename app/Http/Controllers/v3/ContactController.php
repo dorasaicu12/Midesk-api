@@ -24,6 +24,7 @@ use App\Models\customerContactRelation;
 use App\Models\AgentContactRelation;
 use App\Models\TagModel;
 use App\Models\Customer;
+use App\Models\Agent;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Schema;
 use App\Models\agentCustomerRelation;
@@ -239,20 +240,52 @@ class ContactController extends Controller
                 $agentCustomer=agentCustomerRelation::where('customer_id',$val['id'])->first();
                 $val['agent']=$agentCustomer['agent_name'];
             }
+            $agentList=[];
+            foreach($agent as $agentValue){
+                $agents = new Agent();
+                $agents = $agents->setDeleteColumn('active');
+                $agents = $agents->setDeleteValue('1');
+                $agents = $agents->showOne($agentValue['agent_id']);
+                if ($agents) {
+                    $agentList[]=    $agents ;
+                }
+            }
             if(isset($contact['tag'])){
                 $arayTag=explode(',',$contact['tag']);
                 $tags= TagModel::whereIn('id',$arayTag)->get();  
             }else{
                 $tags=[];
             }
-            
-                $phone=$contact['phone'].','.$contact['phone_other'];
-                $arrayPhone=explode(',',$phone);
-                $contact['phone']=$arrayPhone;        
-                $email=$contact['email'].','.$contact['email_other'];
-                $arrayEmail=explode(',',$email);
-                $contact['email']=$arrayEmail;
-            $contact['get_assgin_agent']=$agent;
+                if(isset($contact['phone'])&& isset($contact['phone_other'])){
+                    $phone=$contact['phone'].','.$contact['phone_other'];
+                    $arrayPhone=explode(',',$phone);
+                    $contact['phone']=$arrayPhone;
+                }elseif(!isset($contact['phone']) && isset($contact['phone_other'])){
+                    $arrayPhone=explode(',',$contact['phone_other']);
+                    $contact['phone']=$arrayPhone;
+                }elseif(isset($contact['phone']) && !isset($contact['phone_other'])){
+                    $arrayPhone=explode(',',$contact['phone']);
+                    $contact['phone']=$arrayPhone;
+                }else{
+                    $contact['phone']=[null];
+                }
+  
+                if(isset($contact['email'])&& isset($contact['email_other'])){
+                    $email=$contact['email'].','.$contact['email_other'];
+                    $arrayEmail=explode(',',$email);
+                    $contact['email']=$arrayEmail;
+                }elseif(!isset($contact['email']) && isset($contact['email_other'])){
+                    $arrayEmail=explode(',',$contact['email_other']);
+                    $contact['email']=$arrayEmail;
+                }elseif(isset($contact['email']) && !isset($contact['email_other'])){
+                    $arrayEmail=explode(',',$contact['email']);
+                    $contact['email']=$arrayEmail;
+                }else{
+                    $contact['email']=[null];
+                }
+                      
+
+            $contact['get_assgin_agent']=$agentList;
             $contact['get_customer']=$customerValue;
             $contact['get_all_tag']=$tags;
             Log::channel('contact_history')->info('successfully',['token'=>$token,'id'=>$id,'data'=>$contact]);

@@ -72,4 +72,5 @@ Route::group(['prefix' => 'v3'], function () {
        Route::get('ticket/ticketTeam/{id}', 'TicketController@TicketOfTeam')->name('ticket.team');
        Route::get('pending/ticket', 'TicketController@TicketPending')->name('ticket.pending');
        Route::get('deleteList/ticket', 'TicketController@getDefaultDelete')->name('ticket.deleteList');
+       Route::get('getall/ticket', 'TicketController@GetAllThroughtPermission')->name('ticket.all');
      });

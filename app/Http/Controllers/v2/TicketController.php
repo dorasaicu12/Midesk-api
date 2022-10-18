@@ -139,7 +139,6 @@ class TicketController extends Controller
     public function index(Request $request)
     {
         $req = $request->all();
-
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
             $checkFileds= CheckField::check_fields($req,'ticket');
              if($checkFileds){
@@ -153,7 +152,6 @@ class TicketController extends Controller
                 return MyHelper::response(false,$checkFileds,[],404);
              }
            }
-           
            if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
             $checkFileds= CheckField::CheckSearch($req,'ticket_2');
              if($checkFileds){
@@ -177,34 +175,15 @@ class TicketController extends Controller
              if($checkFileds){
                 return MyHelper::response(false,$checkFileds,[],404);
              }
-             
            }
-
            $tickets = (new Ticket)->getDefault($req,'getTicketsDetail:id,title,content,content_system,ticket_id,status,type,private,file_name');
            // $tickets['ticket_id']='#'.$tickets['ticket_id'];
            foreach($tickets as $val){
               $id_ticket=$val['id'];
               $val['ticket_id']='#'.$val['ticket_id'];
-              $cm=TicketDetail::where('ticket_id',$val['id'])->select((new TicketDetail)->getFillable())->orderBy('datecreate','desc')->limit(1)->first();
-              if($cm['type']=='file'){
-                if(isset($cm['file_multiple'])){
-                    $array= json_decode($cm['file_multiple'], true);
-                    foreach($array as $files){
-                        $result[]= $files['file_name'];
-                    }
-                    $text=implode(',',$result);
-                    $cm['content']=substr('File đính kèm là:'.$text, 0, 110) . '...';
-                }else{
-                    $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 110) . '...';
-                }
-            }elseif($cm['type']=='text'){
-                if($cm['content'] !== null && strlen($cm['content']) > 50){
-                    $cm['content']=strip_tags($cm['content']);
-                  }
-            }
-              $val['get_tickets_comment']=$cm;
+              
+              $val['get_tickets_comment']=$this->FirstComment($id_ticket);
            }
-          
         return MyHelper::response(true,'Successfully',$tickets,200);
     }
     
@@ -963,26 +942,8 @@ class TicketController extends Controller
         foreach($tickets as $val){
            $id_ticket=$val['id'];
            $val['ticket_id']='#'.$val['ticket_id'];
-           $comment=TicketDetail::where('ticket_id',$id_ticket)->orderBy('datecreate','desc')->limit(1)->select(['id','ticket_id','title','content','content_system','type','file_size','file_extension','file_name','file_original','file_multiple','datecreate','createby'])->get();
-         foreach($comment as $cm){
-             if($cm['type']=='file'){
-                 if(isset($cm['file_multiple'])){
-                     $array= json_decode($cm['file_multiple'], true);
-                     foreach($array as $files){
-                         $result[]= $files['file_name'];
-                     }
-                     $text=implode(',',$result);
-                     $cm['content']=substr('File đính kèm là:'.$text, 0, 50) . '...';
-                 }else{
-                     $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 50) . '...';
-                 }
-             }elseif($cm['type']=='text'){
-                 if($cm['content'] !== null && strlen($cm['content']) > 50){
-                     $cm['content']=substr(strip_tags($cm['content']), 0, 50) . '...';
-                   }
-             }
-         }
-           $val['get_tickets_comment']=$comment;
+
+           $val['get_tickets_comment']=$this->FirstComment($id_ticket);
         }
        
      return MyHelper::response(true,'Successfully',$tickets,200);
@@ -1001,26 +962,7 @@ class TicketController extends Controller
           foreach($tickets as $val){
              $id_ticket=$val['id'];
              $val['ticket_id']='#'.$val['ticket_id'];
-             $comment=TicketDetail::where('ticket_id',$id_ticket)->orderBy('datecreate','desc')->limit(1)->select(['id','ticket_id','title','content','content_system','type','file_size','file_extension','file_name','file_original','file_multiple','datecreate','createby'])->get();
-           foreach($comment as $cm){
-               if($cm['type']=='file'){
-                   if(isset($cm['file_multiple'])){
-                       $array= json_decode($cm['file_multiple'], true);
-                       foreach($array as $files){
-                           $result[]= $files['file_name'];
-                       }
-                       $text=implode(',',$result);
-                       $cm['content']=substr('File đính kèm là:'.$text, 0, 50) . '...';
-                   }else{
-                       $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 50) . '...';
-                   }
-               }elseif($cm['type']=='text'){
-                   if($cm['content'] !== null && strlen($cm['content']) > 50){
-                       $cm['content']=substr(strip_tags($cm['content']), 0, 50) . '...';
-                     }
-               }
-           }
-             $val['get_tickets_comment']=$comment;
+             $val['get_tickets_comment']=$this->FirstComment($id_ticket);
           }
          
        return MyHelper::response(true,'Successfully',$tickets,200);
@@ -1033,26 +975,7 @@ class TicketController extends Controller
           foreach($tickets as $val){
              $id_ticket=$val['id'];
              $val['ticket_id']='#'.$val['ticket_id'];
-             $comment=TicketDetail::where('ticket_id',$id_ticket)->orderBy('datecreate','desc')->limit(1)->select(['id','ticket_id','title','content','content_system','type','file_size','file_extension','file_name','file_original','file_multiple','datecreate','createby'])->get();
-           foreach($comment as $cm){
-               if($cm['type']=='file'){
-                   if(isset($cm['file_multiple'])){
-                       $array= json_decode($cm['file_multiple'], true);
-                       foreach($array as $files){
-                           $result[]= $files['file_name'];
-                       }
-                       $text=implode(',',$result);
-                       $cm['content']=substr('File đính kèm là:'.$text, 0, 50) . '...';
-                   }else{
-                       $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 50) . '...';
-                   }
-               }elseif($cm['type']=='text'){
-                   if($cm['content'] !== null && strlen($cm['content']) > 50){
-                       $cm['content']=substr(strip_tags($cm['content']), 0, 50) . '...';
-                     }
-               }
-           }
-             $val['get_tickets_comment']=$comment;
+             $val['get_tickets_comment']=$this->FirstComment($id_ticket);
           }
          
        return MyHelper::response(true,'Successfully',$tickets,200);
@@ -1065,30 +988,80 @@ class TicketController extends Controller
           foreach($tickets as $val){
              $id_ticket=$val['id'];
              $val['ticket_id']='#'.$val['ticket_id'];
-             $comment=TicketDetail::where('ticket_id',$id_ticket)->orderBy('datecreate','desc')->limit(1)->select(['id','ticket_id','title','content','content_system','type','file_size','file_extension','file_name','file_original','file_multiple','datecreate','createby'])->get();
-           foreach($comment as $cm){
-               if($cm['type']=='file'){
-                   if(isset($cm['file_multiple'])){
-                       $array= json_decode($cm['file_multiple'], true);
-                       foreach($array as $files){
-                           $result[]= $files['file_name'];
-                       }
-                       $text=implode(',',$result);
-                       $cm['content']=substr('File đính kèm là:'.$text, 0, 50) . '...';
-                   }else{
-                       $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 50) . '...';
-                   }
-               }elseif($cm['type']=='text'){
-                   if($cm['content'] !== null && strlen($cm['content']) > 50){
-                       $cm['content']=substr(strip_tags($cm['content']), 0, 50) . '...';
-                     }
-               }
-           }
-             $val['get_tickets_comment']=$comment;
+             $val['get_tickets_comment']=$this->FirstComment($id_ticket);;
           }
          
        return MyHelper::response(true,'Successfully',$tickets,200);
         
+    }
+    public function FirstComment($id)
+    {
+        $cm=TicketDetail::where('ticket_id',$id)->select((new TicketDetail)->getFillable())->orderBy('datecreate','desc')->limit(1)->first();
+        if($cm['type']=='file'){
+          if(isset($cm['file_multiple'])){
+              $array= json_decode($cm['file_multiple'], true);
+              foreach($array as $files){
+                  $result[]= $files['file_name'];
+              }
+              $text=implode(',',$result);
+              $cm['content']=substr('File đính kèm là:'.$text, 0, 110) . '...';
+          }else{
+              $cm['content']=substr('File đính kèm là:'.$cm['file_name'], 0, 110) . '...';
+          }
+      }elseif($cm['type']=='text'){
+          if($cm['content'] !== null && strlen($cm['content']) > 50){
+              $cm['content']=strip_tags($cm['content']);
+            }
+      }
+      return $cm;
+    }
+
+
+    public function GetAllThroughtPermission(Request $request)
+    {
+        $req = $request->all();
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $checkFileds= CheckField::check_fields($req,'ticket');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+            $checkFileds= CheckField::check_order($req,'ticket');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $checkFileds= CheckField::CheckSearch($req,'ticket_2');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+             $checksearch= CheckField::check_exist_of_value($req,'ticket_'.auth::user()->groupid.'');
+             if($checksearch){
+                return MyHelper::response(false,$checksearch,[],404);
+             }
+           }
+           if (array_key_exists('search_or', $req) && rtrim($req['search_or']) != '') {
+            $checkFileds= CheckField::CheckSearchOr($req,'ticket_2');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           if (array_key_exists('date', $req) && rtrim($req['date']) != '') {
+            $checkFileds= CheckField::CheckDate($req,'ticket_2');
+             if($checkFileds){
+                return MyHelper::response(false,$checkFileds,[],404);
+             }
+           }
+           $tickets = (new Ticket)->getDefaultNoLevel($req,'getTicketsDetail:id,title,content,content_system,ticket_id,status,type,private,file_name');
+           // $tickets['ticket_id']='#'.$tickets['ticket_id'];
+           foreach($tickets as $val){
+              $id_ticket=$val['id'];
+              $val['ticket_id']='#'.$val['ticket_id'];
+              $val['get_tickets_comment']=$this->FirstComment($id_ticket);
+           }
+        return MyHelper::response(true,'Successfully',$tickets,200);
     }
         
 }

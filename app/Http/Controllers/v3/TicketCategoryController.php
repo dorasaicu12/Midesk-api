@@ -369,7 +369,7 @@ class TicketCategoryController extends Controller
       if(!$TicketCategory){
           return MyHelper::response(false,'ticket category not found',[],404);
       }else{
-
+         $TicketCategory->dateupdate=strtotime($TicketCategory->dateupdate);
           return MyHelper::response(true,'successfully',$TicketCategory,200);
       }
     }

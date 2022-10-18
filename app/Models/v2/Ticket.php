@@ -34,6 +34,7 @@ class Ticket extends Model
     label,
     label_creby,
     tag,
+    createby,
     first_reply_time,
     event_id,
     channel,
@@ -55,11 +56,12 @@ class Ticket extends Model
         $this->level=auth::user()->level;
         $this->id=auth::user()->id;
         $this->team_id=$team_id=TeamStaff::where('agent_id',auth::user()->id)->pluck('team_id')->toArray();
+        $this->relation=['getTicketsDetail','getTicketContact','getTicketPriority','getTicketAssign','getTicketCreator'];
         self::setTable('ticket_'.$groupid);
     }
     function getDefault($req)
     {
-    	$res =  self::with(['getTicketsDetail','getTicketContact']);
+    	$res =  self::with($this->relation);
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
     		$from = intval($req['page']) * self::TAKE;
@@ -183,7 +185,7 @@ class Ticket extends Model
 
     function getDefaultFollow($req,$array)
     {
-    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketContact','getTicketPriority']);
+    	$res =  self::with($this->relation);
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
     		$from = intval($req['page']) * self::TAKE;
@@ -229,7 +231,7 @@ class Ticket extends Model
     }
     function getDefaultTeam($req,$array)
     {
-    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketContact','getTicketPriority']);
+    	$res =  self::with($this->relation);
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
     		$from = intval($req['page']) * self::TAKE;
@@ -302,7 +304,7 @@ class Ticket extends Model
 
     function getDefaultPending($req,$array)
     {
-    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketContact','getTicketPriority']);
+    	$res =  self::with($this->relation);
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
     		$from = intval($req['page']) * self::TAKE;
@@ -364,7 +366,7 @@ class Ticket extends Model
 
     function getDefaultDelete($req,$array)
     {
-    	$res =  self::with(['getTicketsDetail','getTicketsComment','getTicketContact','getTicketPriority']);
+    	$res =  self::with($this->relation);
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
     		$from = intval($req['page']) * self::TAKE;
@@ -421,6 +423,119 @@ class Ticket extends Model
               ->paginate($limit)->appends(request()->query());
         }
     }
+
+    function getDefaultNoLevel($req)
+    {
+    	$res =  self::with($this->relation);
+    	/// paginate
+    	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
+    		$from = intval($req['page']) * self::TAKE;
+    	}else{
+    		$from = self::FROM;
+    	}
+    	/// litmit ofset
+    	if (array_key_exists('limit', $req) && rtrim($req['limit']) != '') {
+    		$limit = $req['limit'];
+    		if (intval($limit) > 100) {
+    			$limit = 100;
+    		}
+    	}else{
+    		$limit = self::TAKE;
+    	}
+    	/// select
+        if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
+            $array = explode(',',$req['fields']);
+            if(in_array('key_id',$array)){
+                unset($array[array_search('key_id',$array)]);
+                array_push($array,"channel");
+                $req['fields']= implode(",",$array);
+            }
+            $res = $res->selectRaw('id,'.$req['fields']);
+        }else{
+            if (auth::user()->groupid == '196') {
+                $res = $res->selectRaw('id,'.$this->fillable);
+            }
+            $res = $res->selectRaw('id,'.$this->fillable);
+        }
+    	/// search
+    	if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $search = explode(',', $req['search']);
+            foreach($search as $value){
+                if(strpos($value, '<=>') !== false){
+                    $key_search = explode('<=>', $value);
+                    $type = '=';
+                }else if(strpos($value, '<like>') !== false){
+                    $key_search = explode('<like>', $value);
+                    $type = 'like';
+                    $key_search[1] = '%'.$key_search[1].'%';
+                }else if(strpos($value, '<>') !== false){
+                    $key_search = explode('<>', $value);
+                    $type = '<>';
+                }
+                $res->where($key_search[0],$type,$key_search[1]);
+              }
+
+    	}
+        //serach or
+        if (array_key_exists('search_or', $req) && rtrim($req['search_or']) != '') {
+            $search = explode(',', $req['search_or']);
+            $res->where(function($q) use ($search) {
+                foreach($search as $value){
+                    if(strpos($value, '<=>') !== false){
+                        $key_search = explode('<=>', $value);
+                        $type = '=';
+                    }else if(strpos($value, '<like>') !== false){
+                        $key_search = explode('<like>', $value);
+                        $type = 'like';
+                        $key_search[1] = '%'.$key_search[1].'%';
+                    }else if(strpos($value, '<>') !== false){
+                        $key_search = explode('<>', $value);
+                        $type = '<>';
+                    }
+                    $q->orWhere($key_search[0],$type,$key_search[1]);
+                  }
+            });
+
+    	}
+		
+    	if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+    		$order_by = explode(',', $req['order_by']);
+    		foreach ($order_by as $key => $value) {
+    			$c = explode(':', $value);
+    			$by = $c[0];
+    			$order = $c[1];
+    			$res->orderBy($by, $order);
+    		}
+    	}else{
+    		$c = explode(':', self::ORDERBY);
+			$by = $c[0];
+			$order = $c[1];
+			$res->orderBy($by, $order);
+    	}
+        if (array_key_exists('date', $req) && rtrim($req['date']) != '') {
+            $date = explode('-', $req['date']);        
+            $tmp_start = strtotime(Carbon::createFromFormat('d/m/Y', $date[0])->format('d-m-Y'));
+            $tmp_end =strtotime(Carbon::createFromFormat('d/m/Y', $date[1])->format('d-m-Y'));
+    	}else{
+            $timeTmp1         = strtotime("first day of last month -1 month");
+            $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
+            $partition_start = $tmp_start;
+        
+            $timeTmp2       = strtotime("last day of this month");
+            $tmp_end       = strtotime(date('Y-m-d',$timeTmp2). " 00:00:00");
+            $partition_end = $tmp_end;
+    	}
+        $delete = self::DELETE;
+        
+            return $res->where(function($q) use ($delete) {
+                $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+            })
+             ->whereBetween('datecreate', [$tmp_start, $tmp_end]) 
+             ->offset($from)
+             ->limit($limit)
+             ->paginate($limit)->appends(request()->query());
+
+    }
     
     public function getTicketsDetail()
     {
@@ -446,7 +561,11 @@ class Ticket extends Model
     }
     public function getTicketAssign()
     {
-        return $this->hasOne(User::class,'id','assign_agent');
+        return $this->hasOne(User::class,'id','assign_agent')->select(['id','firstname','lastname','fullname','username']);
+    }
+    public function getTicketCreator()
+    {
+        return $this->hasOne(User::class,'id','createby')->select(['id','firstname','lastname','fullname','username']);
     }
     public function getTicketTag()
     {
