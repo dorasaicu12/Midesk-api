@@ -245,7 +245,7 @@ class ContactController extends Controller
                 $agents = new Agent();
                 $agents = $agents->setDeleteColumn('active');
                 $agents = $agents->setDeleteValue('1');
-                $agents = $agents->showOne($agentValue['agent_id']);
+                $agents = $agents->showOneContactAgent($agentValue['agent_id']);
                 if ($agents) {
                     $agentList[]=    $agents ;
                 }
@@ -259,13 +259,13 @@ class ContactController extends Controller
                 if(isset($contact['phone'])&& isset($contact['phone_other'])){
                     $phone=$contact['phone'].','.$contact['phone_other'];
                     $arrayPhone=explode(',',$phone);
-                    $contact['phone']=$arrayPhone;
+                    $contact['phone']=array_filter($arrayPhone, function($value) { return !is_null($value) && $value !== ''; });
                 }elseif(!isset($contact['phone']) && isset($contact['phone_other'])){
                     $arrayPhone=explode(',',$contact['phone_other']);
-                    $contact['phone']=$arrayPhone;
+                    $contact['phone']=array_filter($arrayPhone, function($value) { return !is_null($value) && $value !== ''; });
                 }elseif(isset($contact['phone']) && !isset($contact['phone_other'])){
                     $arrayPhone=explode(',',$contact['phone']);
-                    $contact['phone']=$arrayPhone;
+                    $contact['phone']=array_filter($arrayPhone, function($value) { return !is_null($value) && $value !== ''; });
                 }else{
                     $contact['phone']=[null];
                 }
@@ -273,13 +273,13 @@ class ContactController extends Controller
                 if(isset($contact['email'])&& isset($contact['email_other'])){
                     $email=$contact['email'].','.$contact['email_other'];
                     $arrayEmail=explode(',',$email);
-                    $contact['email']=$arrayEmail;
+                    $contact['email']=array_filter($arrayEmail, function($value) { return !is_null($value) && $value !== ''; });
                 }elseif(!isset($contact['email']) && isset($contact['email_other'])){
                     $arrayEmail=explode(',',$contact['email_other']);
-                    $contact['email']=$arrayEmail;
+                    $contact['email']=array_filter($arrayEmail, function($value) { return !is_null($value) && $value !== ''; });
                 }elseif(isset($contact['email']) && !isset($contact['email_other'])){
                     $arrayEmail=explode(',',$contact['email']);
-                    $contact['email']=$arrayEmail;
+                    $contact['email']=array_filter($arrayEmail, function($value) { return !is_null($value) && $value !== ''; });
                 }else{
                     $contact['email']=[null];
                 }

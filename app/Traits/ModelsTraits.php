@@ -166,4 +166,43 @@ trait ModelsTraits {
                 })->first();
         return $res;
     }
+
+    public function showOneContactAgent($id)
+    {
+        $delete = $this->DELETE;
+        $select_id = $this->SELECT_COLUMN;
+
+        $groupid = auth()->user()->groupid;
+        $res = new self;
+        if ($this->getTable() == 'contact_'.$groupid) {
+            switch ($groupid) {
+                case '196':
+                    $res = $res->selectRaw('id,'.$this->fillable)->where(function($q) use ($id) {
+                        $q->Where('ext_contact_id', $id)->orwhere('phone', $id);
+                    });
+                    break;
+                case '103':
+                    $res = $res->where(function($q) use ($id) {
+                        $q->Where($select_id, $id)->orwhere('phone', $id);
+                    }); 
+                    break;
+                default:
+                    $res = $res->selectRaw(implode(',', $this->fillable));
+                    $res = $res->where([['groupid',$groupid],[$select_id,$id]]);
+                    break;
+            }    
+        }else{            
+            $res = $res->selectRaw(implode(',', ['id','firstname','lastname','fullname']));
+            $res = $res->where([['groupid',$groupid],[$select_id,$id]]);
+        }
+        $res =  $res->where(function($q) use ($delete) {
+                    if (is_array($delete)) {
+                        $q->where($this->DELETE_COLUMN, $delete[0])
+                          ->orWhere($this->DELETE_COLUMN, $delete[1]);
+                    }else{
+                        $q->where($this->DELETE_COLUMN, $delete);
+                    }
+                })->first();
+        return $res;
+    }
 }

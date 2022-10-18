@@ -28,6 +28,7 @@ use App\Traits\ProcessTraits;
 use Auth;
 use DB;
 use App\Models\Tags;
+use App\Models\TicketLink;
 use Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Crypt;
@@ -181,7 +182,8 @@ class TicketController extends Controller
            foreach($tickets as $val){
               $id_ticket=$val['id'];
               $val['ticket_id']='#'.$val['ticket_id'];
-              
+              $link_id= $this->getLinkTicket($id_ticket);
+              $val['link']=$link_id;
               $val['get_tickets_comment']=$this->FirstComment($id_ticket);
            }
         return MyHelper::response(true,'Successfully',$tickets,200);
@@ -254,7 +256,7 @@ class TicketController extends Controller
                 }
              }        
             }else{
-                $team_infor[]=[null];
+                $team_infor=[];
             }
         $category=TicketCategory::where('id',$ticket['category'])->first();
         $categoryGET=null;
@@ -329,9 +331,32 @@ class TicketController extends Controller
             }
         }
         $event=Event::where('ticket_id',$id)->select(['id','event_location','remind_time','note'])->get();
+        $id_link=explode(',',$this->getLinkTicket($id));
+        $ticketLink= TicketLink::WhereIn('id',$id_link)->select('ticket_id','link_id')->get();
+        $list='';
+        foreach($ticketLink as $num){
+
+                $list .=$num['ticket_id'].','.$num['link_id'].',';
+            
+        }
+        $arrayLink=array_filter(explode(',',$list), function($value) { return !is_null($value) && $value !== ''; });
+        $ticketList=Ticket::whereIn('id',$arrayLink)->get(); 
+        $ListLinkTicket=[];  
+        foreach($ticketList as $Link){
+            if($Link['id'] != $id){
+             $ListLinkTicket[]=[
+                'id'=>$Link['id'],
+                'title'=>$Link['title'],
+                'status'=>$Link['status'],
+                'assign_agent'=>$Link['assign_agent'],
+                'datecreate'=>$Link['datecreate'],
+             ];
+            }
+        }
         $ticket['get_ticket_category']=$categoryGET;
         $ticket['get_tickets_detail']=(new Ticket)->showTicketDetail($ticket['id']); 
         $ticket['get_tickets_event']=$event;
+        $ticket['get_list_ticket_link']=$ListLinkTicket;
         $ticket['tags']= $team_infor;
             return MyHelper::response(true,'Successfully',$ticket,200);
         }else{
@@ -942,7 +967,8 @@ class TicketController extends Controller
         foreach($tickets as $val){
            $id_ticket=$val['id'];
            $val['ticket_id']='#'.$val['ticket_id'];
-
+           $link_id= $this->getLinkTicket($id_ticket);
+           $val['link']=$link_id;
            $val['get_tickets_comment']=$this->FirstComment($id_ticket);
         }
        
@@ -962,6 +988,8 @@ class TicketController extends Controller
           foreach($tickets as $val){
              $id_ticket=$val['id'];
              $val['ticket_id']='#'.$val['ticket_id'];
+             $link_id= $this->getLinkTicket($id_ticket);
+             $val['link']=$link_id;
              $val['get_tickets_comment']=$this->FirstComment($id_ticket);
           }
          
@@ -975,6 +1003,8 @@ class TicketController extends Controller
           foreach($tickets as $val){
              $id_ticket=$val['id'];
              $val['ticket_id']='#'.$val['ticket_id'];
+             $link_id= $this->getLinkTicket($id_ticket);
+             $val['link']=$link_id;
              $val['get_tickets_comment']=$this->FirstComment($id_ticket);
           }
          
@@ -988,6 +1018,8 @@ class TicketController extends Controller
           foreach($tickets as $val){
              $id_ticket=$val['id'];
              $val['ticket_id']='#'.$val['ticket_id'];
+             $link_id= $this->getLinkTicket($id_ticket);
+             $val['link']=$link_id;
              $val['get_tickets_comment']=$this->FirstComment($id_ticket);;
           }
          
@@ -1014,6 +1046,16 @@ class TicketController extends Controller
             }
       }
       return $cm;
+    }
+
+    public function getLinkTicket($id){
+      $ticket=  TicketLink::WhereRaw('ticket_id ='.$id.' OR FIND_IN_SET('.$id.',link_id)')->pluck('id')->toArray();
+      if($ticket != []){
+        return implode(',',$ticket);
+      }else{
+        return null;
+      }
+        
     }
 
 
