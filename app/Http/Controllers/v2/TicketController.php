@@ -346,6 +346,7 @@ class TicketController extends Controller
             if($Link['id'] != $id){
              $ListLinkTicket[]=[
                 'id'=>$Link['id'],
+                'ticket_id'=>'#'.$Link['ticket_id'],
                 'title'=>$Link['title'],
                 'status'=>$Link['status'],
                 'assign_agent'=>$Link['assign_agent'],

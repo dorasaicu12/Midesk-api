@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Auth;
 use App\Http\Functions\MyHelper;
+use Illuminate\Support\Facades\Log;
 use DB;
 class Customer extends Model
 {
@@ -91,12 +92,13 @@ class Customer extends Model
                 $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
             })->where([['groupid',$groupid],['id',$id]])->first();
     }
-    public function createCustomer($customer){
+    public function createCustomer($customer,$request){
         $check_customer_by_email=self::where('email',$customer['email'])->first();
         $check_customer_by_phone=self::where('phone',$customer['phone'])->first();
 
         if($customer['phone']==''){
             if($check_customer_by_email){
+                Log::channel('customer_history')->info('customer already exist',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,'customer already exist', ['id'=>$check_customer_by_email->id,'customer_id'=>$check_customer_by_email->customer_id],400);
             } else{
                 DB::beginTransaction();
@@ -105,16 +107,19 @@ class Customer extends Model
         
                 DB::commit();
                 $customer = self::ShowOne($response->id);
+                Log::channel('customer_history')->info('Create customer successfully',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all(),'data'=>['id' => $customer->id,'customer_id' => $customer->customer_id]]);
                     return MyHelper::response(true,'Create customer successfully', ['id' => $customer->id,'customer_id' => $customer->customer_id],200);
                 } catch (\Exception $ex) {
         
                 DB::rollback();
+                Log::channel('customer_history')->info($ex->getMessage(),['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                     return MyHelper::response(false,$ex->getMessage(), [],500);
                 }
             }
         }else if($customer['email']==''){
 
                  if($check_customer_by_phone){
+                    Log::channel('customer_history')->info('customer already exist',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,'customer already exist', ['id'=>$check_customer_by_phone->id,'customer_id'=>$check_customer_by_phone->customer_id],400);
             } else{
                 DB::beginTransaction();
@@ -123,6 +128,7 @@ class Customer extends Model
         
                 DB::commit();
                 $customer = self::ShowOne($response->id);
+                Log::channel('customer_history')->info('Create customer successfully',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all(),'data'=>['id' => $customer->id,'customer_id' => $customer->customer_id]]);
                     return MyHelper::response(true,'Create customer successfully', ['id' => $customer->id,'customer_id' => $customer->customer_id],200);
                 } catch (\Exception $ex) {
         
@@ -133,9 +139,11 @@ class Customer extends Model
 
         }else{
             if($check_customer_by_email){
+                Log::channel('customer_history')->info('customer already exist',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,'customer already exist', [$check_customer_by_phone->id,'customer_id'=>$check_customer_by_phone->customer_id],400);
  
             }else if($check_customer_by_phone){
+                Log::channel('customer_history')->info('customer already exist',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,'customer already exist', [$check_customer_by_phone->id,'customer_id'=>$check_customer_by_phone->customer_id],400);
             } else{
                 DB::beginTransaction();
@@ -144,6 +152,7 @@ class Customer extends Model
         
                 DB::commit();
                 $customer = self::ShowOne($response->id);
+                Log::channel('customer_history')->info('Create customer successfully',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all(),'data'=>['id' => $customer->id,'customer_id' => $customer->customer_id]]);
                     return MyHelper::response(true,'Create customer successfully', ['id' => $customer->id,'customer_id' => $customer->customer_id],200);
                 } catch (\Exception $ex) {
         

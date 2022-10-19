@@ -129,28 +129,33 @@ class CustomerController extends Controller
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
             $checkFileds= CheckField::check_fields($req,'customer');
              if($checkFileds){
+                Log::channel('customer_history')->info('Retrive Customer Data Failed by error:'.$checkFileds.'',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
            }
            if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
             $checkFileds= CheckField::check_order($req,'customer');
              if($checkFileds){
+                Log::channel('customer_history')->info('Retrive Customer Data Failed by error:'.$checkFileds.'',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
            }
            if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
             $checkFileds= CheckField::CheckSearch($req,'customer');
              if($checkFileds){
+                Log::channel('customer_history')->info('Retrive Customer Data Failed by error:'.$checkFileds.'',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
              $checksearch= CheckField::check_exist_of_value($req,'customer');
 
              if($checksearch){
+                Log::channel('customer_history')->info('Retrive Customer Data Failed by error:'.$checksearch.'',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
                 return MyHelper::response(false,$checksearch,[],404);
              }
            }     
         
         $customers = (new Customer)->getListDefault($req);
+        Log::channel('customer_history')->info('Retrive Customer Data Successfully',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
         return MyHelper::response(true,'Successfully',$customers,200);
     }
 
@@ -199,7 +204,7 @@ class CustomerController extends Controller
     *     }
     * )
     */
-    public function show($id)
+    public function show($id,Request $request)
     {
         $customer = (new Customer)->showOne($id);
         $id_tags=explode(',',$customer['tag']);
@@ -226,8 +231,10 @@ class CustomerController extends Controller
         $customer['get_owner']=$owner;
         $customer['get_user']=$user;
         if (!$customer) {
+            Log::channel('customer_history')->info('Customer not found',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
             return MyHelper::response(false,'Customer not found',[],404);
         }
+        Log::channel('customer_history')->info('Successfully',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
         return MyHelper::response(true,'Successfully',$customer,200);
     }
 
@@ -314,6 +321,7 @@ class CustomerController extends Controller
     {
              
         if($request->fullname==''){
+            Log::channel('customer_history')->info('fullname field is required',['client'=>['authorization'=>$request->header('Authorization'),'Content-type'=>$request->header('Accept'),'host'=>request()->getHttpHost()],'request'=>$request->all()]);
             return MyHelper::response(false,'fullname field is required', [],400);
         }else{
             $channel_list  = ['facebook', 'zalo', 'webform', 'email', 'web', 'api'];
@@ -407,7 +415,7 @@ class CustomerController extends Controller
         //    }
         
 
-           return (new customer)->createCustomer($customer);
+           return (new customer)->createCustomer($customer,$request);
     
 
         }
@@ -498,6 +506,7 @@ class CustomerController extends Controller
     {
     	$check_customer = (new Customer)->showOne($id);
     	if(!$check_customer){
+            Log::channel('customer_history')->info('Customer Not found',['request'=>$request]);
             return MyHelper::response(true,'Customer Not found', [],404);
         }else{
             $request = array_filter($request->all());   
@@ -507,8 +516,10 @@ class CustomerController extends Controller
             // exit;
             $check_customer->update($request);
             if(!$check_customer){
+                Log::channel('customer_history')->info('Updated Customer Failed',['request'=>$request]);
                 return MyHelper::response(false,'Updated Customer Failed', [],500);
             }
+            Log::channel('customer_history')->info('Updated Customer successfully',['request'=>$request]);
             return MyHelper::response(true,'Updated Customer successfully', [],200);
         }  
     }
@@ -555,10 +566,12 @@ class CustomerController extends Controller
     {   
         $customer = (new Customer)->showOne($id);
         if (!$customer) {
+            Log::channel('customer_history')->info('Customer Not Found',['id'=>$id]);
             return MyHelper::response(false,'Customer Not Found', [],404);
         }else{
             $customer->delete();
         }
+        Log::channel('customer_history')->info('Delete Customer Successfully',['id'=>$id]);
         return MyHelper::response(true,'Delete Customer Successfully', [],200);
     }
 
@@ -567,27 +580,32 @@ class CustomerController extends Controller
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
             $checkFileds= CheckField::check_fields($req,'ticket');
              if($checkFileds){
+                Log::channel('customer_history')->info('Customer Data retrive failed by error :'.$checkFileds.'',['request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
            } 
            if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
             $checkFileds= CheckField::check_order($req,'ticket');
              if($checkFileds){
+                Log::channel('customer_history')->info('Customer Data retrive failed by error :'.$checkFileds.'',['request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
            }
            if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
             $checkFileds= CheckField::CheckSearch($req,'ticket_2');
              if($checkFileds){
+                Log::channel('customer_history')->info('Customer Data retrive failed by error :'.$checkFileds.'',['request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
              $checksearch= CheckField::check_exist_of_value($req,'ticket_'.auth::user()->groupid.'');
 
              if($checksearch){
+                Log::channel('customer_history')->info('Customer Data retrive failed by error :'.$checksearch.'',['request'=>$req]);
                 return MyHelper::response(false,$checksearch,[],404);
              }
            }
            $tickets = (new Ticket)->getDefaultByCustomerId($req,$id);
+           Log::channel('customer_history')->info('Customer Data retrive Successfully',['request'=>$req]);
         return MyHelper::response(true,'Successfully',$tickets,200);
     }
 

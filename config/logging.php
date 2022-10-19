@@ -113,6 +113,18 @@ return [
             'level' => 'debug',
             'days' => 0,
         ],
+        'customer_history' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/customer_history.log'),
+            'level' => 'debug',
+            'days' => 0,
+        ],
+        'event_history' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/event_history.log'),
+            'level' => 'debug',
+            'days' => 0,
+        ],
     ],
 
 ];

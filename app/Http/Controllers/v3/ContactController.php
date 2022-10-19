@@ -267,7 +267,7 @@ class ContactController extends Controller
                     $arrayPhone=explode(',',$contact['phone']);
                     $contact['phone']=array_filter($arrayPhone, function($value) { return !is_null($value) && $value !== ''; });
                 }else{
-                    $contact['phone']=[null];
+                    $contact['phone']=[];
                 }
   
                 if(isset($contact['email'])&& isset($contact['email_other'])){
@@ -281,7 +281,7 @@ class ContactController extends Controller
                     $arrayEmail=explode(',',$contact['email']);
                     $contact['email']=array_filter($arrayEmail, function($value) { return !is_null($value) && $value !== ''; });
                 }else{
-                    $contact['email']=[null];
+                    $contact['email']=[];
                 }
                       
 
@@ -697,7 +697,7 @@ class ContactController extends Controller
            
            $activities = (new ContactActivity)->getDefault($req,$id);
 
-           return MyHelper::response(true,'Successfully',[$activities],200);
+           return MyHelper::response(true,'Successfully',$activities,200);
     }
     public function ContactTicket(Request $request,$id){
         $req = $request->all();
@@ -728,7 +728,7 @@ class ContactController extends Controller
            
            $ticket = (new Ticket)->getDefaultByContactId($req,$id);
 
-           return MyHelper::response(true,'Successfully',[$ticket],200);
+           return MyHelper::response(true,'Successfully',$ticket,200);
     }
         
 }
