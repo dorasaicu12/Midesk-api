@@ -23,5 +23,5 @@ class AuthUser
     public static function isLogoutPage()
     {
         return (request()->route()->getName() == 'admin.logout');
-    }    
+    }
 }

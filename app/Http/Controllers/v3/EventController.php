@@ -21,7 +21,7 @@ use App\Models\Customer;
 use App\Models\TeamStaff;
 use Carbon\Carbon;
 use DB;
-
+use Illuminate\Support\Facades\Log;
 class EventController extends Controller
 {
     protected $array_remind_type = ['date','daily','weekly','monthly','yearly'];
@@ -125,28 +125,33 @@ class EventController extends Controller
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
             $checkFileds= CheckField::check_fields($req,'event');
              if($checkFileds){
+                Log::channel('event_history')->info('retrive Event falid by error '.$checkFileds.'',['status' => 404,'request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
            }
            if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
             $checkFileds= CheckField::check_order($req,'event');
              if($checkFileds){
+                Log::channel('event_history')->info('retrive Event falid by error '.$checkFileds.'',['status' => 404,'request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
            }
            if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
             $checkFileds= CheckField::CheckSearch($req,'event');
              if($checkFileds){
+                Log::channel('event_history')->info('retrive Event falid by error '.$checkFileds.'',['status' => 404,'request'=>$req]);
                 return MyHelper::response(false,$checkFileds,[],404);
              }
              $checksearch= CheckField::check_exist_of_value($req,'event');
 
              if($checksearch){
+                Log::channel('event_history')->info('retrive Event falid by error '.$checksearch.'',['status' => 404,'request'=>$req]);
                 return MyHelper::response(false,$checksearch,[],404);
              }
            } 
            
         $events = (new Event)->getListDefault($req);
+        Log::channel('event_history')->info('Retrive data successfully',['status' => 200,'request'=>$req]);
         return MyHelper::response(true,'Successfully',$events,200);
     }
     
@@ -222,6 +227,7 @@ class EventController extends Controller
         $data['agent'] = TeamStaff::select('team_id','agent_id')->with(['Agent' => function ($q){
             $q->select('id','fullname');
         }])->where('groupid',$groupid)->get();
+        Log::channel('event_history')->info('Create event successfully',['status' => 200,'data'=>$data]);
         return MyHelper::response(true,'Create event successfully', $data,200);
     }
 
@@ -340,6 +346,7 @@ class EventController extends Controller
         $event_type = $request->event_type;
         $check_event_type = (new EventType)->find($event_type);
         if (!$check_event_type) {
+            Log::channel('event_history')->info('Event type field do not exist',['status' => 403,'request'=>$request]);
             return MyHelper::response(false,'Event type field do not exist', [],403);
         }
         $note = $request->note;
@@ -351,40 +358,47 @@ class EventController extends Controller
         $remind_type = $request->remind_type;
 
         if (!in_array($remind_type, $this->array_remind_type)) {
+            Log::channel('event_history')->info('remind_type field do not match',['status' => 403,'request'=>$request]);
             return MyHelper::response(false,'remind_type field do not match', [],403);
         }
 
         $team_id = $request->handling_team;
         $check_team = (new Team)->where('team_id',$team_id)->first();
         if (!$check_team) {
+            Log::channel('event_history')->info('handling_team field do not match',['status' => 403,'request'=>$request]);
             return MyHelper::response(false,'handling_team field do not match', [],403);
         }
 
         $agent_id = $request->handling_agent;
         $check_agent = (new TeamStaff)->where('team_id',$check_team->team_id)->get()->pluck('agent_id')->toArray();
         if (!in_array($agent_id,$check_agent)) {
+            Log::channel('event_history')->info('handling_team field do not match',['status' => 403,'request'=>$request]);
             return MyHelper::response(false,'handling_agent field do not match', [],403);
         }
 
         $event_source = $request->event_source;
         $event_source_id = $request->event_source_id;
         if (!in_array($event_source, $this->array_event_source)) {
+            Log::channel('event_history')->info('Event source field do not match',['status' => 403,'request'=>$request]);
             return MyHelper::response(false,'Event source field do not match', [],403);
         }
 
         if ($event_source == 'contact') {
             $contact = (new Contact)->find($event_source_id);
             if (!$contact) {
+                Log::channel('event_history')->info('Event source do not exist',['status' => 403,'request'=>$request]);
                 return MyHelper::response(false,'Event source do not exist', [],403);
             }
         }elseif ($event_source == 'agent') {
             $agent = (new User)->find($event_source_id);
             if (!$agent) {
+                Log::channel('event_history')->info('Event source do not exist',['status' => 403,'request'=>$request]);
                 return MyHelper::response(false,'Event source do not exist', [],403);
             }
         }else{
             $customer = (new Customer)->find($event_source_id);
             if (!$customer) {
+                Log::channel('event_history')->info('Event source do not exist',['status' => 403,'request'=>$request]);
                 return MyHelper::response(false,'Event source do not exist', [],403);
             }
         }
@@ -394,6 +408,7 @@ class EventController extends Controller
             if($ticket){
                 $ticket_id=$request['ticket_id'];
             }else{
+                Log::channel('event_history')->info('ticket not found',['status' => 404,'request'=>$request]);
                 return MyHelper::response(false,'ticket not found',[],404);
             }
         }
@@ -402,6 +417,7 @@ class EventController extends Controller
             if($contact){
                 $contact_id=$request['contact_id'];
             }else{
+                Log::channel('event_history')->info('contact not found',['status' => 404,'request'=>$request]);
                 return MyHelper::response(false,'contact not found',[],404);
             }
         }
@@ -412,6 +428,7 @@ class EventController extends Controller
             if($order){
                 $order_id=$request['order_id'];
             }else{
+                Log::channel('event_history')->info('order not found',['status' => 404,'request'=>$request]);
                 return MyHelper::response(false,'order not found',[],404);
             }
         }
@@ -439,8 +456,10 @@ class EventController extends Controller
         $event->created_by = auth()->user()->id;
         
         if ($event->save()) {
+            Log::channel('event_history')->info('Create event successfully',['status' => 200,'request'=>$request]);
             return MyHelper::response(true,'Create event successfully', ['id' => $event->id],200);
         }else{
+            Log::channel('event_history')->info('Create event failed',['status' => 403,'request'=>$request]);
             return MyHelper::response(false,'Create event failed', [],403);
         }
     }
@@ -496,9 +515,11 @@ class EventController extends Controller
     public function show($id)
     {
         $event = Event::where('id', $id)->first();
-        if (!$event) {            
+        if (!$event) {       
+            Log::channel('event_history')->info('Create event successfully',['status' => 200,'id'=>$id]);     
             return MyHelper::response(false,'Event not found',[],404);
         }else{
+            Log::channel('event_history')->info('Successfully',['status' => 200,'id'=>$id]);
             return MyHelper::response(true,'Successfully',$event,200);
         }
     }
@@ -626,6 +647,7 @@ class EventController extends Controller
         $event = Event::where('id', $id)->first();
         $request['updated_by']=auth()->user()->id;;
         if (!$event) {
+            Log::channel('event_history')->info('Event do not exist',['status' => 404,'request'=>$request]);
             return MyHelper::response(false,'Event do not exist', [],404);
         }
         $request = array_filter($request->all()); 
@@ -641,6 +663,7 @@ class EventController extends Controller
 
         if (array_key_exists('remind_type', $request)) {
         	if (!in_array($request['remind_type'], $this->array_remind_type)) {
+                Log::channel('event_history')->info('remind_type field do not match',['status' => 404,'request'=>$request]);
 	            return MyHelper::response(false,'remind_type field do not match', [],403);
         	}
         }
@@ -650,6 +673,7 @@ class EventController extends Controller
         	if ($check_team) {
         		$request['event_assign_team'] = $request['handling_team'];
         	}else{
+                Log::channel('event_history')->info('handling_team field do not match',['status' => 404,'request'=>$request]);
 	            return MyHelper::response(false,'handling_team field do not match', [],403);
         	}
             
@@ -658,30 +682,36 @@ class EventController extends Controller
 	        	if (in_array(json_decode( $request['handling_agent']),$check_agent)) {
 	        		$request['event_assign_agent'] = $request['handling_agent'];
 	        	}else{
+                    Log::channel('event_history')->info('handling_agent field do not match',['status' => 404,'request'=>$request]);
 		            return MyHelper::response(false,'handling_agent field do not match', [],403);
 	        	}
         	}else{
+                Log::channel('event_history')->info('handling_agent field is require',['status' => 404,'request'=>$request]);
 	            return MyHelper::response(false,'handling_agent field is require', [],403);
         	}
         }
 
        	if (array_key_exists('event_source', $request) && array_key_exists('event_source_id', $request)) {
        		if (!in_array($request['event_source'], $this->array_event_source)) {
+                Log::channel('event_history')->info('Event source field do not match',['status' => 404,'request'=>$request]);
             	return MyHelper::response(false,'Event source field do not match', [],403);
        		}else{
        			if ($request['event_source'] == 'contact') {
 		            $contact = (new Contact)->find($request['event_source_id']);
 		            if (!$contact) {
+                        Log::channel('event_history')->info('Event source do not exist',['status' => 404,'request'=>$request]);
 		                return MyHelper::response(false,'Event source do not exist', [],403);
 		            }
 		        }elseif ($request['event_source'] == 'agent') {
 		            $agent = (new User)->find($request['event_source_id']);
 		            if (!$agent) {
+                        Log::channel('event_history')->info('Event source do not exist',['status' => 404,'request'=>$request]);
 		                return MyHelper::response(false,'Event source do not exist', [],403);
 		            }
 		        }else{
 		            $customer = (new Customer)->find($request['event_source_id']);
 		            if (!$customer) {
+                        Log::channel('event_history')->info('Event source do not exist',['status' => 404,'request'=>$request]);
 		                return MyHelper::response(false,'Event source do not exist', [],403);
 		            }
 		        }
@@ -691,6 +721,7 @@ class EventController extends Controller
        	if (array_key_exists('event_type', $request)) {
        		$check_event_type = (new EventType)->find($request['event_type']);
 	        if (!$check_event_type) {
+                Log::channel('event_history')->info('Event type field do not exist',['status' => 404,'request'=>$request]);
 	            return MyHelper::response(false,'Event type field do not exist', [],403);
 	        }	
        	}
@@ -704,12 +735,14 @@ class EventController extends Controller
                 $event->ticket_id=$request['ticket_id'];
                 $event->save();
             }else{
+                Log::channel('event_history')->info('ticket not found',['status' => 404,'request'=>$request]);
                 return MyHelper::response(false,'ticket not found',[],404);
             }
         }
         if(isset($request['contact_id'])){
             $contact = Contact::where('id',$request['contact_id'])->first();
             if(!$contact){
+                Log::channel('event_history')->info('contact not found',['status' => 404,'request'=>$request]);
                 return MyHelper::response(false,'contact not found',[],404);
             }else{
                 $event->contact_id=$request['contact_id'];
@@ -719,6 +752,7 @@ class EventController extends Controller
         if(isset($request['order_id'])){
             $order = Order::where('id',$request['order_id'])->first();
             if(!$order){
+                Log::channel('event_history')->info('order not found',['status' => 404,'request'=>$request]);
                 return MyHelper::response(false,'order not found',[],404);
             }else{
                 $event->order_id=$request['order_id'];
@@ -727,8 +761,10 @@ class EventController extends Controller
         }
         
         if ($event->update($request)) {
+            Log::channel('event_history')->info('Update event successfully',['status' => 200,'request'=>$request]);
         	return MyHelper::response(true,'Update event successfully', [],200);
         }else{
+            Log::channel('event_history')->info('Update event failed',['status' => 403,'request'=>$request]);
             return MyHelper::response(false,'Update event failed', [],403);
         }
     } catch (\Exception $ex) {
@@ -781,11 +817,13 @@ class EventController extends Controller
     public function destroy($id)
     {
         $event = Event::where('id', $id)->first();
-        if (!$event) {            
+        if (!$event) {        
+            Log::channel('event_history')->info('Event not found',['status' => 404,'id'=>$id]);    
             return MyHelper::response(false,'Event not found',[],404);
         }else{
             $eventact = Event::find($id);
             $eventact->delete();
+            Log::channel('event_history')->info('Delete Event Successfully',['status' => 200,'id'=>$id]); 
             return MyHelper::response(true,'Delete Event Successfully', [],200);
         }
     }
@@ -865,22 +903,27 @@ class EventController extends Controller
     public function EventTicket(Request $request,$id)
     {
         $event = Event::where('id', $id)->first();
-        if (!$event) {            
+        if (!$event) {           
+            Log::channel('event_history')->info('Event not found',['status' => 404,'id'=>$id,'request'=>$request]); 
             return MyHelper::response(false,'Event not found',[],404);
         }else{      
             if($event->ticket_id){
-                return MyHelper::response(true,'this event already have ticket',['event_id'=>$event->id,'ticket_id'=>$event->ticket_id],200); 
+                Log::channel('event_history')->info('this event already have ticket',['status' => 403,'id'=>$id,'request'=>$request]);
+                return MyHelper::response(true,'this event already have ticket',['event_id'=>$event->id,'ticket_id'=>$event->ticket_id],403); 
             }else{
                 if(isset($request['ticket_id'])){
                     $ticket = Ticket::where('id',$request['ticket_id'])->first();
                     if($ticket){
                         $event->ticket_id=$request['ticket_id'];
                         $event->save();
+                        Log::channel('event_history')->info('this event already have ticket',['status' => 403,'id'=>$id,'request'=>$request]);
                         return MyHelper::response(true,'add ticket successfully',['event_id'=>$event->id,'ticket_id'=>$event->ticket_id],200); 
                     }else{
+                        Log::channel('event_history')->info('ticket not found',['status' => 404,'id'=>$id,'request'=>$request]);
                         return MyHelper::response(false,'ticket not found',[],404);
                     }
                 }else{
+                    Log::channel('event_history')->info('please enter ticket_id',['status' => 500,'id'=>$id,'request'=>$request]);
                     return MyHelper::response(false,'please enter ticket_id',[],500);
                 }
             }  

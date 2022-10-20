@@ -18,7 +18,7 @@ class CorMiddleware
         return $next($request)
         //file config middleware back-end để font-end có thể truy cập tới api dưới local
         ->header('Access-Control-Allow-Origin', '*')
-        ->header('Access-Control-Allow-Headers','*')
-        ->header('Access-Control-Allow-Credentials',' true');
+            ->header('Access-Control-Allow-Headers', '*')
+            ->header('Access-Control-Allow-Credentials', ' true');
     }
 }

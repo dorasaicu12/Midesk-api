@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/
+ */
 
 Route::group(['prefix' => 'v3'], function () {
 
@@ -21,7 +20,7 @@ Route::group(['prefix' => 'v3'], function () {
         Route::post('refresh/{id}', 'AuthController@refresh')->name('refresh');
     });
 
-    Route::group(['middleware' => ['auth:api','CheckCustomer'], 'namespace' => 'v3'], function () {
+    Route::group(['middleware' => ['auth:api', 'CheckCustomer'], 'namespace' => 'v3'], function () {
 
         Route::get('ticket/forAbi', 'TicketController@ticketForAbi')->name('ticket.forAbi');
         Route::get('ticket/ticketForm', 'TicketController@assignForm');
@@ -31,7 +30,7 @@ Route::group(['prefix' => 'v3'], function () {
         Route::post('ticket/comment/{id}', 'TicketController@comment')->name('ticket.comment');
         Route::post('ticket/attachfile/{id}', 'TicketController@attachfile')->name('ticket.file');
         Route::post('ticket/ticketMerge/{id}', 'TicketController@ticketMerge')->name('ticket.merge');
-        
+
         Route::apiResource('ticket', 'TicketController');
         Route::apiResource('ticketCategory', 'TicketCategoryController');
 
@@ -55,7 +54,7 @@ Route::group(['prefix' => 'v3'], function () {
         Route::apiResource('marco', 'MarcoController');
         Route::apiResource('quickchat', 'QuickChatController');
         Route::apiResource('label', 'LabelController');
-        
+
         Route::apiResource('event', 'EventController');
         Route::apiResource('agent', 'UserController');
 
@@ -66,11 +65,11 @@ Route::group(['prefix' => 'v3'], function () {
     });
 });
 
-       Route::group(['prefix' => 'v2','middleware' => ['auth:api', 'CheckCustomer'], 'namespace' => 'v2'], function () {
-       Route::apiResource('ticket', 'TicketController');
-       Route::get('ticket/ticketFollow/{id}', 'TicketController@getTicketFollow')->name('ticket.follow');
-       Route::get('ticket/ticketTeam/{id}', 'TicketController@TicketOfTeam')->name('ticket.team');
-       Route::get('pending/ticket', 'TicketController@TicketPending')->name('ticket.pending');
-       Route::get('deleteList/ticket', 'TicketController@getDefaultDelete')->name('ticket.deleteList');
-       Route::get('getall/ticket', 'TicketController@GetAllThroughtPermission')->name('ticket.all');
-     });
+Route::group(['prefix' => 'v2', 'middleware' => ['auth:api', 'CheckCustomer'], 'namespace' => 'v2'], function () {
+    Route::apiResource('ticket', 'TicketController');
+    Route::get('ticket/ticketFollow/{id}', 'TicketController@getTicketFollow')->name('ticket.follow');
+    Route::get('ticket/ticketTeam/{id}', 'TicketController@TicketOfTeam')->name('ticket.team');
+    Route::get('pending/ticket', 'TicketController@TicketPending')->name('ticket.pending');
+    Route::get('deleteList/ticket', 'TicketController@getDefaultDelete')->name('ticket.deleteList');
+    Route::get('getall/ticket', 'TicketController@GetAllThroughtPermission')->name('ticket.all');
+});

@@ -2,24 +2,13 @@
 
 namespace App\Http\Controllers\v3;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use App\Http\Functions\CheckField;
 use App\Http\Functions\MyHelper;
 use App\Models\Macro;
-use App\Models\Order;
-use Carbon\Carbon;
-use App\Models\Contact;
-use App\Models\Customer;
-use App\Models\Product;
-use App\Models\Ticket;
-use App\Traits\ProcessTraits;
-use Illuminate\Support\Facades\Log;
-
-use App\Http\Functions\CheckField;
-
 use Auth;
 use DB;
+use Illuminate\Http\Request;
 
 class MarcoController extends Controller
 {
@@ -32,38 +21,37 @@ class MarcoController extends Controller
     {
         $req = $request->all();
         if (array_key_exists('fields', $req) && rtrim($req['fields']) != '') {
-            $checkFileds= CheckField::check_fields($req,'macro');
-             if($checkFileds){
-                return MyHelper::response(false,$checkFileds,[],404);
-             }
-           }
-           if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
-            $checkFileds= CheckField::check_order($req,'macro');
-             if($checkFileds){
-                return MyHelper::response(false,$checkFileds,[],404);
-             }
-           }
-           if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
-            $checkFileds= CheckField::CheckSearch($req,'macro');
-             if($checkFileds){
-                return MyHelper::response(false,$checkFileds,[],404);
-             }
-             $checksearch= CheckField::check_exist_of_value($req,'macro');
-
-             if($checksearch){
-                return MyHelper::response(false,$checksearch,[],404);
-             }
-           }
-           
-           
-        $marco = new Macro;
-        $marco  = $marco->getListDefault($req);
-        foreach($marco  as $value){
-            if(isset($value['action'])){
-            $value['action']= json_decode($value['action']);
+            $checkFileds = CheckField::check_fields($req, 'macro');
+            if ($checkFileds) {
+                return MyHelper::response(false, $checkFileds, [], 404);
+            }
         }
-           }
-        return MyHelper::response(true,'Successfully',$marco,200);
+        if (array_key_exists('order_by', $req) && rtrim($req['order_by']) != '') {
+            $checkFileds = CheckField::check_order($req, 'macro');
+            if ($checkFileds) {
+                return MyHelper::response(false, $checkFileds, [], 404);
+            }
+        }
+        if (array_key_exists('search', $req) && rtrim($req['search']) != '') {
+            $checkFileds = CheckField::CheckSearch($req, 'macro');
+            if ($checkFileds) {
+                return MyHelper::response(false, $checkFileds, [], 404);
+            }
+            $checksearch = CheckField::check_exist_of_value($req, 'macro');
+
+            if ($checksearch) {
+                return MyHelper::response(false, $checksearch, [], 404);
+            }
+        }
+
+        $marco = new Macro;
+        $marco = $marco->getListDefault($req);
+        foreach ($marco as $value) {
+            if (isset($value['action'])) {
+                $value['action'] = json_decode($value['action']);
+            }
+        }
+        return MyHelper::response(true, 'Successfully', $marco, 200);
     }
 
     /**
@@ -85,47 +73,47 @@ class MarcoController extends Controller
     public function store(Request $request)
     {
         $groupid = auth::user()->groupid;
-        $title=$request->title;
-        $description=$request->description;
-        $type=$request->type && 'all';
-        $creby   = auth::user()->id;
-        $time     = time();
-        $public=$request->public && 1;
-        $action=$request->action;
+        $title = $request->title;
+        $description = $request->description;
+        $type = $request->type && 'all';
+        $creby = auth::user()->id;
+        $time = time();
+        $public = $request->public && 1;
+        $action = $request->action;
 
-    DB::beginTransaction();
-    try {
-    DB::commit();
-    $order = new Macro;
-    $order->groupid=$groupid;
-    $order->title=$title;
-    $order->description=$description;
-    $order->public=$public;
-    
-    $order->creby=$creby;
-    $order->datecreate=$time;
-    if(isset($action)){
-        foreach($action as $value){
-            if($value['type']=='public_reply_template'){
-                $id=$value['value'];
-                $conten=DB::table("email_template")->where('id',$id)->first();
-                if(!$conten){
-                    return MyHelper::response(false,'id:'.$id.' can not be found in field public_reply_template',[],404);
+        DB::beginTransaction();
+        try {
+            DB::commit();
+            $order = new Macro;
+            $order->groupid = $groupid;
+            $order->title = $title;
+            $order->description = $description;
+            $order->public = $public;
+
+            $order->creby = $creby;
+            $order->datecreate = $time;
+            if (isset($action)) {
+                foreach ($action as $value) {
+                    if ($value['type'] == 'public_reply_template') {
+                        $id = $value['value'];
+                        $conten = DB::table("email_template")->where('id', $id)->first();
+                        if (!$conten) {
+                            return MyHelper::response(false, 'id:' . $id . ' can not be found in field public_reply_template', [], 404);
+                        }
+                        $value['value'] = $conten->email_content;
+                    }
+                    $actionPut[] = $value;
+
                 }
-                $value['value']= $conten->email_content;       
+                $order->action = json_encode($actionPut);
             }
-            $actionPut[]=$value;
-            
+            $order->save();
+            return MyHelper::response(true, 'Created Macro successfully', ['id' => $order->id], 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return MyHelper::response(false, $ex->getMessage(), [], 403);
         }
-        $order->action=json_encode($actionPut);
-}
-    $order->save();
-    return MyHelper::response(true,'Created Macro successfully',['id'=>$order->id],200);
-} catch (\Exception $ex) {
-    DB::rollback();
-    return MyHelper::response(false,$ex->getMessage(), [],403);
-}
-   
+
     }
 
     /**
@@ -137,15 +125,15 @@ class MarcoController extends Controller
     public function show($id_macro)
     {
         $marco = (new Macro)->checkExist($id_macro);
-        if(!$marco){
-            return MyHelper::response(false,'Macro not found',[],404);
-        }else{
-            
-                if(isset($marco['action'])){
-                $marco['action']= json_decode($marco['action']);
+        if (!$marco) {
+            return MyHelper::response(false, 'Macro not found', [], 404);
+        } else {
+
+            if (isset($marco['action'])) {
+                $marco['action'] = json_decode($marco['action']);
             }
-       
-            return MyHelper::response(true,'successfully',$marco,200);
+
+            return MyHelper::response(true, 'successfully', $marco, 200);
         }
     }
 
@@ -157,7 +145,7 @@ class MarcoController extends Controller
      */
     public function edit($id_macro)
     {
-       
+
     }
 
     /**
@@ -167,29 +155,29 @@ class MarcoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update($id,Request $request)
+    public function update($id, Request $request)
     {
         $data = array_filter($request->all());
         $macroupdate = Macro::find($id);
-        if(isset($data['action'])){  
-            foreach($data['action'] as $value){
-                if($value['type']=='public_reply_template'){
-                    $id=$value['value'];
-                    $conten=DB::table("email_template")->where('id',$id)->first();
-                    if(!$conten){
-                        return MyHelper::response(false,'id:'.$id.' can not be found in field public_reply_template',[],404);
+        if (isset($data['action'])) {
+            foreach ($data['action'] as $value) {
+                if ($value['type'] == 'public_reply_template') {
+                    $id = $value['value'];
+                    $conten = DB::table("email_template")->where('id', $id)->first();
+                    if (!$conten) {
+                        return MyHelper::response(false, 'id:' . $id . ' can not be found in field public_reply_template', [], 404);
                     }
-                    $value['value']= $conten->email_content;       
+                    $value['value'] = $conten->email_content;
                 }
-                $actionPut[]=$value;
-                
-            }
-            $data['action']=json_encode($actionPut);
-    }
-       $data['dateupdate']=time();
-       $macroupdate->update($data);
+                $actionPut[] = $value;
 
-    return MyHelper::response(true,'updated Macro successfully',[],200);
+            }
+            $data['action'] = json_encode($actionPut);
+        }
+        $data['dateupdate'] = time();
+        $macroupdate->update($data);
+
+        return MyHelper::response(true, 'updated Macro successfully', [], 200);
     }
 
     /**
@@ -202,10 +190,10 @@ class MarcoController extends Controller
     {
         $Macro = (new Macro)->checkExist($id);
         if (!$Macro) {
-            return MyHelper::response(false,'Macro Not Found', [],404);
-        }else{
+            return MyHelper::response(false, 'Macro Not Found', [], 404);
+        } else {
             $Macro->delete();
         }
-        return MyHelper::response(true,'Delete Macro Successfully', [],200);
+        return MyHelper::response(true, 'Delete Macro Successfully', [], 200);
     }
 }

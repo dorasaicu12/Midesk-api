@@ -2,24 +2,9 @@
 
 namespace App\Http\Controllers\v3;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
-use App\Http\Functions\MyHelper;
-use App\Models\TicketCategory;
-use App\Models\Order;
-use Carbon\Carbon;
-use App\Models\Contact;
-use App\Models\Customer;
-use App\Models\Product;
-use App\Models\Ticket;
-use App\Traits\ProcessTraits;
-use Illuminate\Support\Facades\Log;
-
-use App\Http\Functions\CheckField;
-
-use Auth;
-use DB;
 class TicketCategorycontrollers extends Controller
 {
     /**

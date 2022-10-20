@@ -83,8 +83,8 @@ class Permission
     {
         $uriCurrent = request()->fullUrl();
         $methodCurrent = request()->method();
-        $error = ['method' => $methodCurrent,'url' => $uriCurrent];
-        return MyHelper::response(false,'You don\'t have this permission',$error,403);
+        $error = ['method' => $methodCurrent, 'url' => $uriCurrent];
+        return MyHelper::response(false, 'You don\'t have this permission', $error, 403);
     }
 
 }

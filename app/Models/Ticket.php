@@ -29,12 +29,14 @@ class Ticket extends Model
     assign_agent,
     assign_team,
     category,
-    priority,tag,
+    priority,
+    tag,
     label,
     label_creby,
     tag,
     first_reply_time,
     event_id,
+    createby,
     channel,
     type,
     datecreate,
@@ -254,7 +256,7 @@ class Ticket extends Model
     {
     	$res =  self::with(['getTicketsContent'=>function($q){
             $q->select('ticket_id', 'content');
-        },'getTicketsDetail','getTicketCategory','getTicketPriority']);
+        },'getTicketsDetail','getTicketAssign','getTicketCreator','getTicketCategory','getTicketPriority']);
     	
     	/// paginate
     	if (array_key_exists('page', $req) && rtrim($req['page']) != '') {
@@ -338,11 +340,20 @@ class Ticket extends Model
 			$order = $c[1];
 			$res->orderBy($by, $order);
     	}
+         //datetime
+        if (array_key_exists('datetime', $req) && rtrim($req['datetime']) != '') {
+            $date = explode('-', $req['datetime']);        
+            $tmp_start = strtotime('- '.$date[0].' '.$date[1].'');
+        }else{
+            $timeTmp1         = strtotime("first day of last month -11 month");
+            $tmp_start       = strtotime(date('Y-m-d',$timeTmp1). " 00:00:00");
+        }
         $delete = self::DELETE;
-    	return $res->where(function($q) use ($delete) {
-                    
+    	return $res->where(function($q) use ($delete,$tmp_start) {
                     $q->where('is_delete', $delete[0])->orWhere('is_delete', $delete[1]);
+                    $q->where('datecreate','>=',$tmp_start);
                 })->where('requester', $id)
+                 
     	->offset($from)
     	->limit($limit)
     	->paginate($limit)->appends(request()->query());
@@ -368,7 +379,11 @@ class Ticket extends Model
     }
     public function getTicketAssign()
     {
-        return $this->hasOne(User::class,'id','assign_agent');
+        return $this->hasOne(User::class,'id','assign_agent')->select(['id','firstname','lastname','fullname','username']);
+    }
+    public function getTicketCreator()
+    {
+        return $this->hasOne(User::class,'id','createby')->select(['id','firstname','lastname','fullname','username']);
     }
     public function getTicketTag()
     {

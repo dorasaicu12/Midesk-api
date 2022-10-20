@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
-    
+
     protected static $allPermissions = null;
     const ACTIVE = 1;
 
@@ -35,8 +34,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
-    
-    
+
     protected $table = 'table_users';
     /**
      * The attributes that are mass assignable.
@@ -69,7 +67,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function Roles()
     {
-    	return $this->hasOne(UserType::class,'id','user_type_id');
+        return $this->hasOne(UserType::class, 'id', 'user_type_id');
     }
     /**
      * The roles user.
@@ -78,12 +76,12 @@ class User extends Authenticatable implements JWTSubject
      */
     public function Permissions()
     {
-        return $this->hasManyThrough(UserTypeDetail::class,UserType::class,'id','type_id','user_type_id');
+        return $this->hasManyThrough(UserTypeDetail::class, UserType::class, 'id', 'type_id', 'user_type_id');
     }
 
     public function Check($user)
     {
-        return self::where([['email',$user['email']],['password',md5($user['password'])],['active',self::ACTIVE]])->first();
+        return self::where([['email', $user['email']], ['password', md5($user['password'])], ['active', self::ACTIVE]])->first();
     }
 
     /**
@@ -115,8 +113,8 @@ class User extends Authenticatable implements JWTSubject
     public static function allPermissions()
     {
         if (self::$allPermissions === null) {
-            $user                 = auth()->user();
-            self::$allPermissions = $user->Permissions()->get(['page','action']);
+            $user = auth()->user();
+            self::$allPermissions = $user->Permissions()->get(['page', 'action']);
         }
         return self::$allPermissions;
     }
